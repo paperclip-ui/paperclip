@@ -82,7 +82,7 @@ const getExprName = (expr: ast.InnerExpressionInfo) => {
 
 export const renameFilePrompt = (filePath: string): Prompt => ({
   details: { kind: PromptKind.RenameFile, filePath },
-  title: "Rename name",
+  title: "Rename file",
   placeholder: "New file name",
   okLabel: "Rename file",
 });

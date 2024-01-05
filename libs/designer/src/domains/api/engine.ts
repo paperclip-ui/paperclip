@@ -5,9 +5,11 @@ import {
   ModulesEvaluated,
   FileChanged,
   FileChangedKind,
+  ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { Engine, Dispatch } from "@paperclip-ui/common";
-import { DesignerEngineEvent, DocumentOpened } from "./events";
+import { Engine, Dispatch, isPaperclipFile } from "@paperclip-ui/common";
+import { Point } from "../../state/geom";
+import { DesignerEngineEvent } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
@@ -86,6 +88,8 @@ import { ConfirmKind } from "../../state/confirm";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { ExpressionKind } from "../../ui/logic/Editor/EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 import { NativeTypes } from "react-dnd-html5-backend";
+import { serializeDeclaration } from "@paperclip-ui/core/lib/proto/ast/serialize";
+import { isImageAsset } from "../ui/state";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -138,9 +142,27 @@ const createActions = (
     });
   };
 
+  const expandFilePathDirectories = async (filePath: string) => {
+    const dirs = filePath.split("/");
+
+    // pop off file name
+    dirs.pop();
+    while (dirs.length) {
+      try {
+        await readDirectory(dirs.join("/"));
+
+        // outside of project scope
+      } catch (e) {
+        break;
+      }
+      dirs.pop();
+    }
+  };
+
   return {
     openFile,
     readDirectory,
+    expandFilePathDirectories,
     async deleteFile(filePath: string) {
       // no need to do anything else since file watcher trigger changes
       await client.DeleteFile({ path: filePath });
@@ -148,6 +170,11 @@ const createActions = (
     async moveFile(fromPath: string, toPath: string) {
       // no need to do anything else since file watcher will trigger changes
       await client.MoveFile({ fromPath, toPath });
+
+      dispatch({
+        type: "designer-engine/fileMoved",
+        payload: { fromPath, toPath },
+      });
     },
     async createDirectory(name: string, parentDir?: string) {
       const filePath = parentDir + "/" + name;
@@ -184,7 +211,7 @@ const createActions = (
       });
     },
 
-    openCodeEditor(path: string, range: Range) {
+    openCodeEditor(path: string, range?: Range) {
       client.OpenCodeEditor({ path, range });
     },
     openFileInNavigator(filePath: string) {
@@ -415,23 +442,35 @@ const createEventHandler = (actions: Actions) => {
     event: ExprNavigatorDroppedNode,
     state: DesignerState
   ) => {
-    const { targetId, droppedExprId, position } = event.payload;
+    const { targetId, item, position } = event.payload;
 
     const resolvedTarget = await resolveTargetExprId(targetId, state);
-
-    actions.applyChanges([
-      {
-        moveNode: {
-          targetId: resolvedTarget.id,
-          nodeId: droppedExprId,
-          position: {
-            before: NodePosition.BEFORE,
-            after: NodePosition.AFTER,
-            inside: NodePosition.INSIDE,
-          }[position],
+    if (item.kind === DNDKind.Node) {
+      await actions.applyChanges([
+        {
+          moveNode: {
+            targetId: resolvedTarget.id,
+            nodeId: item.item.id,
+            position: {
+              before: NodePosition.BEFORE,
+              after: NodePosition.AFTER,
+              inside: NodePosition.INSIDE,
+            }[position],
+          },
         },
-      },
-    ]);
+      ]);
+    } else if (item.kind === DNDKind.Resource) {
+      await insertResource(
+        item.item.parentPath + "/" + item.item.name,
+        resolvedTarget.id,
+        null,
+        state
+      );
+    } else if (item.kind === DNDKind.File) {
+      await insertResource(item.item.path, resolvedTarget.id, null, state);
+    } else if (item.kind === NativeTypes.FILE) {
+      await insertFiles(item.item.files, resolvedTarget.id, null, state);
+    }
   };
 
   const handleStyleDeclarationChanged = (
@@ -464,21 +503,23 @@ const createEventHandler = (actions: Actions) => {
     event: ExpressionPasted,
     state: DesignerState
   ) => {
-    const { expr, type } = event.payload;
+    const { data, type } = event.payload;
 
-    const kind = {
-      [ast.ExprKind.TextNode]: "textNode",
-      [ast.ExprKind.Element]: "element",
-      [ast.ExprKind.Component]: "component",
-    }[expr.kind];
+    let targetExpressionId = getTargetExprId(state);
 
-    if (!kind) {
-      console.error(`Cannot paste: `, expr);
-      return;
-    }
+    console.log(event.payload);
 
-    if (type === "copy") {
-      let targetExpressionId = getTargetExprId(state);
+    if (type === ShortcutCommand.Copy || type === ShortcutCommand.Cut) {
+      const kind = {
+        [ast.ExprKind.TextNode]: "textNode",
+        [ast.ExprKind.Element]: "element",
+        [ast.ExprKind.Component]: "component",
+      }[data.kind];
+
+      if (!kind) {
+        console.error(`Cannot paste: `, data);
+        return;
+      }
 
       if (!targetExpressionId) {
         targetExpressionId = state.currentDocument.paperclip.html.sourceId;
@@ -489,20 +530,36 @@ const createEventHandler = (actions: Actions) => {
       // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
       targetExpressionId = ast.getParent(targetExpressionId, state.graph)?.id;
 
-      actions.applyChanges([
-        {
-          pasteExpression: {
-            targetExpressionId,
-            [kind]: expr.expr,
+      if (type === ShortcutCommand.Copy) {
+        actions.applyChanges([
+          {
+            pasteExpression: {
+              targetExpressionId,
+              [kind]: data.expr,
+            },
           },
-        },
-      ]);
-    } else if (type === "cut") {
+        ]);
+      } else {
+        actions.applyChanges([
+          {
+            moveExpressionToFile: {
+              newFilePath: getCurrentFilePath(state),
+              expressionId: data.expr.id,
+            },
+          },
+        ]);
+      }
+    } else if (type === ShortcutCommand.CopyStyles) {
       actions.applyChanges([
         {
-          moveExpressionToFile: {
-            newFilePath: getCurrentFilePath(state),
-            expressionId: expr.expr.id,
+          setStyleDeclarations: {
+            expressionId: getStyleableTargetId(state),
+            declarations: data.propertyNames.map((name) => {
+              return {
+                name,
+                value: serializeDeclaration(data.map[name].value),
+              };
+            }),
           },
         },
       ]);
@@ -762,12 +819,15 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
-  const handleMovedFile = (event: FileNavigatorDroppedFile) => {
-    // mv /some/path/to/file-or-dir -> /new/path + /file-or-dir
-    actions.moveFile(
-      event.payload.item.path,
-      event.payload.directory + "/" + event.payload.item.path.split("/").pop()
-    );
+  const handleMovedFile = async (
+    { payload: { directory, item } }: FileNavigatorDroppedFile,
+    state: DesignerState
+  ) => {
+    if (item.files) {
+      await saveFiles(item.files, directory, state);
+    } else {
+      actions.moveFile(item.path, directory + "/" + item.path.split("/").pop());
+    }
   };
 
   const handleConvertToComponent = (
@@ -785,26 +845,30 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const openCodeEditor = (state: DesignerState) => {
-    const { kind, expr } = getSelectedExpressionInfo(state);
+    const exprInfo = getSelectedExpressionInfo(state);
     let range: Range;
-    switch (kind) {
-      case ast.ExprKind.Element:
-      case ast.ExprKind.TextNode:
-      case ast.ExprKind.Component:
-      case ast.ExprKind.Slot:
-      case ast.ExprKind.Insert:
-      case ast.ExprKind.Style:
-      case ast.ExprKind.Trigger:
-      case ast.ExprKind.Atom:
-        range = expr.range;
-        break;
-    }
-    if (!range) {
-      console.error(`Cannot open code editor for ${kind}`);
-      return;
+
+    if (exprInfo) {
+      const { kind, expr } = exprInfo;
+      switch (kind) {
+        case ast.ExprKind.Element:
+        case ast.ExprKind.TextNode:
+        case ast.ExprKind.Component:
+        case ast.ExprKind.Slot:
+        case ast.ExprKind.Insert:
+        case ast.ExprKind.Style:
+        case ast.ExprKind.Trigger:
+        case ast.ExprKind.Atom:
+          range = expr.range;
+          break;
+      }
+      if (!range) {
+        console.error(`Cannot open code editor for ${kind}`);
+        return;
+      }
     }
 
-    actions.openCodeEditor(getRenderedFilePath(state), range);
+    actions.openCodeEditor(getCurrentFilePath(state), range);
   };
 
   const openFileInNavigator = (state: DesignerState) => {
@@ -896,11 +960,12 @@ const createEventHandler = (actions: Actions) => {
       handleConvertToSlot(value, details);
     } else if (details.kind === PromptKind.RenameFile) {
       const dir = dirname(details.filePath);
-      const ext = details.filePath.split("/").pop().split(".").pop();
+      const extParts = details.filePath.split("/").pop().split(".");
+
+      const ext = extParts.length > 1 ? extParts[extParts.length - 1] : null;
 
       // could be dir, so we leave out .
-      const fileName =
-        ext.length === 1 ? value : value.replace("." + ext, "") + "." + ext[1];
+      const fileName = !ext ? value : value.replace("." + ext, "") + "." + ext;
 
       actions.moveFile(details.filePath, dir + "/" + fileName);
     }
@@ -915,30 +980,7 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleDocumentOpened = (
-    _event: DocumentOpened,
-    state: DesignerState
-  ) => {
-    // read ALL dirs so that they expand in file navigator
-    readFileAncestorDirectories(getCurrentFilePath(state));
-  };
-
-  const readFileAncestorDirectories = async (filePath: string) => {
-    const dirs = filePath.split("/");
-
-    // pop off file name
-    dirs.pop();
-    while (dirs.length) {
-      try {
-        await actions.readDirectory(dirs.join("/"));
-
-        // outside of project scope
-      } catch (e) {
-        break;
-      }
-      dirs.pop();
-    }
-  };
+  const readFileAncestorDirectories = async (filePath: string) => {};
 
   const handleKeyDown = (
     event: KeyDown,
@@ -951,8 +993,8 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleDroppedResource = (
-    { payload: { kind, item, point } }: ToolsLayerDrop,
+  const handleDroppedResource = async (
+    { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
     const bounds = {
@@ -960,75 +1002,150 @@ const createEventHandler = (actions: Actions) => {
       ...getScaledPoint(point, state.canvas.transform),
     };
 
-    const expr = ast.getExprInfoById(item.id, state.graph);
+    if (item.kind === ResourceKind.File2) {
+      await insertResource(
+        item.parentPath + "/" + item.name,
+        getNodeInfoAtCurrentPoint(state)?.nodeId,
+        point,
+        state
+      );
+    } else {
+      const expr = ast.getExprInfoById(item.id, state.graph);
 
-    let changes = [];
+      let changes = [];
 
-    if (expr.kind === ast.ExprKind.Component) {
-      changes = [
-        {
-          insertFrame: {
-            documentId: state.currentDocument.paperclip.html.sourceId,
-            bounds: roundBox(bounds),
-            nodeSource: `imp.${expr.expr.name}`,
-            imports: {
-              imp: ast.getOwnerDependencyPath(item.id, state.graph),
+      if (expr.kind === ast.ExprKind.Component) {
+        changes = [
+          {
+            insertFrame: {
+              documentId: state.currentDocument.paperclip.html.sourceId,
+              bounds: roundBox(bounds),
+              nodeSource: `imp.${expr.expr.name}`,
+              imports: {
+                imp: ast.getOwnerDependencyPath(item.id, state.graph),
+              },
             },
           },
-        },
-      ];
+        ];
+      }
+      await actions.applyChanges(changes);
     }
-
-    actions.applyChanges(changes);
   };
 
-  const saveFiles = async (files: File[], state: DesignerState) => {
-    const currentFilePath = getCurrentFilePath(state);
-    const currentDir = currentFilePath
-      ? dirname(currentFilePath)
-      : state.projectDirectory;
-
-    if (!currentDir) {
-      return console.error(`Can't find directory to drop file to!`);
+  const saveFiles = async (
+    files: File[],
+    dir: string,
+    state: DesignerState
+  ) => {
+    if (!dir) {
+      console.error(`Can't find directory to drop file to!`);
+      return [];
     }
 
     await Promise.all(
       files.map(async (file) => {
         const buff = await file.arrayBuffer();
-        actions.saveFile(currentDir + "/" + file.name, new Uint8Array(buff));
+        actions.saveFile(dir + "/" + file.name, new Uint8Array(buff));
       })
     );
 
-    // return files.map((file) => {
-    //   return (currentDir + "/" + file.name).replace(
-    //     state.projectDirectory + "/",
-    //     ""
-    //   );
-    // });
+    return files.map((file) => {
+      return (dir + "/" + file.name).replace(state.projectDirectory + "/", "");
+    });
   };
 
   const handleDroppedFile = async (
-    { payload: { item } }: ToolsLayerDrop,
+    { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
     const files = item.files as File[];
-    const document = getCurrentDependency(state).document;
+    const targetNodeId = getNodeInfoAtCurrentPoint(state)?.nodeId;
+    await insertFiles(files, targetNodeId, point, state);
+  };
 
-    await saveFiles(files, state);
+  const insertFiles = async (
+    files: File[],
+    targetNodeId: string,
+    point: Point,
+    state: DesignerState
+  ) => {
+    const currentFilePath = getCurrentFilePath(state);
+    const currentDir = currentFilePath
+      ? dirname(currentFilePath)
+      : state.projectDirectory.path;
+
+    const newFiles = await saveFiles(files, currentDir, state);
 
     // drop files onto the canvas
-    actions.applyChanges(
-      files.map(
-        (file) =>
-          ({
-            appendChild: {
-              parentId: document.id,
-              childSource: `div {
-                img(src: "./${file.name}")
-              }`,
-            },
-          } as Mutation)
-      )
+    //
+    for (const filePath of newFiles) {
+      await insertResource(filePath, targetNodeId, point, state);
+    }
+  };
+
+  const insertResource = async (
+    path: string,
+    hoverindNodeId: string,
+    point: any,
+    state: DesignerState
+  ) => {
+    const document = getCurrentDependency(state).document;
+
+    const modulePath = path.replace(state.projectInfo.srcDirectory + "/", "");
+
+    if (hoverindNodeId && isImageAsset(path)) {
+      actions.applyChanges([
+        {
+          setStyleDeclarations: {
+            variantIds: getSelectedVariantIds(state),
+            expressionId: hoverindNodeId,
+            declarations: [
+              { name: "background", value: `url("${modulePath}")` },
+            ],
+          },
+        },
+      ]);
+    } else {
+      let frameMetadata: string = "";
+
+      if (point && !hoverindNodeId) {
+        const bounds = {
+          ...DEFAULT_FRAME_BOX,
+          ...getScaledPoint(point, state.canvas.transform),
+        };
+        frameMetadata = `/**
+         * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${bounds.x}, y: ${bounds.y})
+         */`;
+      }
+
+      actions.applyChanges([
+        {
+          appendChild: {
+            parentId: document.id,
+            childSource: `
+              ${frameMetadata}
+               div {
+                  style {
+                    background: url("${modulePath}")
+                    background-repeat: no-repeat
+                  }
+                }
+            `,
+          },
+        },
+      ]);
+    }
+  };
+
+  const handleDroppedFileNavigatorItem = async (
+    { payload: { item, point } }: ToolsLayerDrop,
+    state: DesignerState
+  ) => {
+    await insertResource(
+      item.path,
+      getNodeInfoAtCurrentPoint(state)?.nodeId,
+      point,
+      state
     );
   };
 
@@ -1037,6 +1154,8 @@ const createEventHandler = (actions: Actions) => {
       handleDroppedResource(event, state);
     } else if (event.payload.kind === NativeTypes.FILE) {
       handleDroppedFile(event, state);
+    } else if (event.payload.kind === DNDKind.File) {
+      handleDroppedFileNavigatorItem(event, state);
     }
   };
 
@@ -1069,13 +1188,25 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleHistoryChanged = (
-    event: HistoryChanged,
+    _event: HistoryChanged,
     state: DesignerState
   ) => {
     // open the document
     const filePath = getCurrentFilePath(state);
-    if (filePath && filePath !== getRenderedFilePath(state)) {
+    if (
+      filePath &&
+      filePath !== getRenderedFilePath(state) &&
+      isPaperclipFile(filePath)
+    ) {
       actions.openFile(filePath);
+    }
+    maybeExpandAllDirectories(state);
+  };
+
+  const maybeExpandAllDirectories = (state: DesignerState) => {
+    const filePath = getCurrentFilePath(state);
+    if (filePath) {
+      actions.expandFilePathDirectories(filePath);
     }
   };
 
@@ -1165,9 +1296,6 @@ const createEventHandler = (actions: Actions) => {
       case "ui/confirmClosed": {
         return handleConfirmClose(event);
       }
-      case "designer-engine/documentOpened": {
-        return handleDocumentOpened(event, newState);
-      }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
@@ -1187,7 +1315,7 @@ const createEventHandler = (actions: Actions) => {
         return handleDeleteExpression(event.payload.variantId, newState);
       }
       case "ui/FileNavigatorDroppedFile": {
-        return handleMovedFile(event);
+        return handleMovedFile(event, newState);
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
@@ -1266,6 +1394,7 @@ const bootstrap = (
     syncGraph,
     syncEvents,
     syncResourceFiles,
+    expandFilePathDirectories,
     readDirectory,
     loadProjectInfo,
   }: Actions,
@@ -1279,7 +1408,10 @@ const bootstrap = (
   const filePath = getCurrentFilePath(initialState);
 
   if (filePath) {
-    openFile(filePath);
+    if (isPaperclipFile(filePath)) {
+      openFile(filePath);
+    }
+    expandFilePathDirectories(filePath);
   }
 
   syncGraph();

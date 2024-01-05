@@ -32,6 +32,7 @@ service Designer {
 
 message ProjectInfo {
     repeated string experimental_capabilities = 1;
+    string src_directory = 2;
 }
 
 message SaveFileRequest {
@@ -77,7 +78,7 @@ message CreateFileRequest {
 
 message OpenCodeEditorRequest {
   string path = 1;
-  ast.base.Range range = 2;
+  optional ast.base.Range range = 2;
 }
 
 

@@ -1,3 +1,4 @@
+import "state/theme.pc" as module1
 import "ui/theme.pc" as module
 
 /**
@@ -11,6 +12,15 @@ public component Test {
             color: white
         }
         text "hello world"
+    }
+}
+
+/**
+ * @frame(x: -269, y: 27, width: 592, height: 388)
+*/
+div {
+    style {
+        position: relative
     }
 }
 

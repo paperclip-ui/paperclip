@@ -106,7 +106,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
         return state;
       }
 
-      let doubleClicked;
+      let doubleClicked: boolean;
 
       [state, doubleClicked] = handleDoubleClick(state, event);
 
@@ -130,6 +130,16 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
     }
     case "ui/frameTitleClicked": {
       return selectNode(event.payload.frameId, state);
+    }
+    case "designer-engine/fileMoved": {
+      if (event.payload.fromPath === getCurrentFilePath(state)) {
+        state = redirect(
+          state,
+          routes.editor({ filePath: event.payload.toPath })
+        );
+      }
+
+      return state;
     }
     case "ui/canvasPanned": {
       // do not allow panning when expanded

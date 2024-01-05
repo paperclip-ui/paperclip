@@ -1,3 +1,4 @@
+import "state/theme.pc" as module3
 import "./logic/MultiSelectInput/ui.pc" as module2
 import "./decl-suggestion.pc" as module1
 import "./token-input.pc" as module
@@ -290,8 +291,7 @@ public component Preview {
                         insert name {
                             DeclName {
                                 insert children {
-                                    text "Padding" {
-                                    }
+                                    text "Padding"
                                 }
                             }
                         }
@@ -481,3 +481,4 @@ div preview {
         }
     }
 }
+

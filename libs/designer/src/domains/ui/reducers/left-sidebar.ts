@@ -19,6 +19,7 @@ import { uniq } from "lodash";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { ShortcutCommand } from "../../shortcuts/state";
 import { newDeleteFileConfirmation } from "@paperclip-ui/designer/src/state/confirm";
+import { isPaperclipFile } from "@paperclip-ui/common";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -48,22 +49,53 @@ export const leftSidebarReducer = (
     }
     case "designer-engine/documentOpened": {
       state = expandLayerVirtIds(state);
-      state = produce(state, (newState) => {
-        newState.selectedFilePath = getCurrentFilePath(state);
+      state = produce(state, (draft) => {
+        draft.selectedFilePath = getCurrentFilePath(state);
+
+        if (
+          draft.showFileNavigator == null &&
+          draft.selectedFilePath &&
+          isPaperclipFile(draft.selectedFilePath)
+        ) {
+          draft.showFileNavigator = false;
+        }
       });
       return state;
+    }
+    case "ui/fileFilterFocused": {
+      return produce(state, (draft) => {
+        draft.fileFilterFocused = true;
+        draft.showFileNavigator = true;
+      });
+    }
+    case "ui/fileFilterBlurred": {
+      return produce(state, (draft) => {
+        draft.fileFilterFocused = false;
+      });
+    }
+    case "ui/collapseFileNavigatorToggle": {
+      return produce(state, (draft) => {
+        draft.showFileNavigator =
+          event.payload != null ? event.payload : !draft.showFileNavigator;
+      });
     }
     case "designer-engine/fileCreated": {
       return produce(state, (newState) => {
         newState.selectedFilePath = event.payload.filePath;
       });
     }
+    case "ui/layersBackButtonClick": {
+      return produce(state, (newState) => {
+        newState.showFileNavigator = true;
+      });
+    }
     case "history-engine/historyChanged": {
       state = expandLayerVirtIds(state);
 
-      return produce(state, (newState) => {
-        newState.fileFilter = null;
-        expandDirs(state.projectDirectory.path)(newState);
+      return produce(state, (draft) => {
+        draft.fileFilter = null;
+        draft.selectedFilePath = getCurrentFilePath(state);
+        expandDirs(state.projectDirectory.path)(draft);
       });
     }
     case "ui/AddFileItemClicked": {
@@ -126,14 +158,51 @@ const expandLayerVirtIds = (state: DesignerState) => {
   const targetId = getTargetExprId(state);
 
   if (targetId) {
-    state = produce(state, (newState) => {
-      newState.expandedLayerVirtIds = uniq([
+    state = produce(state, (draft) => {
+      draft.expandedLayerVirtIds = uniq([
         targetId,
         ...state.expandedLayerVirtIds,
-        ...ast.getAncestorIds(targetId, state.graph),
+        ...getExpandedLayersFromExprId(targetId, state),
       ]);
     });
   }
 
   return state;
+};
+
+const getExpandedLayersFromExprId = (
+  targetId: string,
+  state: DesignerState
+) => {
+  const expanded = ast.getAncestorIds(targetId, state.graph);
+  const additional = [];
+
+  // traverse UP ancestors and include any additional expressions
+  // that may be expanded
+  for (const id of expanded) {
+    const expr = ast.getExprInfoById(id, state.graph);
+
+    // if an insert is found, then we need to include the ID defined in the layer UI which
+    // is `instance.slotId`
+    if (expr.kind === ast.ExprKind.Insert) {
+      const instance = ast.getParent(id, state.graph);
+      additional.push(
+        `${instance.id}.${ast.getInsertSlot(expr.expr.id, state.graph).id}`
+      );
+
+      // If an instance is found, then we need to include instance.slotId where slotId
+      // is children, since this is how the UI is represented.
+    } else if (
+      expr.kind === ast.ExprKind.Element &&
+      ast.isInstance(expr.expr, state.graph)
+    ) {
+      additional.push(
+        `${expr.expr.id}.${
+          ast.getInstanceSlot(expr.expr.id, "children", state.graph)?.id
+        }`
+      );
+    }
+  }
+
+  return [...expanded, ...additional];
 };

@@ -10,7 +10,10 @@ export const AssetPreview = (Base: React.FC<BaseAssetPreviewProps>) => () => {
   return (
     <Base>
       {(projectDirectory && currentFile && (
-        <img src={currentFile.replace(projectDirectory.path, "assets")} />
+        <img
+          src={currentFile.replace(projectDirectory.path, "assets")}
+          style={{ width: "100%" }}
+        />
       )) || <></>}
     </Base>
   );

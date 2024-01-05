@@ -687,11 +687,35 @@ export namespace ast {
   export const getComponentRenderExpr = (component: Component) =>
     component.body.find((body) => body.render)?.render;
 
+  export const getDisplayNode = (exprId: string, graph: Graph) => {
+    const info = getExprInfoById(exprId, graph);
+    return info.kind == ExprKind.Component
+      ? getComponentRenderNode(info.expr)
+      : info;
+  };
+
   export const getComponentRenderNode = (
     component: Component
   ): InnerExpressionInfo | undefined => {
     const render = getComponentRenderExpr(component);
     return render && getChildExprInner(render.node);
+  };
+
+  export const getInsertSlot = (insertId: string, graph: Graph) => {
+    const insert = getExprById(insertId, graph);
+    const instance = getParent(insert.id, graph);
+    return getInstanceSlot(instance.id, insert.name, graph);
+  };
+
+  export const getInstanceSlot = (
+    instanceId: string,
+    slotName: string,
+    graph: Graph
+  ) => {
+    const instance = getExprById(instanceId, graph);
+    const component = getInstanceComponent(instance, graph);
+    const slots = getComponentSlots(component, graph);
+    return slots.find((slot) => slot.name === slotName);
   };
 
   export const isInstance = (element: Element, graph: Graph) => {

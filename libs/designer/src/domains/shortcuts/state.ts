@@ -32,6 +32,7 @@ export enum ShortcutCommand {
   CenterInCanvas,
   Cut,
   Copy,
+  CopyStyles,
   Delete,
   Escape,
   Paste,
@@ -64,34 +65,34 @@ export const getEntityShortcuts = memoize(
     return [
       {
         kind: MenuItemKind.Option,
-        label: "Create component",
+        label: "Create Component",
         shortcut: ["alt", "meta", "k"],
         command: ShortcutCommand.ConvertToComponent,
       },
       {
         kind: MenuItemKind.Option,
-        label: "Convert to slot",
+        label: "Convert to Slot",
         enabled:
           ast.isExpressionId(id) && ast.isExpressionInComponent(id, graph),
         command: ShortcutCommand.ConvertToSlot,
       },
       {
         kind: MenuItemKind.Option,
-        label: "Wrap in element",
+        label: "Wrap in Element",
         shortcut: ["alt", "shift", "e"],
         command: ShortcutCommand.WrapInElement,
       },
       { kind: MenuItemKind.Divider },
       {
         kind: MenuItemKind.Option,
-        label: "Open code editor",
+        label: "Open in Code Editor",
         shortcut: ["alt", "shift", "c"],
         command: ShortcutCommand.OpenCodeEditor,
       },
       // Instance specific
       {
         kind: MenuItemKind.Option,
-        label: "Center in canvas",
+        label: "Center in Canvas",
         shortcut: [],
         command: ShortcutCommand.CenterInCanvas,
       },
@@ -101,7 +102,7 @@ export const getEntityShortcuts = memoize(
         ? [
             {
               kind: MenuItemKind.Option,
-              label: "Go to main",
+              label: "Go to Main",
               command: ShortcutCommand.GoToMain,
             },
           ]
@@ -111,7 +112,7 @@ export const getEntityShortcuts = memoize(
         ? [
             {
               kind: MenuItemKind.Option,
-              label: "Go to parent component",
+              label: "Go to Parent Component",
               command: ShortcutCommand.GoToRenderNodeComponent,
             },
           ]
@@ -128,6 +129,11 @@ export const getEntityShortcuts = memoize(
         label: "Copy",
         shortcut: ["meta", "c"],
         command: ShortcutCommand.Copy,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Copy Styles",
+        command: ShortcutCommand.CopyStyles,
       },
       {
         kind: MenuItemKind.Option,
@@ -246,40 +252,55 @@ export const getFileShortcuts = (
 
   return [
     // Tooling
-    {
-      kind: MenuItemKind.Option,
-      label: "Delete File",
-      shortcut: [],
-      command: ShortcutCommand.DeleteFile,
-    },
-    {
-      kind: MenuItemKind.Option,
-      label: "Rename File",
-      shortcut: [],
-      command: ShortcutCommand.RenameFile,
-    },
     ...(isDir
       ? [
           {
             kind: MenuItemKind.Option,
-            label: "Open In File Navigator",
-            shortcut: [],
-            command: ShortcutCommand.OpenFileInNavigator,
-          },
-          {
-            kind: MenuItemKind.Option,
-            label: "Create Design File",
+            label: "New Design file...",
             shortcut: [],
             command: ShortcutCommand.CreateDesignFile,
           },
           {
             kind: MenuItemKind.Option,
-            label: "Create Directory",
+            label: "New Folder...",
             shortcut: [],
             command: ShortcutCommand.CreateDirectory,
           },
+
+          {
+            kind: MenuItemKind.Divider,
+          },
+          {
+            kind: MenuItemKind.Option,
+            label: "Reveal in Finder",
+            shortcut: [],
+            command: ShortcutCommand.OpenFileInNavigator,
+          },
         ]
-      : []),
+      : [
+          {
+            kind: MenuItemKind.Option,
+            label: "Open in Code Editor",
+            shortcut: [],
+            command: ShortcutCommand.OpenCodeEditor,
+          },
+        ]),
+
+    {
+      kind: MenuItemKind.Divider,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Rename...",
+      shortcut: [],
+      command: ShortcutCommand.RenameFile,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Delete",
+      shortcut: [],
+      command: ShortcutCommand.DeleteFile,
+    },
   ].filter(Boolean) as MenuItem<ShortcutCommand>[];
 };
 

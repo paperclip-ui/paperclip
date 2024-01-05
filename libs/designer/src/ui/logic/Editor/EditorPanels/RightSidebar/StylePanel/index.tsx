@@ -2,10 +2,8 @@ import React from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/ui/logic/Sidebar/sidebar.pc";
 import { Variants } from "./Variants";
 import { Declarations } from "./Declarations";
-import { InstanceVariants } from "./InstanceVariants";
 import {
   getSelectedExpressionInfo,
-  isSelectableExpr,
   isStyleableExpr,
 } from "@paperclip-ui/designer/src/state";
 import { useSelector } from "@paperclip-ui/common";

@@ -26,12 +26,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import cx from "classnames";
 import * as ui from "../ui.pc";
-import {
-  isPaperclipFile,
-  memoize,
-  useDispatch,
-  useSelector,
-} from "@paperclip-ui/common";
+import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { ContextMenu } from "@paperclip-ui/designer/src/ui/logic/ContextMenu";
 import { TextInput } from "@paperclip-ui/designer/src/ui/logic/TextInput";
@@ -48,6 +43,11 @@ import {
   Resource,
   ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { NativeTypes } from "react-dnd-html5-backend";
+import {
+  isImageAsset,
+  shouldShowFileNavigator,
+} from "@paperclip-ui/designer/src/domains/ui/state";
 
 export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
   function FileNavigator() {
@@ -55,11 +55,21 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
     const dispatch = useDispatch<DesignerEvent>();
     const fileFilter = useSelector(getFileFilter);
     const focusOnFileFilter = useSelector(getFocusOnFileFilter);
+    const showFileNavigator = useSelector(shouldShowFileNavigator);
+    const onFileFilterFocus = () => dispatch({ type: "ui/fileFilterFocused" });
+    const onFileFilterBlur = () => dispatch({ type: "ui/fileFilterBlurred" });
+    const onCollapseToggle = (event: React.MouseEvent<any>) => {
+      dispatch({ type: "ui/collapseFileNavigatorToggle" });
+      event.stopPropagation();
+    };
+    const onHeaderClick = () =>
+      dispatch({ type: "ui/collapseFileNavigatorToggle", payload: true });
+
     const [preselectedResource, setPreselectedResource] =
       useState<Resource>(null);
     let resources = useSelector(getSearchedFiles);
     resources = useMemo(() => {
-      return resources.filter(isOpenableFile).slice(0, 20);
+      return resources.filter(isOpenableFile).slice(0, 50);
     }, [resources]);
 
     const history = useHistory();
@@ -95,6 +105,15 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
 
     return (
       <Base
+        class={cx({
+          collapsed: !showFileNavigator,
+        })}
+        collapseButton={{
+          onClick: onCollapseToggle,
+        }}
+        headerContainer={{
+          onClick: onHeaderClick,
+        }}
         header={
           <>
             Resources
@@ -102,6 +121,8 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
               autoFocus={focusOnFileFilter}
               onChange={onFilter}
               onKeyDown={onFilterKeyDown}
+              onFocus={onFileFilterFocus}
+              onBlur={onFileFilterBlur}
               value={fileFilter}
               placeholder="Search..."
             />
@@ -213,7 +234,12 @@ export const FilteredFile =
     const onClick = () => {
       history.redirect(getResourceRedirect(resource));
     };
+    const projectDir = useSelector(getEditorState).projectDirectory;
     const ref = useRef<HTMLDivElement>();
+    const setRef = (current: HTMLDivElement) => {
+      ref.current = current;
+      dragRef(current);
+    };
 
     useEffect(() => {
       if (preselected) {
@@ -223,13 +249,52 @@ export const FilteredFile =
       }
     }, [preselected]);
 
+    const [{ opacity }, dragRef] = useDrag(
+      () => ({
+        type: DNDKind.Resource,
+        item: resource,
+        collect: (monitor) => ({
+          opacity: monitor.isDragging() ? 0.5 : 1,
+          cursor: monitor.isDragging() ? "copy" : "initial",
+        }),
+      }),
+      []
+    );
+
+    const hasIcon = isImageAsset(resource.name) && projectDir;
+
+    const iconStyle = hasIcon
+      ? {
+          backgroundImage: `url(${
+            resource.parentPath.replace(projectDir.path, "assets") +
+            "/" +
+            resource.name
+          })`,
+        }
+      : {
+          background: "initial",
+        };
+
     return (
       <Base
-        ref={ref}
+        ref={setRef}
         container={{
           onClick,
           onMouseOver,
         }}
+        preview={
+          !hasIcon
+            ? {
+                style: {
+                  opacity: 0.2,
+                },
+              }
+            : null
+        }
+        icon={{
+          style: iconStyle,
+        }}
+        style={{ opacity }}
         class={cx({
           preselected,
           component: resource.kind === ResourceKind.Component,
@@ -238,7 +303,7 @@ export const FilteredFile =
           "composite-token": resource.kind === ResourceKind.StyleMixin,
         })}
         basename={resource.name}
-        dirname={resource.parentPath.replace(rootDir, "")}
+        dirname={resource.parentPath.replace(rootDir + "/", "")}
         dirTitle={basename}
       />
     );
@@ -277,9 +342,15 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
 
     const [{ isDraggingOver }, dropRef] = useDrop(
       {
-        accept: [DNDKind.File, DNDKind.Node],
+        accept:
+          item.kind === FSItemKind.Directory
+            ? [DNDKind.File, NativeTypes.FILE]
+            : [DNDKind.File, DNDKind.Node],
         drop(droppedItem: any, monitor) {
-          if (monitor.getItemType() === DNDKind.File) {
+          if (
+            monitor.getItemType() === DNDKind.File ||
+            monitor.getItemType() === NativeTypes.FILE
+          ) {
             dispatch({
               type: "ui/FileNavigatorDroppedFile",
               payload: {
@@ -299,7 +370,8 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
         },
         canDrop(_droppedItem: FSItem, monitor) {
           return (
-            (monitor.getItemType() === DNDKind.File &&
+            ((monitor.getItemType() === DNDKind.File ||
+              monitor.getItemType() === NativeTypes.FILE) &&
               item.kind === FSItemKind.Directory) ||
             (monitor.getItemType() === DNDKind.Node &&
               item.kind === FSItemKind.File)

@@ -15,6 +15,8 @@ import {
   getPreviewFrameBoxes,
   getTargetExprId,
   setTargetExprId,
+  getCurrentFilePath,
+  getCurrentDependency,
 } from "../../state";
 import {
   CanvasMouseUp,
@@ -29,6 +31,7 @@ import {
   jsonToMetadataValue,
   metadataValueMapToJSON,
 } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { isPaperclipFile } from "@paperclip-ui/common";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -108,12 +111,28 @@ export const prettyKeyCombo = (combo: string[]) => {
     .toUpperCase();
 };
 
+export const isImageAsset = (value: string) => {
+  return /svg|png|jpeg$/.test(value);
+};
+
+export const shouldShowLayers = (state: DesignerState) => {
+  const currentFile = getCurrentFilePath(state);
+  const dependency = getCurrentDependency(state);
+  return (
+    // !shouldShowFileNavigator(state) &&
+    dependency?.document && isPaperclipFile(currentFile)
+  );
+};
+
+export const shouldShowFileNavigator = (state: DesignerState) => {
+  return state.showFileNavigator !== false;
+};
+
 export const getSelectedExprIdSourceId = (state: DesignerState) => {
   const { expr } = ast.getExprByVirtId(getTargetExprId(state), state.graph);
 
   if (ast.isInstance(expr, state.graph)) {
     const component = ast.getInstanceComponent(expr, state.graph);
-    const renderNode = ast.getComponentRenderNode(component);
     return component.id;
   } else {
     return expr.id;
@@ -138,29 +157,14 @@ export const handleDoubleClick = (
     ];
   }
 
-  // const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
   const virtId = getSelectedExprIdSourceId(designer);
-  const expr = ast.getExprByVirtId(virtId, designer.graph);
 
   designer = produce(designer, (newDesigner) => {
     newDesigner.canvasClickTimestamp = action.payload.timestamp;
 
     setTargetExprId(newDesigner, virtId);
-
-    // LEGACY.
-    // newDesigner.scopedElementId = nodeId;
+    newDesigner.centerOnRedirect = true;
   });
-
-  if (
-    expr.kind === ast.ExprKind.Element &&
-    ast.isInstance(expr.expr, designer.graph)
-  ) {
-    // force center canvas to component when double clicked
-    designer = maybeCenterCanvas(designer, true);
-  }
-
-  // LEGACY. We want to redirect to the component instead
-  // designer = highlightNode(designer, designer.canvas.mousePosition!);
 
   return [designer, true];
 };
@@ -269,6 +273,8 @@ export const panCanvas = (point: Point, state: DesignerState) => {
   });
 };
 
+const CANVAS_SIDE_PADDING = 350;
+
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/state/index.ts#L1304
 export const centerEditorCanvas = (
   editor: DesignerState,
@@ -288,29 +294,18 @@ export const centerEditorCanvas = (
     },
   } = editor;
 
+  // const paddedWith = width - CANVAS_SIDE_PADDING * 2;
+
   const centered = {
     x: -innerBounds.x + width / 2 - innerBounds.width / 2,
     y: -innerBounds.y + height / 2 - innerBounds.height / 2,
   };
 
-  try {
-    const scale =
-      typeof zoomOrZoomToFit === "boolean"
-        ? Math.min(
-            (width - INITIAL_ZOOM_PADDING) / innerBounds.width,
-            (height - INITIAL_ZOOM_PADDING) / innerBounds.height
-          )
-        : typeof zoomOrZoomToFit === "number"
-        ? zoomOrZoomToFit
-        : transform.z;
-  } catch (e) {
-    console.error(e);
-  }
-
   const scale =
     typeof zoomOrZoomToFit === "boolean"
       ? Math.min(
-          (width - INITIAL_ZOOM_PADDING) / innerBounds.width,
+          (width - INITIAL_ZOOM_PADDING - CANVAS_SIDE_PADDING * 2) /
+            innerBounds.width,
           (height - INITIAL_ZOOM_PADDING) / innerBounds.height
         )
       : typeof zoomOrZoomToFit === "number"

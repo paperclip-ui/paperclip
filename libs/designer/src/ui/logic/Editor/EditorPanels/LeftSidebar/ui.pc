@@ -79,7 +79,7 @@ public component FilteredFile {
         ".preselected"
     }
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFile")
-    render div container(class: class) {
+    render div container(class: class, style: style) {
         style variant isStyleMixin {
             color: var(theme.atomColor)
         }
@@ -100,8 +100,8 @@ public component FilteredFile {
             style {
                 display: flex
                 justify-content: space-between
-                width: 100%
                 padding: var(theme.space03) var(theme.space05)
+                width: 100%
             }
             div icon {
                 style {
@@ -119,12 +119,34 @@ public component FilteredFile {
                     justify-content: space-between
                     width: 100%
                     gap: var(theme.space05)
+                    align-items: center
                 }
-                div {
+                div left {
+                    div preview {
+                        div icon {
+                            style {
+                                background: url("ui/lightning.svg")
+                                background-size: 100%
+                                width: 100%
+                                height: 100%
+                            }
+                        }
+                        style {
+                            width: 25px
+                            height: 25px
+                            background: white
+                            border-radius: var(theme1.roundedSM)
+                            position: relative
+                            padding: var(theme1.space01)
+                            flex-shrink: 0
+                        }
+                    }
                     style {
                         display: flex
                         align-items: center
                         gap: var(theme1.space03)
+                        overflow: hidden
+                        flex-shrink: 0
                     }
                     div iconWraper {
                         style variant isComponent {
@@ -150,9 +172,11 @@ public component FilteredFile {
                         overflow: hidden
                         text-overflow: ellipsis
                         white-space: nowrap
+                        direction: rtl
+                        flex-shrink: 1
                     }
                     slot dirname {
-                        text "./some/dir"
+                        text "./some/dir/file"
                     }
                 }
             }
@@ -181,13 +205,34 @@ public component FSItem {
  * @frame(x: -2102, y: -298, width: 380, height: 768)
 */
 public component FileNavigator {
+    variant isCollapsed trigger {
+        ".collapsed"
+    }
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FileNavigator")
-    render sidebar.SidebarPanel {
+    render sidebar.SidebarPanel(class: class) {
+        style {
+            max-height: 1000px
+        }
+        style variant isCollapsed {
+            max-height: 55px
+        }
         sidebar.SidebarSection(class: "fill") {
-            sidebar.SidebarPanelHeader {
+            sidebar.SidebarPanelHeader headerContainer(onDoubleClick: onDoubleClick) {
                 style {
                     align-items: center
                     display: flex
+                }
+                button collapseButton {
+                    style variant isCollapsed {
+                        transform: rotate(0deg)
+                    }
+                    style extends theme.reset, theme1.icon {
+                        mask-image: url("ui/chevron2.svg")
+                        opacity: 0.5
+                        transform: rotate(90deg)
+                        transition: 0.2s
+                        cursor: button
+                    }
                 }
                 slot header {
                     text "Resource"
@@ -201,7 +246,6 @@ public component FileNavigator {
             }
             div {
                 style {
-                    padding: var(theme.space03) 0px
                     overflow-y: scroll
                     overflow-x: hidden
                 }
@@ -231,11 +275,17 @@ component FileResources {
     render sidebar.SidebarPanel {
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
+                button {
+                    style extends theme.reset, theme1.icon {
+                        mask-image: url("ui/chevron2.svg")
+                        opacity: 0.5
+                    }
+                }
                 style {
                     align-items: center
                     display: flex
                 }
-                text "Files"
+                text "Resources"
                 module.TextInput(value: "some file")
                 div {
                     style extends theme.icon {
@@ -257,7 +307,7 @@ public component LeftSidebar {
         sidebar.Sidebar {
             insert children {
                 Layers layers
-                FileNavigator fileNavigator
+                FileNavigator fileNavigator(class: "collapsed")
             }
         }
     }
@@ -361,7 +411,7 @@ public component Layers {
                                         LayerNavigationItemHeader(class: "text showDropTop") {
                                             text "some label"
                                         }
-                                        LayerNavigationItemHeader(class: "element") {
+                                        LayerNavigationItemHeader(class: "insert") {
                                             text "some long label"
                                             TagType {
                                                 text "div"
@@ -410,6 +460,9 @@ public component Layers {
  * @frame(x: 808, y: 1052, width: 90, height: 56)
 */
 public component LayerIcon {
+    variant isInsert trigger {
+        ".insert"
+    }
     variant isCompositeToken trigger {
         ".composite-token"
     }
@@ -454,6 +507,9 @@ public component LayerIcon {
             flex-shrink: 0
         }
         div {
+            style variant isInsert {
+                mask-image: url("ui/insert.svg")
+            }
             style variant isStack {
                 mask-image: url("./stack.png")
             }
@@ -478,7 +534,10 @@ public component LayerIcon {
                 transform: translate(-50%, -50%) rotate(45deg)
             }
             style variant isSlot {
-                -webkit-mask-image: url("../../../../slot3.svg")
+                -webkit-mask-image: url("ui/logic/Editor/EditorPanels/LeftSidebar/noun-selection-square-120464.svg")
+                --icon-size: 0.8em
+                width: 0.8em
+                height: 0.8em
             }
             style variant isElement {
                 width: 0.75em
@@ -639,7 +698,11 @@ public component TreeNavigationItemHeader {
         style variant isSelected {
             background: var(theme.gray04)
         }
-        DropZoneDivider(class: "top")
+        DropZoneDivider(class: "top") {
+            style variant showDropTop {
+                display: block
+            }
+        }
         div {
             style {
                 display: flex
@@ -692,7 +755,11 @@ public component TreeNavigationItemHeader {
                 slot controls
             }
         }
-        DropZoneDivider(class: "bottom")
+        DropZoneDivider(class: "bottom") {
+            style variant showDropBottom {
+                display: block
+            }
+        }
     }
 }
 
@@ -700,6 +767,9 @@ public component TreeNavigationItemHeader {
  * @frame(x: 795, y: 1167, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
+    variant isInsert trigger {
+        ".insert"
+    }
     variant cutting trigger {
         ".cutting"
     }
@@ -737,6 +807,9 @@ public component LayerNavigationItemHeader {
         ".text"
     }
     render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
+        style variant isInsert {
+            --icon-color: var(--regular-layer)
+        }
         style variant cutting {
             opacity: 0.3
         }
@@ -784,11 +857,20 @@ public component LayerNavigationItemHeader {
         }
         slot children {
             text "some layer"
-            text "some layer"
         }
         insert controls {
             slot controls
         }
+    }
+}
+
+/**
+ * @frame(x: 802, y: 1239, width: 349, height: 62)
+*/
+LayerNavigationItemHeader(class: "insert") {
+    insert children {
+    }
+    insert controls {
     }
 }
 

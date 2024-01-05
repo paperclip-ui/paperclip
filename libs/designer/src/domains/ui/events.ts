@@ -13,6 +13,7 @@ import {
 import { ConfirmDetails } from "../../state/confirm";
 
 import { NativeTypes } from "react-dnd-html5-backend";
+import { Resource } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -161,19 +162,28 @@ export type FrameTitleClicked = BaseEvent<
     frameId: string;
   }
 >;
+
+type ExprNavigatorDroppedItem =
+  | {
+      kind: DNDKind.Resource;
+      item: Resource;
+    }
+  | { kind: DNDKind.Node; item: { id: string } }
+  | { kind: DNDKind.File; item: FSItem }
+  | { kind: typeof NativeTypes.FILE; item: any };
 export type ExprNavigatorDroppedNode = BaseEvent<
   "ui/exprNavigatorDroppedNode",
   {
     position: "before" | "after" | "inside";
     targetId: string;
-    droppedExprId: string;
+    item: ExprNavigatorDroppedItem;
   }
 >;
 export type FileNavigatorDroppedFile = BaseEvent<
   "ui/FileNavigatorDroppedFile",
   {
     directory: string;
-    item: FSItem;
+    item: any;
   }
 >;
 export type FileNavigatorDroppedNode = BaseEvent<
@@ -266,12 +276,21 @@ export type FileNavigatorContextMenuOpened = BaseEvent<
 >;
 
 export type InsertElementReleased = BaseEvent<"ui/insertElementReleased", Box>;
+export type LayersBackButtonClicked = BaseEvent<"ui/layersBackButtonClick">;
+export type FileFilterFocused = BaseEvent<"ui/fileFilterFocused">;
+export type FileFilterBlurred = BaseEvent<"ui/fileFilterBlurred">;
+export type CollapseFileNavigatorToggle = BaseEvent<
+  "ui/collapseFileNavigatorToggle",
+  boolean | undefined
+>;
 
 export type UIEvent =
   | ExprNavigatorDroppedNode
   | ElementTagChanged
   | AddVariantPopupClicked
+  | FileFilterBlurred
   | DashboardAddFileConfirmed
+  | FileFilterFocused
   | ToolsTextEditorChanged
   | CanvasMouseMoved
   | ToolsLayerDragOver
@@ -279,11 +298,13 @@ export type UIEvent =
   | TriggersEdited
   | BoundsChanged
   | CanvasResized
+  | LayersBackButtonClicked
   | FrameTitleClicked
   | FileNavigatorContextMenuOpened
   | ToolsLayerDrop
   | PromptClosed
   | FileNavigatorItemClicked
+  | CollapseFileNavigatorToggle
   | FileNavigatorDroppedNode
   | ResizerPathMoved
   | ResizerPathStoppedMoving

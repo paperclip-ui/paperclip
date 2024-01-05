@@ -4,14 +4,12 @@ import { useSelector } from "@paperclip-ui/common";
 import {
   getCurrentDependency,
   getCurrentFilePath,
-  getCuttingExprId,
   getGraph,
 } from "@paperclip-ui/designer/src/state";
 import {
   Component,
   DocumentBodyItem,
   Element,
-  Insert,
   Node,
   Condition,
   Render,
@@ -25,7 +23,7 @@ import cx from "classnames";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Leaf } from "./Leaf";
 import { BaseLayersProps } from "../ui.pc";
-import { isPaperclipFile } from "@paperclip-ui/common";
+import { shouldShowLayers } from "@paperclip-ui/designer/src/domains/ui/state";
 
 export const Layers = (Base: React.FC<BaseLayersProps>) =>
   function Layers() {
@@ -56,11 +54,12 @@ export const Layers = (Base: React.FC<BaseLayersProps>) =>
 const useLayers = () => {
   const currentFile = useSelector(getCurrentFilePath);
   const dependency = useSelector(getCurrentDependency);
+  const shouldShow = useSelector(shouldShowLayers);
 
   return {
     title: currentFile && currentFile.split("/").pop(),
     document: dependency?.document,
-    shouldShow: dependency?.document && isPaperclipFile(currentFile),
+    shouldShow,
   };
 };
 
@@ -388,7 +387,7 @@ const InsertLeaf = memo(
       // instance.slot denotes virtual ID which DOES exist
       <Leaf
         id={targetId}
-        className={cx("slot", { container: insert.length > 0 })}
+        className={cx("insert", { container: insert.length > 0 })}
         text={name}
         depth={depth}
       >

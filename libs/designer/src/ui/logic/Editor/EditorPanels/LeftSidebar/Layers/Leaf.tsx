@@ -14,6 +14,9 @@ import cx from "classnames";
 import { useDrag, useDrop } from "react-dnd";
 import { ContextMenu } from "@paperclip-ui/designer/src/ui/logic/ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { NativeTypes } from "react-dnd-html5-backend";
+import { FSItem } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { isImageAsset } from "@paperclip-ui/designer/src/domains/ui/state";
 
 type DropHotSpot = "inside" | "before" | "after";
 const BORDER_MARGIN = 10;
@@ -29,16 +32,9 @@ type LeafProps = {
   instanceOf?: string[];
 };
 
-export const Leaf = ({
-  children,
-  className,
-  id,
-  depth,
-  text,
-  altText,
-  controls,
-  instanceOf,
-}: LeafProps) => {
+export const Leaf = (props: LeafProps) => {
+  const { children, className, depth, text, altText, controls, instanceOf } =
+    props;
   const {
     selected,
     open,
@@ -50,12 +46,10 @@ export const Leaf = ({
     labelRef,
     style,
     dropHotSpot,
-  } = useLeaf({
-    targetId: id,
-    instanceOf,
-  });
+  } = useLeaf(props);
 
   const shadow = instanceOf != null;
+
   return (
     <styles.TreeNavigationItem style={style}>
       <ContextMenu menu={contextMenu} onOpen={onClick}>
@@ -87,13 +81,7 @@ export const Leaf = ({
   );
 };
 
-const useLeaf = ({
-  targetId,
-  instanceOf,
-}: {
-  targetId: string;
-  instanceOf: string[];
-}) => {
+const useLeaf = ({ id: targetId, instanceOf }: LeafProps) => {
   const virtId = targetId && [...(instanceOf || []), targetId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selectedId = useSelector(getTargetExprId);
@@ -128,54 +116,72 @@ const useLeaf = ({
 
   const [{ isDraggingOver }, dropRef] = useDrop(
     {
-      accept: DNDKind.Node,
+      accept: [DNDKind.Node, DNDKind.Resource, DNDKind.File, NativeTypes.FILE],
       hover: ({ id: draggedExprId }, monitor) => {
-        const offset = monitor.getClientOffset();
-        const rect = headerRef.current?.getBoundingClientRect();
+        if (monitor.getItemType() === DNDKind.Node) {
+          const offset = monitor.getClientOffset();
+          const rect = headerRef.current?.getBoundingClientRect();
 
-        if (offset && rect && monitor.isOver() && monitor.canDrop()) {
-          let isTop = offset.y < rect.top + BORDER_MARGIN;
-          let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
+          if (offset && rect && monitor.isOver() && monitor.canDrop()) {
+            let isTop = offset.y < rect.top + BORDER_MARGIN;
+            let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
 
-          const expr = ast.getExprInfoById(targetId, graph);
-          const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
+            const expr = ast.getExprInfoById(targetId, graph);
+            const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
 
-          // can only insert before or after text nodes
-          if (
-            [ast.ExprKind.TextNode].includes(expr.kind) ||
-            [
-              ast.ExprKind.Atom,
-              ast.ExprKind.Trigger,
-              ast.ExprKind.Style,
-              ast.ExprKind.Component,
-            ].includes(draggedExpr.kind)
-          ) {
-            isTop = offset.y < rect.top + rect.height / 2;
-            isBottom = offset.y > rect.top + rect.height / 2;
+            // can only insert before or after text nodes
+            if (
+              [ast.ExprKind.TextNode].includes(expr.kind) ||
+              [
+                ast.ExprKind.Atom,
+                ast.ExprKind.Trigger,
+                ast.ExprKind.Style,
+                ast.ExprKind.Component,
+              ].includes(draggedExpr.kind)
+            ) {
+              isTop = offset.y < rect.top + rect.height / 2;
+              isBottom = offset.y > rect.top + rect.height / 2;
+            }
+
+            setDropHotSpot(isTop ? "before" : isBottom ? "after" : "inside");
+          } else {
+            setDropHotSpot(null);
           }
-
-          setDropHotSpot(isTop ? "before" : isBottom ? "after" : "inside");
         } else {
-          setDropHotSpot(null);
+          setDropHotSpot("inside");
         }
       },
-      drop(item: any) {
+      drop(item: any, monitor) {
         dispatch({
           type: "ui/exprNavigatorDroppedNode",
           payload: {
             position: dropHotSpot,
             targetId,
-            droppedExprId: item.id,
+            item: {
+              kind: monitor.getItemType() as any,
+              item,
+            },
           },
         });
       },
-      canDrop({ id: draggedExprId }, _monitor) {
-        if (draggedExprId === targetId) {
+      canDrop(item: any, monitor) {
+        if (monitor.getItemType() === NativeTypes.FILE) {
+          return true;
+        }
+        if (monitor.getItemType() === DNDKind.File) {
+          const fileItem = item as FSItem;
+          return isImageAsset(fileItem.path);
+        }
+        if (monitor.getItemType() === DNDKind.Resource) {
+          return true;
+        }
+
+        if (item.id === targetId) {
           return false;
         }
 
         // don't allow dropping a node into a node that is already in it
-        const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
+        const draggedExpr = ast.getExprInfoById(item.id, graph);
 
         return ast.flattenExpressionInfo(draggedExpr)[targetId] == null;
       },

@@ -221,6 +221,7 @@ export const FilteredFile =
     const onClick = () => {
       history.redirect(getResourceRedirect(resource));
     };
+    const projectDir = useSelector(getEditorState).projectDirectory;
     const ref = useRef<HTMLDivElement>();
     const setRef = (current: HTMLDivElement) => {
       ref.current = current;
@@ -247,12 +248,38 @@ export const FilteredFile =
       []
     );
 
+    const hasIcon = /svg|png|jpeg/.test(resource.name) && projectDir;
+
+    const iconStyle = hasIcon
+      ? {
+          backgroundImage: `url(${
+            resource.parentPath.replace(projectDir.path, "assets") +
+            "/" +
+            resource.name
+          })`,
+        }
+      : {
+          background: "initial",
+        };
+
     return (
       <Base
         ref={setRef}
         container={{
           onClick,
           onMouseOver,
+        }}
+        preview={
+          !hasIcon
+            ? {
+                style: {
+                  opacity: 0.2,
+                },
+              }
+            : null
+        }
+        icon={{
+          style: iconStyle,
         }}
         style={{ opacity }}
         class={cx({

@@ -8,7 +8,7 @@ import {
   Resource,
   ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { Engine, Dispatch } from "@paperclip-ui/common";
+import { Engine, Dispatch, isPaperclipFile } from "@paperclip-ui/common";
 import { DesignerEngineEvent, DocumentOpened } from "./events";
 import { DesignerEvent } from "../../events";
 import {
@@ -186,7 +186,7 @@ const createActions = (
       });
     },
 
-    openCodeEditor(path: string, range: Range) {
+    openCodeEditor(path: string, range?: Range) {
       client.OpenCodeEditor({ path, range });
     },
     openFileInNavigator(filePath: string) {
@@ -790,23 +790,27 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const openCodeEditor = (state: DesignerState) => {
-    const { kind, expr } = getSelectedExpressionInfo(state);
+    const exprInfo = getSelectedExpressionInfo(state);
     let range: Range;
-    switch (kind) {
-      case ast.ExprKind.Element:
-      case ast.ExprKind.TextNode:
-      case ast.ExprKind.Component:
-      case ast.ExprKind.Slot:
-      case ast.ExprKind.Insert:
-      case ast.ExprKind.Style:
-      case ast.ExprKind.Trigger:
-      case ast.ExprKind.Atom:
-        range = expr.range;
-        break;
-    }
-    if (!range) {
-      console.error(`Cannot open code editor for ${kind}`);
-      return;
+
+    if (exprInfo) {
+      const { kind, expr } = exprInfo;
+      switch (kind) {
+        case ast.ExprKind.Element:
+        case ast.ExprKind.TextNode:
+        case ast.ExprKind.Component:
+        case ast.ExprKind.Slot:
+        case ast.ExprKind.Insert:
+        case ast.ExprKind.Style:
+        case ast.ExprKind.Trigger:
+        case ast.ExprKind.Atom:
+          range = expr.range;
+          break;
+      }
+      if (!range) {
+        console.error(`Cannot open code editor for ${kind}`);
+        return;
+      }
     }
 
     actions.openCodeEditor(getRenderedFilePath(state), range);
@@ -1123,12 +1127,16 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleHistoryChanged = (
-    event: HistoryChanged,
+    _event: HistoryChanged,
     state: DesignerState
   ) => {
     // open the document
     const filePath = getCurrentFilePath(state);
-    if (filePath && filePath !== getRenderedFilePath(state)) {
+    if (
+      filePath &&
+      filePath !== getRenderedFilePath(state) &&
+      isPaperclipFile(filePath)
+    ) {
       actions.openFile(filePath);
     }
   };

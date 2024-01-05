@@ -150,18 +150,27 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         };
 
         let path: String = request.get_ref().path.clone();
-        let range: Range = request.get_ref().range.clone().expect("Range must exist");
-        let start = range.start.as_ref().expect("Stat must exist");
+        let range: Option<Range> = request.get_ref().range.clone();
 
         log_verbose(&format!(
             "Opening code editor with \"{}\"",
             code_editor_command_template
         ));
 
-        let command = code_editor_command_template
-            .replace("<file>", &path)
-            .replace("<line>", &start.line.to_string())
-            .replace("<column>", &start.column.to_string());
+        let command = if let Some(range) = range {
+            let start = range.start.as_ref().expect("Stat must exist");
+            code_editor_command_template
+                .replace("<file>", &path)
+                .replace("<line>", &start.line.to_string())
+                .replace("<column>", &start.column.to_string())
+                .to_string()
+        } else {
+            code_editor_command_template
+                .replace("<file>", &path)
+                .replace(":<line>", "")
+                .replace(":<column>", "")
+                .to_string()
+        };
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 

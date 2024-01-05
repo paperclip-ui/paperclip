@@ -964,13 +964,15 @@ const createEventHandler = (actions: Actions) => {
     { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
+    console.log(item);
+
     const bounds = {
       ...DEFAULT_FRAME_BOX,
       ...getScaledPoint(point, state.canvas.transform),
     };
 
     if (item.kind === ResourceKind.File2) {
-      await insertAsset(item.path, point, state);
+      await insertAsset(item.parentPath + "/" + item.name, point, state);
     } else {
       const expr = ast.getExprInfoById(item.id, state.graph);
 
@@ -1054,6 +1056,8 @@ const createEventHandler = (actions: Actions) => {
        */`;
     }
 
+    const modulePath = path.replace(state.projectInfo.srcDirectory + "/", "");
+
     actions.applyChanges([
       {
         appendChild: {
@@ -1061,11 +1065,11 @@ const createEventHandler = (actions: Actions) => {
           childSource: `
             ${frameMetadata}
              div {
-                 img(src: "${path.replace(
-                   state.projectInfo.srcDirectory + "/",
-                   ""
-                 )}")
-               }
+                style {
+                  background: url("${modulePath}")
+                  background-repeat: no-repeat
+                }
+              }
           `,
         },
       },

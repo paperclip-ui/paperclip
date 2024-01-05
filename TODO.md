@@ -1,7 +1,5 @@
 #### Immediate
 
-- Layers are STILL not expanding
-
 - Polish
 
   - hide file navigator when current file is open

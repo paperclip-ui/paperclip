@@ -163,11 +163,7 @@ export const handleDoubleClick = (
   // Note that we want a conditional here to prevent centering
   // of text nodes if we're focusing on the original element. The UX
   // is jarring.
-  if (
-    (expr.kind === ast.ExprKind.Element &&
-      ast.isInstance(expr.expr, designer.graph)) ||
-    isNestedInstance
-  ) {
+  if (expr.kind !== ast.ExprKind.TextNode || isNestedInstance) {
     // force center canvas to component when double clicked
     designer = maybeCenterCanvas(designer, true);
   }
@@ -279,6 +275,8 @@ export const panCanvas = (point: Point, state: DesignerState) => {
   });
 };
 
+const CANVAS_SIDE_PADDING = 350;
+
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/state/index.ts#L1304
 export const centerEditorCanvas = (
   editor: DesignerState,
@@ -298,29 +296,18 @@ export const centerEditorCanvas = (
     },
   } = editor;
 
+  // const paddedWith = width - CANVAS_SIDE_PADDING * 2;
+
   const centered = {
     x: -innerBounds.x + width / 2 - innerBounds.width / 2,
     y: -innerBounds.y + height / 2 - innerBounds.height / 2,
   };
 
-  try {
-    const scale =
-      typeof zoomOrZoomToFit === "boolean"
-        ? Math.min(
-            (width - INITIAL_ZOOM_PADDING) / innerBounds.width,
-            (height - INITIAL_ZOOM_PADDING) / innerBounds.height
-          )
-        : typeof zoomOrZoomToFit === "number"
-        ? zoomOrZoomToFit
-        : transform.z;
-  } catch (e) {
-    console.error(e);
-  }
-
   const scale =
     typeof zoomOrZoomToFit === "boolean"
       ? Math.min(
-          (width - INITIAL_ZOOM_PADDING) / innerBounds.width,
+          (width - INITIAL_ZOOM_PADDING - CANVAS_SIDE_PADDING * 2) /
+            innerBounds.width,
           (height - INITIAL_ZOOM_PADDING) / innerBounds.height
         )
       : typeof zoomOrZoomToFit === "number"

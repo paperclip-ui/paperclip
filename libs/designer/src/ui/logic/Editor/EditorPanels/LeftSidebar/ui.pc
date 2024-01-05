@@ -732,6 +732,9 @@ public component TreeNavigationItemHeader {
  * @frame(x: 795, y: 1167, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
+    variant isInsert trigger {
+        ".insert"
+    }
     variant cutting trigger {
         ".cutting"
     }
@@ -821,6 +824,16 @@ public component LayerNavigationItemHeader {
         insert controls {
             slot controls
         }
+    }
+}
+
+/**
+ * @frame(x: 802, y: 1239, width: 349, height: 62)
+*/
+LayerNavigationItemHeader(class: "insert") {
+    insert children {
+    }
+    insert controls {
     }
 }
 

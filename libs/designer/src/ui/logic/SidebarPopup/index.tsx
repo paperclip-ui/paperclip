@@ -18,7 +18,7 @@ export const SidebarPopup = ({
 
   const style: Record<string, number> = {
     left: position?.left,
-    top: position?.top,
+    top: position?.top + getScrollTop(anchor),
   };
 
   return (
@@ -36,4 +36,15 @@ export const SidebarPopup = ({
       </Portal>
     </>
   );
+};
+
+const getScrollTop = (element: HTMLElement) => {
+  let curr = element;
+  let accum = 0;
+  while (curr) {
+    accum += curr.scrollTop;
+    curr = curr.parentElement;
+  }
+
+  return accum;
 };

@@ -1,6 +1,7 @@
 #### Immediate
 
 - Split view!
+- pasted instances should appear where instances as
 
 - Polish
 

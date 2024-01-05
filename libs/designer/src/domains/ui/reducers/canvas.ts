@@ -106,7 +106,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
         return state;
       }
 
-      let doubleClicked;
+      let doubleClicked: boolean;
 
       [state, doubleClicked] = handleDoubleClick(state, event);
 

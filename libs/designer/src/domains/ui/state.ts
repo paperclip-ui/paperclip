@@ -150,6 +150,7 @@ export const handleDoubleClick = (
   }
 
   // const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
+  const isNestedInstance = getTargetExprId(designer)?.includes(".");
   const virtId = getSelectedExprIdSourceId(designer);
   const expr = ast.getExprByVirtId(virtId, designer.graph);
 
@@ -157,21 +158,19 @@ export const handleDoubleClick = (
     newDesigner.canvasClickTimestamp = action.payload.timestamp;
 
     setTargetExprId(newDesigner, virtId);
-
-    // LEGACY.
-    // newDesigner.scopedElementId = nodeId;
   });
 
+  // Note that we want a conditional here to prevent centering
+  // of text nodes if we're focusing on the original element. The UX
+  // is jarring.
   if (
-    expr.kind === ast.ExprKind.Element &&
-    ast.isInstance(expr.expr, designer.graph)
+    (expr.kind === ast.ExprKind.Element &&
+      ast.isInstance(expr.expr, designer.graph)) ||
+    isNestedInstance
   ) {
     // force center canvas to component when double clicked
     designer = maybeCenterCanvas(designer, true);
   }
-
-  // LEGACY. We want to redirect to the component instead
-  // designer = highlightNode(designer, designer.canvas.mousePosition!);
 
   return [designer, true];
 };

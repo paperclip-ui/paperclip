@@ -764,12 +764,15 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
-  const handleMovedFile = (event: FileNavigatorDroppedFile) => {
-    // mv /some/path/to/file-or-dir -> /new/path + /file-or-dir
-    actions.moveFile(
-      event.payload.item.path,
-      event.payload.directory + "/" + event.payload.item.path.split("/").pop()
-    );
+  const handleMovedFile = async (
+    { payload: { directory, item } }: FileNavigatorDroppedFile,
+    state: DesignerState
+  ) => {
+    if (item.files) {
+      await saveFiles(item.files, state);
+    } else {
+      actions.moveFile(item.path, directory + "/" + item.path.split("/").pop());
+    }
   };
 
   const handleConvertToComponent = (
@@ -1233,7 +1236,7 @@ const createEventHandler = (actions: Actions) => {
         return handleDeleteExpression(event.payload.variantId, newState);
       }
       case "ui/FileNavigatorDroppedFile": {
-        return handleMovedFile(event);
+        return handleMovedFile(event, newState);
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);

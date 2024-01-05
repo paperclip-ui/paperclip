@@ -173,7 +173,7 @@ export type FileNavigatorDroppedFile = BaseEvent<
   "ui/FileNavigatorDroppedFile",
   {
     directory: string;
-    item: FSItem;
+    item: any;
   }
 >;
 export type FileNavigatorDroppedNode = BaseEvent<

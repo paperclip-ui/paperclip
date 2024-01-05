@@ -48,6 +48,7 @@ import {
   Resource,
   ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { NativeTypes } from "react-dnd-html5-backend";
 
 export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
   function FileNavigator() {
@@ -300,9 +301,15 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
 
     const [{ isDraggingOver }, dropRef] = useDrop(
       {
-        accept: [DNDKind.File, DNDKind.Node],
+        accept:
+          item.kind === FSItemKind.Directory
+            ? [DNDKind.File, NativeTypes.FILE]
+            : [DNDKind.File, DNDKind.Node],
         drop(droppedItem: any, monitor) {
-          if (monitor.getItemType() === DNDKind.File) {
+          if (
+            monitor.getItemType() === DNDKind.File ||
+            monitor.getItemType() === NativeTypes.FILE
+          ) {
             dispatch({
               type: "ui/FileNavigatorDroppedFile",
               payload: {
@@ -322,7 +329,8 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
         },
         canDrop(_droppedItem: FSItem, monitor) {
           return (
-            (monitor.getItemType() === DNDKind.File &&
+            ((monitor.getItemType() === DNDKind.File ||
+              monitor.getItemType() === NativeTypes.FILE) &&
               item.kind === FSItemKind.Directory) ||
             (monitor.getItemType() === DNDKind.Node &&
               item.kind === FSItemKind.File)

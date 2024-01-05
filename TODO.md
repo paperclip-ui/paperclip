@@ -2,8 +2,6 @@
 
 - file navigator
 
-  - ability to drop assets to stage
-  - ability to drop searched files to stage
   - ability to drag local files into navigator
   - expressions
     - can insert instance into dropped target

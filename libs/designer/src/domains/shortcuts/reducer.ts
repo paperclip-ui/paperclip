@@ -81,10 +81,6 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
 
     case ShortcutCommand.GoToMain:
       state = produce(state, (newState) => {
-        const { expr } = ast.getExprByVirtId(
-          getTargetExprId(state),
-          state.graph
-        );
         setTargetExprId(newState, getSelectedExprIdSourceId(state));
         newState.centerOnRedirect = true;
       });

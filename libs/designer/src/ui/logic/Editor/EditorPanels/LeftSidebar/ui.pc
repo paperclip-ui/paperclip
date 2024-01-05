@@ -480,6 +480,9 @@ public component LayerIcon {
             flex-shrink: 0
         }
         div {
+            style variant isInsert {
+                mask-image: url("ui/insert.svg")
+            }
             style variant isStack {
                 mask-image: url("./stack.png")
             }

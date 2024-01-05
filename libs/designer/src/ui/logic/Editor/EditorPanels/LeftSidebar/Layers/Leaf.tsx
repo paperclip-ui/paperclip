@@ -14,6 +14,9 @@ import cx from "classnames";
 import { useDrag, useDrop } from "react-dnd";
 import { ContextMenu } from "@paperclip-ui/designer/src/ui/logic/ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { NativeTypes } from "react-dnd-html5-backend";
+import { FSItem } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { isImageAsset } from "@paperclip-ui/designer/src/domains/ui/state";
 
 type DropHotSpot = "inside" | "before" | "after";
 const BORDER_MARGIN = 10;
@@ -112,7 +115,7 @@ const useLeaf = ({ id: targetId, instanceOf }: LeafProps) => {
 
   const [{ isDraggingOver }, dropRef] = useDrop(
     {
-      accept: [DNDKind.Node, DNDKind.Resource],
+      accept: [DNDKind.Node, DNDKind.Resource, DNDKind.File, NativeTypes.FILE],
       hover: ({ id: draggedExprId }, monitor) => {
         if (monitor.getItemType() === DNDKind.Node) {
           const offset = monitor.getClientOffset();
@@ -160,17 +163,24 @@ const useLeaf = ({ id: targetId, instanceOf }: LeafProps) => {
           },
         });
       },
-      canDrop({ id: draggedExprId }, monitor) {
+      canDrop(item: any, monitor) {
+        if (monitor.getItemType() === NativeTypes.FILE) {
+          return true;
+        }
+        if (monitor.getItemType() === DNDKind.File) {
+          const fileItem = item as FSItem;
+          return isImageAsset(fileItem.path);
+        }
         if (monitor.getItemType() === DNDKind.Resource) {
           return true;
         }
 
-        if (draggedExprId === targetId) {
+        if (item.id === targetId) {
           return false;
         }
 
         // don't allow dropping a node into a node that is already in it
-        const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
+        const draggedExpr = ast.getExprInfoById(item.id, graph);
 
         return ast.flattenExpressionInfo(draggedExpr)[targetId] == null;
       },

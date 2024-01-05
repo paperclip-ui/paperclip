@@ -168,7 +168,9 @@ type ExprNavigatorDroppedItem =
       kind: DNDKind.Resource;
       item: Resource;
     }
-  | { kind: DNDKind.Node; item: { id: string } };
+  | { kind: DNDKind.Node; item: { id: string } }
+  | { kind: DNDKind.File; item: FSItem }
+  | { kind: typeof NativeTypes.FILE; item: any };
 export type ExprNavigatorDroppedNode = BaseEvent<
   "ui/exprNavigatorDroppedNode",
   {

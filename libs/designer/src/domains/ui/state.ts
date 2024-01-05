@@ -109,7 +109,15 @@ export const prettyKeyCombo = (combo: string[]) => {
     .toUpperCase();
 };
 
+export const isImageAsset = (value: string) => {
+  return /svg|png|jpeg$/.test(value);
+};
+
 export const shouldShowFileNavigator = (state: DesignerState) => {
+  if (state.focusOnFileSearch || state.searchedResources?.length) {
+    return true;
+  }
+
   const currentFile = getCurrentFilePath(state);
 
   if (currentFile) {

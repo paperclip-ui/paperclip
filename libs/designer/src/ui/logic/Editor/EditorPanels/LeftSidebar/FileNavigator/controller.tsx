@@ -26,12 +26,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import cx from "classnames";
 import * as ui from "../ui.pc";
-import {
-  isPaperclipFile,
-  memoize,
-  useDispatch,
-  useSelector,
-} from "@paperclip-ui/common";
+import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { ContextMenu } from "@paperclip-ui/designer/src/ui/logic/ContextMenu";
 import { TextInput } from "@paperclip-ui/designer/src/ui/logic/TextInput";
@@ -49,7 +44,10 @@ import {
   ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { NativeTypes } from "react-dnd-html5-backend";
-import { shouldShowFileNavigator } from "@paperclip-ui/designer/src/domains/ui/state";
+import {
+  isImageAsset,
+  shouldShowFileNavigator,
+} from "@paperclip-ui/designer/src/domains/ui/state";
 
 export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
   function FileNavigator() {
@@ -248,7 +246,7 @@ export const FilteredFile =
       []
     );
 
-    const hasIcon = /svg|png|jpeg/.test(resource.name) && projectDir;
+    const hasIcon = isImageAsset(resource.name) && projectDir;
 
     const iconStyle = hasIcon
       ? {

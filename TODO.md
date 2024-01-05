@@ -1,12 +1,13 @@
 #### Immediate
 
+- Split view!
+
 - Polish
 
   - hide file navigator when current file is open
   - display arrow in layer
 
 - inserts should have new icons
-
 - Rename option for layer
 
   - focus on ID param

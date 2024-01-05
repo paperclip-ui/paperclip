@@ -4,14 +4,12 @@ import { useSelector } from "@paperclip-ui/common";
 import {
   getCurrentDependency,
   getCurrentFilePath,
-  getCuttingExprId,
   getGraph,
 } from "@paperclip-ui/designer/src/state";
 import {
   Component,
   DocumentBodyItem,
   Element,
-  Insert,
   Node,
   Condition,
   Render,

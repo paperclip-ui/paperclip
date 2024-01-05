@@ -5,11 +5,11 @@ import {
   ModulesEvaluated,
   FileChanged,
   FileChangedKind,
-  Resource,
   ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch, isPaperclipFile } from "@paperclip-ui/common";
-import { DesignerEngineEvent, DocumentOpened } from "./events";
+import { Point } from "../../state/geom";
+import { DesignerEngineEvent } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
@@ -89,6 +89,7 @@ import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils"
 import { ExpressionKind } from "../../ui/logic/Editor/EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 import { NativeTypes } from "react-dnd-html5-backend";
 import { serializeDeclaration } from "@paperclip-ui/core/lib/proto/ast/serialize";
+import { isImageAsset } from "../ui/state";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -440,7 +441,7 @@ const createEventHandler = (actions: Actions) => {
 
     const resolvedTarget = await resolveTargetExprId(targetId, state);
     if (item.kind === DNDKind.Node) {
-      actions.applyChanges([
+      await actions.applyChanges([
         {
           moveNode: {
             targetId: resolvedTarget.id,
@@ -454,12 +455,16 @@ const createEventHandler = (actions: Actions) => {
         },
       ]);
     } else if (item.kind === DNDKind.Resource) {
-      insertAsset(
+      await insertResource(
         item.item.parentPath + "/" + item.item.name,
         resolvedTarget.id,
         null,
         state
       );
+    } else if (item.kind === DNDKind.File) {
+      await insertResource(item.item.path, resolvedTarget.id, null, state);
+    } else if (item.kind === NativeTypes.FILE) {
+      await insertFiles(item.item.files, resolvedTarget.id, null, state);
     }
   };
 
@@ -992,7 +997,7 @@ const createEventHandler = (actions: Actions) => {
     };
 
     if (item.kind === ResourceKind.File2) {
-      await insertAsset(
+      await insertResource(
         item.parentPath + "/" + item.name,
         getNodeInfoAtCurrentPoint(state)?.nodeId,
         point,
@@ -1048,7 +1053,16 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState
   ) => {
     const files = item.files as File[];
+    const targetNodeId = getNodeInfoAtCurrentPoint(state)?.nodeId;
+    await insertFiles(files, targetNodeId, point, state);
+  };
 
+  const insertFiles = async (
+    files: File[],
+    targetNodeId: string,
+    point: Point,
+    state: DesignerState
+  ) => {
     const currentFilePath = getCurrentFilePath(state);
     const currentDir = currentFilePath
       ? dirname(currentFilePath)
@@ -1059,16 +1073,11 @@ const createEventHandler = (actions: Actions) => {
     // drop files onto the canvas
     //
     for (const filePath of newFiles) {
-      await insertAsset(
-        filePath,
-        getNodeInfoAtCurrentPoint(state)?.nodeId,
-        point,
-        state
-      );
+      await insertResource(filePath, targetNodeId, point, state);
     }
   };
 
-  const insertAsset = async (
+  const insertResource = async (
     path: string,
     hoverindNodeId: string,
     point: any,
@@ -1078,7 +1087,7 @@ const createEventHandler = (actions: Actions) => {
 
     const modulePath = path.replace(state.projectInfo.srcDirectory + "/", "");
 
-    if (hoverindNodeId && /svg|png|jpg$/.test(path)) {
+    if (hoverindNodeId && isImageAsset(path)) {
       actions.applyChanges([
         {
           setStyleDeclarations: {
@@ -1126,7 +1135,7 @@ const createEventHandler = (actions: Actions) => {
     { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
-    await insertAsset(
+    await insertResource(
       item.path,
       getNodeInfoAtCurrentPoint(state)?.nodeId,
       point,

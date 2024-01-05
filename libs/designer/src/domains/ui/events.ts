@@ -276,12 +276,17 @@ export type FileNavigatorContextMenuOpened = BaseEvent<
 >;
 
 export type InsertElementReleased = BaseEvent<"ui/insertElementReleased", Box>;
+export type LayersBackButtonClicked = BaseEvent<"ui/layersBackButtonClick">;
+export type FileFilterFocused = BaseEvent<"ui/fileFilterFocused">;
+export type FileFilterBlurred = BaseEvent<"ui/fileFilterBlurred">;
 
 export type UIEvent =
   | ExprNavigatorDroppedNode
   | ElementTagChanged
   | AddVariantPopupClicked
+  | FileFilterBlurred
   | DashboardAddFileConfirmed
+  | FileFilterFocused
   | ToolsTextEditorChanged
   | CanvasMouseMoved
   | ToolsLayerDragOver
@@ -289,6 +294,7 @@ export type UIEvent =
   | TriggersEdited
   | BoundsChanged
   | CanvasResized
+  | LayersBackButtonClicked
   | FrameTitleClicked
   | FileNavigatorContextMenuOpened
   | ToolsLayerDrop

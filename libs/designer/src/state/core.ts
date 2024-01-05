@@ -100,6 +100,8 @@ export type DesignerState = {
   renderedFilePath?: string;
   insertedNodeIds: string[];
   graph: Graph;
+  showFileNavigator?: boolean;
+  fileFilterFocused?: boolean;
   insertMode?: InsertMode;
   focusOnFileSearch?: boolean;
   resourceFilePaths: string[];

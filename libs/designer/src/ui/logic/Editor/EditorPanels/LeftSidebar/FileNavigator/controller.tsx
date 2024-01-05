@@ -56,6 +56,8 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
     const fileFilter = useSelector(getFileFilter);
     const focusOnFileFilter = useSelector(getFocusOnFileFilter);
     const showFileNavigator = useSelector(shouldShowFileNavigator);
+    const onFileFilterFocus = () => dispatch({ type: "ui/fileFilterFocused" });
+    const onFileFilterBlur = () => dispatch({ type: "ui/fileFilterBlurred" });
 
     const [preselectedResource, setPreselectedResource] =
       useState<Resource>(null);
@@ -95,12 +97,11 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
       }
     };
 
-    if (!showFileNavigator) {
-      return null;
-    }
-
     return (
       <Base
+        class={cx({
+          collapsed: !showFileNavigator,
+        })}
         header={
           <>
             Resources
@@ -108,6 +109,8 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
               autoFocus={focusOnFileFilter}
               onChange={onFilter}
               onKeyDown={onFilterKeyDown}
+              onFocus={onFileFilterFocus}
+              onBlur={onFileFilterBlur}
               value={fileFilter}
               placeholder="Search..."
             />

@@ -16,6 +16,7 @@ import {
   getTargetExprId,
   setTargetExprId,
   getCurrentFilePath,
+  getCurrentDependency,
 } from "../../state";
 import {
   CanvasMouseUp,
@@ -30,6 +31,7 @@ import {
   jsonToMetadataValue,
   metadataValueMapToJSON,
 } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { isPaperclipFile } from "@paperclip-ui/common";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -113,18 +115,17 @@ export const isImageAsset = (value: string) => {
   return /svg|png|jpeg$/.test(value);
 };
 
-export const shouldShowFileNavigator = (state: DesignerState) => {
-  if (state.focusOnFileSearch || state.searchedResources?.length) {
-    return true;
-  }
-
+export const shouldShowLayers = (state: DesignerState) => {
   const currentFile = getCurrentFilePath(state);
+  const dependency = getCurrentDependency(state);
+  return (
+    // !shouldShowFileNavigator(state) &&
+    dependency?.document && isPaperclipFile(currentFile)
+  );
+};
 
-  if (currentFile) {
-    return true;
-  }
-
-  return true;
+export const shouldShowFileNavigator = (state: DesignerState) => {
+  return state.fileFilterFocused || state.showFileNavigator !== false;
 };
 
 export const getSelectedExprIdSourceId = (state: DesignerState) => {
@@ -132,7 +133,6 @@ export const getSelectedExprIdSourceId = (state: DesignerState) => {
 
   if (ast.isInstance(expr, state.graph)) {
     const component = ast.getInstanceComponent(expr, state.graph);
-    const renderNode = ast.getComponentRenderNode(component);
     return component.id;
   } else {
     return expr.id;

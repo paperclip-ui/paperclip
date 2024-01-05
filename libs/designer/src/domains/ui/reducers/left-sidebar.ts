@@ -11,7 +11,6 @@ import {
   newDirectoryPrompt,
   redirect,
   renameFilePrompt,
-  getCurrentDocument,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import produce from "immer";
@@ -20,7 +19,7 @@ import { uniq } from "lodash";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { ShortcutCommand } from "../../shortcuts/state";
 import { newDeleteFileConfirmation } from "@paperclip-ui/designer/src/state/confirm";
-import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
+import { isPaperclipFile } from "@paperclip-ui/common";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -50,14 +49,37 @@ export const leftSidebarReducer = (
     }
     case "designer-engine/documentOpened": {
       state = expandLayerVirtIds(state);
-      state = produce(state, (newState) => {
-        newState.selectedFilePath = getCurrentFilePath(state);
+      state = produce(state, (draft) => {
+        draft.selectedFilePath = getCurrentFilePath(state);
+
+        if (
+          draft.showFileNavigator == null &&
+          draft.selectedFilePath &&
+          isPaperclipFile(draft.selectedFilePath)
+        ) {
+          draft.showFileNavigator = false;
+        }
       });
       return state;
+    }
+    case "ui/fileFilterFocused": {
+      return produce(state, (draft) => {
+        draft.fileFilterFocused = true;
+      });
+    }
+    case "ui/fileFilterBlurred": {
+      return produce(state, (draft) => {
+        draft.fileFilterFocused = false;
+      });
     }
     case "designer-engine/fileCreated": {
       return produce(state, (newState) => {
         newState.selectedFilePath = event.payload.filePath;
+      });
+    }
+    case "ui/layersBackButtonClick": {
+      return produce(state, (newState) => {
+        newState.showFileNavigator = true;
       });
     }
     case "history-engine/historyChanged": {

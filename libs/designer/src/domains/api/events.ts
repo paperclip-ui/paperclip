@@ -52,6 +52,10 @@ export type DesignFileCreated = BaseEvent<
   "designer-engine/designFileCreated",
   { filePath: string }
 >;
+export type FileMoved = BaseEvent<
+  "designer-engine/fileMoved",
+  { fromPath: string; toPath: string }
+>;
 export type FileCreated = BaseEvent<
   "designer-engine/fileCreated",
   { filePath: string; kind: FSItemKind }
@@ -61,6 +65,7 @@ export type DesignerEngineEvent =
   | DocumentOpened
   | ChangesApplied
   | FileSearchResult
+  | FileMoved
   | FileCreated
   | DirectoryRead
   | APIError

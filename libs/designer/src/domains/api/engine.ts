@@ -960,9 +960,7 @@ const createEventHandler = (actions: Actions) => {
       const ext = extParts.length > 1 ? extParts[extParts.length - 1] : null;
 
       // could be dir, so we leave out .
-      const fileName = !ext
-        ? value
-        : value.replace("." + ext, "") + "." + ext[1];
+      const fileName = !ext ? value : value.replace("." + ext, "") + "." + ext;
 
       actions.moveFile(details.filePath, dir + "/" + fileName);
     }

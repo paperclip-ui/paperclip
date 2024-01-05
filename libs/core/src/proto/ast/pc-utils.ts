@@ -687,6 +687,13 @@ export namespace ast {
   export const getComponentRenderExpr = (component: Component) =>
     component.body.find((body) => body.render)?.render;
 
+  export const getDisplayNode = (exprId: string, graph: Graph) => {
+    const info = getExprInfoById(exprId, graph);
+    return info.kind == ExprKind.Component
+      ? getComponentRenderNode(info.expr)
+      : info;
+  };
+
   export const getComponentRenderNode = (
     component: Component
   ): InnerExpressionInfo | undefined => {

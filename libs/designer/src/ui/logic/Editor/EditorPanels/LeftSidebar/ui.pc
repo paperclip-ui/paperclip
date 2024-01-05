@@ -119,8 +119,17 @@ public component FilteredFile {
                     justify-content: space-between
                     width: 100%
                     gap: var(theme.space05)
+                    align-items: center
                 }
                 div {
+                    div preview {
+                        style {
+                            width: 40px
+                            height: 40px
+                            background: white
+                            border-radius: var(theme1.roundedSM)
+                        }
+                    }
                     style {
                         display: flex
                         align-items: center
@@ -791,3 +800,4 @@ public component LayerNavigationItemHeader {
         }
     }
 }
+

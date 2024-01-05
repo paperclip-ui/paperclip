@@ -1,19 +1,10 @@
 #### Immediate
 
-- file navigator
-
-  - ability to drag local files into navigator
-  - expressions
-    - can insert instance into dropped target
-    - can apply token to dropped target
-    - can apply mixin to dropped target
-    - when SVG is dropped to element, set background CSS
-    - honor variants
-  - open file in code editor
-  - clean up menu items (use zed as example)
-    - right click directory
-    - right click file
-
+- Rename option for layer
+  - focus on ID param
+- copy layer styles
+- should be able to drop asset to leaf
+- preview for resources
 - Polish
 
   - hide file navigator when current file is open

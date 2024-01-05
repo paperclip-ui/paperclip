@@ -15,6 +15,7 @@ import {
   getPreviewFrameBoxes,
   getTargetExprId,
   setTargetExprId,
+  getCurrentFilePath,
 } from "../../state";
 import {
   CanvasMouseUp,
@@ -106,6 +107,16 @@ export const prettyKeyCombo = (combo: string[]) => {
     .replace("alt", "⌥")
     .replaceAll("+", "")
     .toUpperCase();
+};
+
+export const shouldShowFileNavigator = (state: DesignerState) => {
+  const currentFile = getCurrentFilePath(state);
+
+  if (currentFile) {
+    return true;
+  }
+
+  return true;
 };
 
 export const getSelectedExprIdSourceId = (state: DesignerState) => {

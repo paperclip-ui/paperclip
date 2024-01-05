@@ -88,6 +88,7 @@ import { ConfirmKind } from "../../state/confirm";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { ExpressionKind } from "../../ui/logic/Editor/EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 import { NativeTypes } from "react-dnd-html5-backend";
+import { serializeDeclaration } from "@paperclip-ui/core/lib/proto/ast/serialize";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -484,21 +485,23 @@ const createEventHandler = (actions: Actions) => {
     event: ExpressionPasted,
     state: DesignerState
   ) => {
-    const { expr, type } = event.payload;
+    const { data, type } = event.payload;
 
-    const kind = {
-      [ast.ExprKind.TextNode]: "textNode",
-      [ast.ExprKind.Element]: "element",
-      [ast.ExprKind.Component]: "component",
-    }[expr.kind];
+    let targetExpressionId = getTargetExprId(state);
 
-    if (!kind) {
-      console.error(`Cannot paste: `, expr);
-      return;
-    }
+    console.log(event.payload);
 
-    if (type === "copy") {
-      let targetExpressionId = getTargetExprId(state);
+    if (type === ShortcutCommand.Copy || type === ShortcutCommand.Cut) {
+      const kind = {
+        [ast.ExprKind.TextNode]: "textNode",
+        [ast.ExprKind.Element]: "element",
+        [ast.ExprKind.Component]: "component",
+      }[data.kind];
+
+      if (!kind) {
+        console.error(`Cannot paste: `, data);
+        return;
+      }
 
       if (!targetExpressionId) {
         targetExpressionId = state.currentDocument.paperclip.html.sourceId;
@@ -509,20 +512,36 @@ const createEventHandler = (actions: Actions) => {
       // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
       targetExpressionId = ast.getParent(targetExpressionId, state.graph)?.id;
 
-      actions.applyChanges([
-        {
-          pasteExpression: {
-            targetExpressionId,
-            [kind]: expr.expr,
+      if (type === ShortcutCommand.Copy) {
+        actions.applyChanges([
+          {
+            pasteExpression: {
+              targetExpressionId,
+              [kind]: data.expr,
+            },
           },
-        },
-      ]);
-    } else if (type === "cut") {
+        ]);
+      } else {
+        actions.applyChanges([
+          {
+            moveExpressionToFile: {
+              newFilePath: getCurrentFilePath(state),
+              expressionId: data.expr.id,
+            },
+          },
+        ]);
+      }
+    } else if (type === ShortcutCommand.CopyStyles) {
       actions.applyChanges([
         {
-          moveExpressionToFile: {
-            newFilePath: getCurrentFilePath(state),
-            expressionId: expr.expr.id,
+          setStyleDeclarations: {
+            expressionId: getStyleableTargetId(state),
+            declarations: data.propertyNames.map((name) => {
+              return {
+                name,
+                value: serializeDeclaration(data.map[name].value),
+              };
+            }),
           },
         },
       ]);

@@ -14,3 +14,12 @@ public component Test {
     }
 }
 
+/**
+ * @frame(x: -269, y: 27, width: 592, height: 388)
+*/
+div {
+    style {
+        position: relative
+    }
+}
+

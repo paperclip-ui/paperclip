@@ -32,6 +32,7 @@ export enum ShortcutCommand {
   CenterInCanvas,
   Cut,
   Copy,
+  CopyStyles,
   Delete,
   Escape,
   Paste,
@@ -128,6 +129,11 @@ export const getEntityShortcuts = memoize(
         label: "Copy",
         shortcut: ["meta", "c"],
         command: ShortcutCommand.Copy,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Copy Styles",
+        command: ShortcutCommand.CopyStyles,
       },
       {
         kind: MenuItemKind.Option,

@@ -49,6 +49,7 @@ import {
   ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { NativeTypes } from "react-dnd-html5-backend";
+import { shouldShowFileNavigator } from "@paperclip-ui/designer/src/domains/ui/state";
 
 export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
   function FileNavigator() {
@@ -56,7 +57,7 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
     const dispatch = useDispatch<DesignerEvent>();
     const fileFilter = useSelector(getFileFilter);
     const focusOnFileFilter = useSelector(getFocusOnFileFilter);
-    const currentFile = useSelector(getCurrentFilePath);
+    const showFileNavigator = useSelector(shouldShowFileNavigator);
 
     const [preselectedResource, setPreselectedResource] =
       useState<Resource>(null);
@@ -96,9 +97,9 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
       }
     };
 
-    // if (currentFile && isPaperclipFile(currentFile) && !focusOnFileFilter) {
-    //   return null;
-    // }
+    if (!showFileNavigator) {
+      return null;
+    }
 
     return (
       <Base

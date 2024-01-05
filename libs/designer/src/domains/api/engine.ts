@@ -170,6 +170,11 @@ const createActions = (
     async moveFile(fromPath: string, toPath: string) {
       // no need to do anything else since file watcher will trigger changes
       await client.MoveFile({ fromPath, toPath });
+
+      dispatch({
+        type: "designer-engine/fileMoved",
+        payload: { fromPath, toPath },
+      });
     },
     async createDirectory(name: string, parentDir?: string) {
       const filePath = parentDir + "/" + name;

@@ -386,7 +386,7 @@ const InsertLeaf = memo(
       // instance.slot denotes virtual ID which DOES exist
       <Leaf
         id={targetId}
-        className={cx("slot", { container: insert.length > 0 })}
+        className={cx("insert", { container: insert.length > 0 })}
         text={name}
         depth={depth}
       >

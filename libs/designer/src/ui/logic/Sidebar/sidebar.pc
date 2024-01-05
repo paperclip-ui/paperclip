@@ -138,6 +138,7 @@ public component SidebarPanelHeader {
             padding: var(theme.space05)
             width: 100%
             flex-shrink: 0
+            user-select: none
         }
         div {
             style {

@@ -384,7 +384,7 @@ public component Layers {
                                         LayerNavigationItemHeader(class: "text showDropTop") {
                                             text "some label"
                                         }
-                                        LayerNavigationItemHeader(class: "element") {
+                                        LayerNavigationItemHeader(class: "insert") {
                                             text "some long label"
                                             TagType {
                                                 text "div"
@@ -772,6 +772,9 @@ public component LayerNavigationItemHeader {
         ".text"
     }
     render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
+        style variant isInsert {
+            --icon-color: var(--regular-layer)
+        }
         style variant cutting {
             opacity: 0.3
         }

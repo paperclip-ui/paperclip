@@ -18,6 +18,8 @@ export const SidebarPopup = ({
 
   const style: Record<string, number> = {
     left: position?.left,
+
+    // panel might be scrolled
     top: position?.top + getScrollTop(anchor),
   };
 

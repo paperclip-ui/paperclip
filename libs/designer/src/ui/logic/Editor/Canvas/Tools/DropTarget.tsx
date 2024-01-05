@@ -1,6 +1,10 @@
 import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { DNDKind } from "@paperclip-ui/designer/src/state";
+import {
+  Resource,
+  ResourceKind,
+} from "@paperclip-ui/proto/lib/generated/service/designer";
 import React, { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import { NativeTypes } from "react-dnd-html5-backend";
@@ -30,6 +34,16 @@ const useDropTarget = () => {
 
   const [{ isDraggingOver }, dragRef] = useDrop({
     accept: [DNDKind.Resource, NativeTypes.FILE, DNDKind.File],
+    canDrop(item: Resource) {
+      if (
+        item.kind === ResourceKind.StyleMixin ||
+        item.kind === ResourceKind.Token ||
+        item.kind === ResourceKind.Trigger
+      ) {
+        return false;
+      }
+      return true;
+    },
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
 

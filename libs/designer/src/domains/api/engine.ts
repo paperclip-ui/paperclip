@@ -813,7 +813,7 @@ const createEventHandler = (actions: Actions) => {
       }
     }
 
-    actions.openCodeEditor(getRenderedFilePath(state), range);
+    actions.openCodeEditor(getCurrentFilePath(state), range);
   };
 
   const openFileInNavigator = (state: DesignerState) => {

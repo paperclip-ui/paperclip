@@ -152,11 +152,6 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let path: String = request.get_ref().path.clone();
         let range: Option<Range> = request.get_ref().range.clone();
 
-        log_verbose(&format!(
-            "Opening code editor with \"{}\"",
-            code_editor_command_template
-        ));
-
         let command = if let Some(range) = range {
             let start = range.start.as_ref().expect("Stat must exist");
             code_editor_command_template
@@ -171,6 +166,8 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 .replace(":<column>", "")
                 .to_string()
         };
+
+        log_verbose(&format!("Opening code editor with \"{}\"", command));
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 

@@ -61,9 +61,10 @@ export const leftSidebarReducer = (
     case "history-engine/historyChanged": {
       state = expandLayerVirtIds(state);
 
-      return produce(state, (newState) => {
-        newState.fileFilter = null;
-        expandDirs(state.projectDirectory.path)(newState);
+      return produce(state, (draft) => {
+        draft.fileFilter = null;
+        draft.selectedFilePath = getCurrentFilePath(state);
+        expandDirs(state.projectDirectory.path)(draft);
       });
     }
     case "ui/AddFileItemClicked": {

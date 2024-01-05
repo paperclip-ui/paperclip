@@ -769,7 +769,7 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState
   ) => {
     if (item.files) {
-      await saveFiles(item.files, state);
+      await saveFiles(item.files, item.path, state);
     } else {
       actions.moveFile(item.path, directory + "/" + item.path.split("/").pop());
     }
@@ -990,20 +990,19 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const saveFiles = async (files: File[], state: DesignerState) => {
-    const currentFilePath = getCurrentFilePath(state);
-    const currentDir = currentFilePath
-      ? dirname(currentFilePath)
-      : state.projectDirectory;
-
-    if (!currentDir) {
+  const saveFiles = async (
+    files: File[],
+    dir: string,
+    state: DesignerState
+  ) => {
+    if (!dir) {
       return console.error(`Can't find directory to drop file to!`);
     }
 
     await Promise.all(
       files.map(async (file) => {
         const buff = await file.arrayBuffer();
-        actions.saveFile(currentDir + "/" + file.name, new Uint8Array(buff));
+        actions.saveFile(dir + "/" + file.name, new Uint8Array(buff));
       })
     );
 
@@ -1022,9 +1021,15 @@ const createEventHandler = (actions: Actions) => {
     const files = item.files as File[];
     const document = getCurrentDependency(state).document;
 
-    await saveFiles(files, state);
+    const currentFilePath = getCurrentFilePath(state);
+    const currentDir = currentFilePath
+      ? dirname(currentFilePath)
+      : state.projectDirectory.path;
+
+    await saveFiles(files, currentDir, state);
 
     // drop files onto the canvas
+
     actions.applyChanges(
       files.map(
         (file) =>

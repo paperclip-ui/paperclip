@@ -1,9 +1,13 @@
 #### Immediate
 
+- Layers are STILL not expanding
+
 - Polish
 
   - hide file navigator when current file is open
   - display arrow in layer
+
+- inserts should have new icons
 
 - Rename option for layer
 

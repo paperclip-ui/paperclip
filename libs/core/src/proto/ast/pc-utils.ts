@@ -701,6 +701,23 @@ export namespace ast {
     return render && getChildExprInner(render.node);
   };
 
+  export const getInsertSlot = (insertId: string, graph: Graph) => {
+    const insert = getExprById(insertId, graph);
+    const instance = getParent(insert.id, graph);
+    return getInstanceSlot(instance.id, insert.name, graph);
+  };
+
+  export const getInstanceSlot = (
+    instanceId: string,
+    slotName: string,
+    graph: Graph
+  ) => {
+    const instance = getExprById(instanceId, graph);
+    const component = getInstanceComponent(instance, graph);
+    const slots = getComponentSlots(component, graph);
+    return slots.find((slot) => slot.name === slotName);
+  };
+
   export const isInstance = (element: Element, graph: Graph) => {
     return getInstanceComponent(element, graph) != null;
   };

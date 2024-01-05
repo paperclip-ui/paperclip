@@ -100,8 +100,8 @@ public component FilteredFile {
             style {
                 display: flex
                 justify-content: space-between
-                width: 100%
                 padding: var(theme.space03) var(theme.space05)
+                width: 100%
             }
             div icon {
                 style {
@@ -121,7 +121,7 @@ public component FilteredFile {
                     gap: var(theme.space05)
                     align-items: center
                 }
-                div {
+                div left {
                     div preview {
                         div icon {
                             style {
@@ -136,15 +136,17 @@ public component FilteredFile {
                             height: 25px
                             background: white
                             border-radius: var(theme1.roundedSM)
-                            flex-shrink: 0
                             position: relative
                             padding: var(theme1.space01)
+                            flex-shrink: 0
                         }
                     }
                     style {
                         display: flex
                         align-items: center
                         gap: var(theme1.space03)
+                        overflow: hidden
+                        flex-shrink: 0
                     }
                     div iconWraper {
                         style variant isComponent {
@@ -170,9 +172,11 @@ public component FilteredFile {
                         overflow: hidden
                         text-overflow: ellipsis
                         white-space: nowrap
+                        direction: rtl
+                        flex-shrink: 1
                     }
                     slot dirname {
-                        text "./some/dir"
+                        text "./some/dir/file"
                     }
                 }
             }

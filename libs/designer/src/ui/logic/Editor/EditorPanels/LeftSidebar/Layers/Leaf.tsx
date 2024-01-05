@@ -29,16 +29,9 @@ type LeafProps = {
   instanceOf?: string[];
 };
 
-export const Leaf = ({
-  children,
-  className,
-  id,
-  depth,
-  text,
-  altText,
-  controls,
-  instanceOf,
-}: LeafProps) => {
+export const Leaf = (props: LeafProps) => {
+  const { children, className, depth, text, altText, controls, instanceOf } =
+    props;
   const {
     selected,
     open,
@@ -50,10 +43,7 @@ export const Leaf = ({
     labelRef,
     style,
     dropHotSpot,
-  } = useLeaf({
-    targetId: id,
-    instanceOf,
-  });
+  } = useLeaf(props);
 
   const shadow = instanceOf != null;
   return (
@@ -87,13 +77,7 @@ export const Leaf = ({
   );
 };
 
-const useLeaf = ({
-  targetId,
-  instanceOf,
-}: {
-  targetId: string;
-  instanceOf: string[];
-}) => {
+const useLeaf = ({ id: targetId, instanceOf }: LeafProps) => {
   const virtId = targetId && [...(instanceOf || []), targetId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selectedId = useSelector(getTargetExprId);

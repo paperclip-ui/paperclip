@@ -1,7 +1,6 @@
 import "ui/AssetPreview/ui.pc" as module1
 import "ui/logic/Sidebar/sidebar.pc" as module
 import "ui/theme.pc" as theme
-
 import "ui/logic/Editor/EditorPanels/LeftSidebar/ui.pc" as leftSidebar
 import "ui/right-sidebar.pc" as rightSidebar
 import "ui/resource-modal.pc" as assetsModal
@@ -9,7 +8,7 @@ import "ui/toolbar.pc" as toolbar
 
 token iconSize var(theme.fontSize03)
 /**
- * @frame(x: 2868, y: 610, width: 1543, height: 1072)
+ * @frame(x: 892, y: -2655, width: 1543, height: 1072)
 */
 public component SplashInfo {
     render div {
@@ -108,7 +107,7 @@ public component SplashInfo {
 }
 
 /**
- * @frame(x: 6874, y: 1592, width: 345, height: 71)
+ * @frame(x: 1118, y: -1009, width: 345, height: 71)
 */
 public component SplashTip {
     render div {
@@ -152,7 +151,7 @@ public component SplashTip {
 }
 
 /**
- * @frame(x: 536, y: 112, width: 251, height: 118)
+ * @frame(x: -1965, y: -2594, width: 251, height: 118)
 */
 public component ComboKey {
     render span {
@@ -170,8 +169,7 @@ public component ComboKey {
 }
 
 /**
- * @frame(x: 512, y: 542, width: 1830, height: 1256)
- * @preview(showCanvas: true)
+ * @frame(x: -1909, y: -4103, width: 1830, height: 1256)
 */
 public component Editor {
     script(src: "./logic/Editor/index.tsx", target: "react", name: "Editor")
@@ -222,7 +220,7 @@ public component Editor {
 }
 
 /**
- * @frame(x: -1353, y: 1353, width: 1024, height: 768)
+ * @frame(x: -2027, y: -2276, width: 1024, height: 768)
 */
 public component Artboard {
     render div root {
@@ -231,7 +229,7 @@ public component Artboard {
 }
 
 /**
- * @frame(x: 556, y: 2067, width: 1024, height: 768)
+ * @frame(x: -2075, y: -2071, width: 1024, height: 768)
 */
 public component Canvas {
     script(src: "./logic/Editor/Canvas/index.tsx", target: "react", name: "Canvas")
@@ -278,3 +276,19 @@ Editor root {
         SplashTip
     }
 }
+
+/**
+ * @frame(x: 3057, y: -4207, width: 2095, height: 1217)
+*/
+Editor canvasPreview(showCanvas: true)
+
+/**
+ * @frame(x: 430, y: -4136, width: 1936, height: 1239)
+*/
+Editor splashPreview(showCanvas: false, showSplash: true)
+
+/**
+ * @frame(x: 5796, y: -4274, width: 1949, height: 1236)
+*/
+Editor canvasPreview(showCanvas: false, showAssetPreview: true)
+

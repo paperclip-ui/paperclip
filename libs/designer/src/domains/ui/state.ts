@@ -125,7 +125,7 @@ export const shouldShowLayers = (state: DesignerState) => {
 };
 
 export const shouldShowFileNavigator = (state: DesignerState) => {
-  return state.fileFilterFocused || state.showFileNavigator !== false;
+  return state.showFileNavigator !== false;
 };
 
 export const getSelectedExprIdSourceId = (state: DesignerState) => {

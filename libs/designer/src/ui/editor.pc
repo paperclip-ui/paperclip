@@ -1,3 +1,4 @@
+import "state/theme.pc" as module2
 import "ui/AssetPreview/ui.pc" as module1
 import "ui/logic/Sidebar/sidebar.pc" as module
 import "ui/theme.pc" as theme

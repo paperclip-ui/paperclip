@@ -205,13 +205,34 @@ public component FSItem {
  * @frame(x: -2102, y: -298, width: 380, height: 768)
 */
 public component FileNavigator {
+    variant isCollapsed trigger {
+        ".collapsed"
+    }
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FileNavigator")
-    render sidebar.SidebarPanel {
+    render sidebar.SidebarPanel(class: class) {
+        style {
+            max-height: 1000px
+        }
+        style variant isCollapsed {
+            max-height: 55px
+        }
         sidebar.SidebarSection(class: "fill") {
-            sidebar.SidebarPanelHeader {
+            sidebar.SidebarPanelHeader headerContainer(onDoubleClick: onDoubleClick) {
                 style {
                     align-items: center
                     display: flex
+                }
+                button collapseButton {
+                    style variant isCollapsed {
+                        transform: rotate(0deg)
+                    }
+                    style extends theme.reset, theme1.icon {
+                        mask-image: url("ui/chevron2.svg")
+                        opacity: 0.5
+                        transform: rotate(90deg)
+                        transition: 0.2s
+                        cursor: button
+                    }
                 }
                 slot header {
                     text "Resource"
@@ -254,11 +275,17 @@ component FileResources {
     render sidebar.SidebarPanel {
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
+                button {
+                    style extends theme.reset, theme1.icon {
+                        mask-image: url("ui/chevron2.svg")
+                        opacity: 0.5
+                    }
+                }
                 style {
                     align-items: center
                     display: flex
                 }
-                text "Files"
+                text "Resources"
                 module.TextInput(value: "some file")
                 div {
                     style extends theme.icon {
@@ -280,7 +307,7 @@ public component LeftSidebar {
         sidebar.Sidebar {
             insert children {
                 Layers layers
-                FileNavigator fileNavigator
+                FileNavigator fileNavigator(class: "collapsed")
             }
         }
     }
@@ -671,7 +698,11 @@ public component TreeNavigationItemHeader {
         style variant isSelected {
             background: var(theme.gray04)
         }
-        DropZoneDivider(class: "top")
+        DropZoneDivider(class: "top") {
+            style variant showDropTop {
+                display: block
+            }
+        }
         div {
             style {
                 display: flex
@@ -724,7 +755,11 @@ public component TreeNavigationItemHeader {
                 slot controls
             }
         }
-        DropZoneDivider(class: "bottom")
+        DropZoneDivider(class: "bottom") {
+            style variant showDropBottom {
+                display: block
+            }
+        }
     }
 }
 
@@ -821,7 +856,6 @@ public component LayerNavigationItemHeader {
             }
         }
         slot children {
-            text "some layer"
             text "some layer"
         }
         insert controls {

@@ -1,3 +1,4 @@
+import "state/theme.pc" as module
 import "./editor.pc" as imp
 import "./theme.pc" as theme
 import "./input.pc" as input

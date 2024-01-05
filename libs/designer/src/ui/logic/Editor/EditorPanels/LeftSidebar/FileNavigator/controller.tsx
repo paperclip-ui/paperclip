@@ -58,6 +58,12 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
     const showFileNavigator = useSelector(shouldShowFileNavigator);
     const onFileFilterFocus = () => dispatch({ type: "ui/fileFilterFocused" });
     const onFileFilterBlur = () => dispatch({ type: "ui/fileFilterBlurred" });
+    const onCollapseToggle = (event: React.MouseEvent<any>) => {
+      dispatch({ type: "ui/collapseFileNavigatorToggle" });
+      event.stopPropagation();
+    };
+    const onHeaderClick = () =>
+      dispatch({ type: "ui/collapseFileNavigatorToggle", payload: true });
 
     const [preselectedResource, setPreselectedResource] =
       useState<Resource>(null);
@@ -102,6 +108,12 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
         class={cx({
           collapsed: !showFileNavigator,
         })}
+        collapseButton={{
+          onClick: onCollapseToggle,
+        }}
+        headerContainer={{
+          onClick: onHeaderClick,
+        }}
         header={
           <>
             Resources

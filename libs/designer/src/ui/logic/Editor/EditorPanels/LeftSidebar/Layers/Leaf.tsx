@@ -49,6 +49,7 @@ export const Leaf = (props: LeafProps) => {
   } = useLeaf(props);
 
   const shadow = instanceOf != null;
+
   return (
     <styles.TreeNavigationItem style={style}>
       <ContextMenu menu={contextMenu} onOpen={onClick}>

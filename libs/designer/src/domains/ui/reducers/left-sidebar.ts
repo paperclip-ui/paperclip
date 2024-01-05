@@ -65,11 +65,18 @@ export const leftSidebarReducer = (
     case "ui/fileFilterFocused": {
       return produce(state, (draft) => {
         draft.fileFilterFocused = true;
+        draft.showFileNavigator = true;
       });
     }
     case "ui/fileFilterBlurred": {
       return produce(state, (draft) => {
         draft.fileFilterFocused = false;
+      });
+    }
+    case "ui/collapseFileNavigatorToggle": {
+      return produce(state, (draft) => {
+        draft.showFileNavigator =
+          event.payload != null ? event.payload : !draft.showFileNavigator;
       });
     }
     case "designer-engine/fileCreated": {

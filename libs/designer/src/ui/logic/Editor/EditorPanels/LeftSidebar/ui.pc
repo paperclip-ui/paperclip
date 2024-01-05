@@ -433,6 +433,9 @@ public component Layers {
  * @frame(x: 808, y: 1052, width: 90, height: 56)
 */
 public component LayerIcon {
+    variant isInsert trigger {
+        ".insert"
+    }
     variant isCompositeToken trigger {
         ".composite-token"
     }
@@ -501,7 +504,10 @@ public component LayerIcon {
                 transform: translate(-50%, -50%) rotate(45deg)
             }
             style variant isSlot {
-                -webkit-mask-image: url("../../../../slot3.svg")
+                -webkit-mask-image: url("ui/logic/Editor/EditorPanels/LeftSidebar/noun-selection-square-120464.svg")
+                --icon-size: 0.8em
+                width: 0.8em
+                height: 0.8em
             }
             style variant isElement {
                 width: 0.75em

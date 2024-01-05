@@ -955,11 +955,14 @@ const createEventHandler = (actions: Actions) => {
       handleConvertToSlot(value, details);
     } else if (details.kind === PromptKind.RenameFile) {
       const dir = dirname(details.filePath);
-      const ext = details.filePath.split("/").pop().split(".").pop();
+      const extParts = details.filePath.split("/").pop().split(".");
+
+      const ext = extParts.length > 1 ? extParts[extParts.length - 1] : null;
 
       // could be dir, so we leave out .
-      const fileName =
-        ext.length === 1 ? value : value.replace("." + ext, "") + "." + ext[1];
+      const fileName = !ext
+        ? value
+        : value.replace("." + ext, "") + "." + ext[1];
 
       actions.moveFile(details.filePath, dir + "/" + fileName);
     }

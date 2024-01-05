@@ -507,8 +507,6 @@ const createEventHandler = (actions: Actions) => {
 
     let targetExpressionId = getTargetExprId(state);
 
-    console.log(event.payload);
-
     if (type === ShortcutCommand.Copy || type === ShortcutCommand.Cut) {
       const kind = {
         [ast.ExprKind.TextNode]: "textNode",

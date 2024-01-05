@@ -33,7 +33,6 @@ message Mutation {
     // General
     DeleteExpression delete_expression = 11;
     SetId set_id = 16;
-    PasteExpression paste_expression = 21;
     MoveExpressionToFile move_expression_to_file = 26;
     AddImport add_import = 27;
 
@@ -186,15 +185,6 @@ message Bounds {
   float y = 2;
   float width = 3;
   float height = 4;
-}
-
-message PasteExpression {
-  string target_expression_id = 1;
-  oneof item {
-    ast.pc.TextNode text_node = 2;
-    ast.pc.Element element = 3;
-    ast.pc.Component component = 4;
-  }
 }
 
 message InsertChild {

@@ -8,11 +8,11 @@ use crate::pc::{
 };
 
 pub trait Serializable {
-    fn serialize(&self) -> String;
+    fn serialize(&self, is_root: bool) -> String;
 }
 
 impl Serializable for ExpressionWrapper {
-    fn serialize(&self) -> String {
+    fn serialize(&self, is_root: bool) -> String {
         let mut context = Context::new(0);
 
         match self {
@@ -21,8 +21,8 @@ impl Serializable for ExpressionWrapper {
             ExpressionWrapper::Boolean(expr) => serialize_boolean(expr, &mut context),
             ExpressionWrapper::Comment(expr) => serialize_doc_comment2(expr, &mut context),
             ExpressionWrapper::Component(expr) => serialize_component(expr, &mut context),
-            ExpressionWrapper::Element(expr) => serialize_element(expr, false, &mut context),
-            ExpressionWrapper::TextNode(expr) => serialize_text(expr, false, &mut context),
+            ExpressionWrapper::Element(expr) => serialize_element(expr, is_root, &mut context),
+            ExpressionWrapper::TextNode(expr) => serialize_text(expr, is_root, &mut context),
             ExpressionWrapper::Node(expr) => serialize_node(expr, &mut context),
             ExpressionWrapper::Slot(expr) => serialize_slot(expr, &mut context),
             ExpressionWrapper::Insert(expr) => serialize_insert(expr, &mut context),

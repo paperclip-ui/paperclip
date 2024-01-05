@@ -21,7 +21,8 @@ use paperclip_proto::service::designer::{
     ModulesEvaluated, MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest,
     ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, Resource, ResourceFiles,
     ResourceKind, SaveFileRequest, ScreenshotCaptured, SearchResourcesRequest,
-    SearchResourcesResponse, UpdateFileRequest,
+    SearchResourcesResponse, StringifyExpressionRequest, StringifyExpressionResult,
+    UpdateFileRequest,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
@@ -83,6 +84,15 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 path
             )))
         }
+    }
+
+    async fn stringify_expression(
+        &self,
+        request: Request<StringifyExpressionRequest>,
+    ) -> Result<Response<StringifyExpressionResult>, Status> {
+        let content = "".to_string();
+
+        Ok(Response::new(StringifyExpressionResult { content }))
     }
 
     async fn search_resources(

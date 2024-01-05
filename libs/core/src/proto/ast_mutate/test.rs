@@ -11,11 +11,11 @@ use paperclip_proto::ast::pc::{
     component_body_item, node, Component, Element, Render, Slot, TextNode,
 };
 use paperclip_proto::ast_mutate::{
-    mutation, paste_expression, update_variant_trigger, AppendChild, Bounds, ConvertToComponent,
-    ConvertToSlot, DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PasteExpression,
-    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
-    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
-    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
+    mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
+    DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PrependChild,
+    SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration, SetStyleDeclarationValue,
+    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
+    UpdateDependencyPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -3030,7 +3030,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_an_element_into_another_element,
   [
     (
@@ -3064,7 +3064,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_an_element_into_the_document,
   [
     (
@@ -3097,7 +3097,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_a_text_node_into_the_document,
   [
     (
@@ -3193,7 +3193,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_a_node_to_a_slot,
   [
     (
@@ -3236,7 +3236,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_a_node_to_an_insert,
   [
     (
@@ -3930,7 +3930,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   creates_instance_of_pasted_component,
   [
     (
@@ -3962,7 +3962,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   imports_pasted_instance_from_other_doc,
   [
     (
@@ -4536,7 +4536,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   when_pasting_component_slots_are_created_too,
   [
     (

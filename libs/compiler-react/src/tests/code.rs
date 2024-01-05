@@ -4,6 +4,7 @@ use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_core::proto::graph::{load::LoadableGraph, test_utils};
 use paperclip_parser::core::parser_context::Options;
+use paperclip_proto::ast::graph_container::GraphContainer;
 use paperclip_proto::ast::graph_ext::Graph;
 use std::collections::HashMap;
 
@@ -35,10 +36,11 @@ macro_rules! add_case {
             }
 
             let dep = graph.dependencies.get("/entry.pc").unwrap();
+            let container = GraphContainer::new(&graph);
 
             let output = compile_code(
                 &dep,
-                &graph,
+                &container,
                 CompileOptions {
                     use_exact_imports: false,
                 },

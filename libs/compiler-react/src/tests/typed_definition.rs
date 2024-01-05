@@ -4,6 +4,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use futures::executor::block_on;
 use paperclip_core::proto::graph::{load::LoadableGraph, test_utils};
 use paperclip_parser::core::parser_context::Options;
+use paperclip_proto::ast::graph_container::GraphContainer;
 use paperclip_proto::ast::graph_ext::Graph;
 use std::collections::HashMap;
 
@@ -33,7 +34,8 @@ macro_rules! add_case {
                 .dependencies
                 .get("/entry.pc")
                 .expect("Cannot get dependency");
-            let output = compile_typed_definition(&dep, &graph).expect("Cannot compile");
+            let container = GraphContainer::new(&graph);
+            let output = compile_typed_definition(&dep, &container).expect("Cannot compile");
 
             println!("{}", output);
 

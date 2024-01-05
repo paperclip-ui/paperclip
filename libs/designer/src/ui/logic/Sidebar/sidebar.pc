@@ -137,6 +137,7 @@ public component SidebarPanelHeader {
         style extends theme.fontHeader {
             padding: var(theme.space05)
             width: 100%
+            flex-shrink: 0
         }
         div {
             style {
@@ -165,7 +166,6 @@ public component SidebarPanelContent {
         }
         slot children
     }
-    
 }
 
 public component SidebarHeader {

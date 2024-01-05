@@ -79,7 +79,7 @@ public component FilteredFile {
         ".preselected"
     }
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFile")
-    render div container(class: class) {
+    render div container(class: class, style: style) {
         style variant isStyleMixin {
             color: var(theme.atomColor)
         }
@@ -791,4 +791,3 @@ public component LayerNavigationItemHeader {
         }
     }
 }
-

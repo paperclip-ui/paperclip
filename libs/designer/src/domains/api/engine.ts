@@ -5,6 +5,8 @@ import {
   ModulesEvaluated,
   FileChanged,
   FileChangedKind,
+  Resource,
+  ResourceKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, DocumentOpened } from "./events";
@@ -951,8 +953,8 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleDroppedResource = (
-    { payload: { kind, item, point } }: ToolsLayerDrop,
+  const handleDroppedResource = async (
+    { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
     const bounds = {
@@ -960,26 +962,29 @@ const createEventHandler = (actions: Actions) => {
       ...getScaledPoint(point, state.canvas.transform),
     };
 
-    const expr = ast.getExprInfoById(item.id, state.graph);
+    if (item.kind === ResourceKind.File2) {
+      await insertAsset(item.path, point, state);
+    } else {
+      const expr = ast.getExprInfoById(item.id, state.graph);
 
-    let changes = [];
+      let changes = [];
 
-    if (expr.kind === ast.ExprKind.Component) {
-      changes = [
-        {
-          insertFrame: {
-            documentId: state.currentDocument.paperclip.html.sourceId,
-            bounds: roundBox(bounds),
-            nodeSource: `imp.${expr.expr.name}`,
-            imports: {
-              imp: ast.getOwnerDependencyPath(item.id, state.graph),
+      if (expr.kind === ast.ExprKind.Component) {
+        changes = [
+          {
+            insertFrame: {
+              documentId: state.currentDocument.paperclip.html.sourceId,
+              bounds: roundBox(bounds),
+              nodeSource: `imp.${expr.expr.name}`,
+              imports: {
+                imp: ast.getOwnerDependencyPath(item.id, state.graph),
+              },
             },
           },
-        },
-      ];
+        ];
+      }
+      await actions.applyChanges(changes);
     }
-
-    actions.applyChanges(changes);
   };
 
   const saveFiles = async (files: File[], state: DesignerState) => {
@@ -1032,12 +1037,11 @@ const createEventHandler = (actions: Actions) => {
     );
   };
 
-  const handleDroppedFileNavigatorItem = async (
-    { payload: { item, point } }: ToolsLayerDrop,
+  const insertAsset = async (
+    path: string,
+    point: any,
     state: DesignerState
   ) => {
-    const document = getCurrentDependency(state).document;
-
     const bounds = {
       ...DEFAULT_FRAME_BOX,
       ...getScaledPoint(point, state.canvas.transform),
@@ -1054,7 +1058,7 @@ const createEventHandler = (actions: Actions) => {
           }, y: ${bounds.y})
              */
              div {
-                 img(src: "${item.path.replace(
+                 img(src: "${path.replace(
                    state.projectInfo.srcDirectory + "/",
                    ""
                  )}")
@@ -1063,6 +1067,13 @@ const createEventHandler = (actions: Actions) => {
         },
       },
     ]);
+  };
+
+  const handleDroppedFileNavigatorItem = async (
+    { payload: { item, point } }: ToolsLayerDrop,
+    state: DesignerState
+  ) => {
+    await insertAsset(item.path, point, state);
   };
 
   const handleDropItem = (event: ToolsLayerDrop, state: DesignerState) => {

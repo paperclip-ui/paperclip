@@ -220,6 +220,10 @@ export const FilteredFile =
       history.redirect(getResourceRedirect(resource));
     };
     const ref = useRef<HTMLDivElement>();
+    const setRef = (current: HTMLDivElement) => {
+      ref.current = current;
+      dragRef(current);
+    };
 
     useEffect(() => {
       if (preselected) {
@@ -229,13 +233,26 @@ export const FilteredFile =
       }
     }, [preselected]);
 
+    const [{ opacity }, dragRef] = useDrag(
+      () => ({
+        type: DNDKind.Resource,
+        item: resource,
+        collect: (monitor) => ({
+          opacity: monitor.isDragging() ? 0.5 : 1,
+          cursor: monitor.isDragging() ? "copy" : "initial",
+        }),
+      }),
+      []
+    );
+
     return (
       <Base
-        ref={ref}
+        ref={setRef}
         container={{
           onClick,
           onMouseOver,
         }}
+        style={{ opacity }}
         class={cx({
           preselected,
           component: resource.kind === ResourceKind.Component,

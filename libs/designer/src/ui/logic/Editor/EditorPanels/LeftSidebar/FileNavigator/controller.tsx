@@ -63,7 +63,7 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
       useState<Resource>(null);
     let resources = useSelector(getSearchedFiles);
     resources = useMemo(() => {
-      return resources.filter(isOpenableFile).slice(0, 20);
+      return resources.filter(isOpenableFile).slice(0, 50);
     }, [resources]);
 
     const history = useHistory();

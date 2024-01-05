@@ -1043,37 +1043,53 @@ const createEventHandler = (actions: Actions) => {
     point: any,
     state: DesignerState
   ) => {
-    let frameMetadata: string = "";
     const document = getCurrentDependency(state).document;
-
-    if (point) {
-      const bounds = {
-        ...DEFAULT_FRAME_BOX,
-        ...getScaledPoint(point, state.canvas.transform),
-      };
-      frameMetadata = `/**
-       * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${bounds.x}, y: ${bounds.y})
-       */`;
-    }
+    const hoveringNode = getNodeInfoAtCurrentPoint(state);
 
     const modulePath = path.replace(state.projectInfo.srcDirectory + "/", "");
 
-    actions.applyChanges([
-      {
-        appendChild: {
-          parentId: document.id,
-          childSource: `
-            ${frameMetadata}
-             div {
-                style {
-                  background: url("${modulePath}")
-                  background-repeat: no-repeat
-                }
-              }
-          `,
+    if (hoveringNode && /svg|png|jpg$/.test(path)) {
+      actions.applyChanges([
+        {
+          setStyleDeclarations: {
+            variantIds: getSelectedVariantIds(state),
+            expressionId: hoveringNode.nodeId,
+            declarations: [
+              { name: "background", value: `url("${modulePath}")` },
+            ],
+          },
         },
-      },
-    ]);
+      ]);
+    } else {
+      let frameMetadata: string = "";
+
+      if (point && !hoveringNode) {
+        const bounds = {
+          ...DEFAULT_FRAME_BOX,
+          ...getScaledPoint(point, state.canvas.transform),
+        };
+        frameMetadata = `/**
+         * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${bounds.x}, y: ${bounds.y})
+         */`;
+      }
+
+      actions.applyChanges([
+        {
+          appendChild: {
+            parentId: document.id,
+            childSource: `
+              ${frameMetadata}
+               div {
+                  style {
+                    background: url("${modulePath}")
+                    background-repeat: no-repeat
+                  }
+                }
+            `,
+          },
+        },
+      ]);
+    }
   };
 
   const handleDroppedFileNavigatorItem = async (

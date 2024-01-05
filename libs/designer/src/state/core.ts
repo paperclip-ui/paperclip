@@ -104,7 +104,7 @@ export type DesignerState = {
   focusOnFileSearch?: boolean;
   resourceFilePaths: string[];
   searchedResources?: Resource[];
-  selectedFilePath?: string;
+  selectedFilePath: string;
   expandedDirs?: string[];
   searchedFilePathRoot?: string;
   showLeftSidebar: boolean;
@@ -145,6 +145,7 @@ export const DEFAULT_STATE: DesignerState = {
   graph: {
     dependencies: {},
   },
+  selectedFilePath: INITIAL_HISTORY_STATE.history.query.file,
   showLeftSidebar: true,
   showRightsidebar: true,
   expandedLayerVirtIds: [],

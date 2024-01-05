@@ -140,9 +140,27 @@ const createActions = (
     });
   };
 
+  const expandFilePathDirectories = async (filePath: string) => {
+    const dirs = filePath.split("/");
+
+    // pop off file name
+    dirs.pop();
+    while (dirs.length) {
+      try {
+        await readDirectory(dirs.join("/"));
+
+        // outside of project scope
+      } catch (e) {
+        break;
+      }
+      dirs.pop();
+    }
+  };
+
   return {
     openFile,
     readDirectory,
+    expandFilePathDirectories,
     async deleteFile(filePath: string) {
       // no need to do anything else since file watcher trigger changes
       await client.DeleteFile({ path: filePath });
@@ -924,30 +942,7 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleDocumentOpened = (
-    _event: DocumentOpened,
-    state: DesignerState
-  ) => {
-    // read ALL dirs so that they expand in file navigator
-    readFileAncestorDirectories(getCurrentFilePath(state));
-  };
-
-  const readFileAncestorDirectories = async (filePath: string) => {
-    const dirs = filePath.split("/");
-
-    // pop off file name
-    dirs.pop();
-    while (dirs.length) {
-      try {
-        await actions.readDirectory(dirs.join("/"));
-
-        // outside of project scope
-      } catch (e) {
-        break;
-      }
-      dirs.pop();
-    }
-  };
+  const readFileAncestorDirectories = async (filePath: string) => {};
 
   const handleKeyDown = (
     event: KeyDown,
@@ -1150,6 +1145,14 @@ const createEventHandler = (actions: Actions) => {
     ) {
       actions.openFile(filePath);
     }
+    maybeExpandAllDirectories(state);
+  };
+
+  const maybeExpandAllDirectories = (state: DesignerState) => {
+    const filePath = getCurrentFilePath(state);
+    if (filePath) {
+      actions.expandFilePathDirectories(filePath);
+    }
   };
 
   const handleAddFile = ({ payload: { name } }: DashboardAddFileConfirmed) => {
@@ -1237,9 +1240,6 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/confirmClosed": {
         return handleConfirmClose(event);
-      }
-      case "designer-engine/documentOpened": {
-        return handleDocumentOpened(event, newState);
       }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
@@ -1339,6 +1339,7 @@ const bootstrap = (
     syncGraph,
     syncEvents,
     syncResourceFiles,
+    expandFilePathDirectories,
     readDirectory,
     loadProjectInfo,
   }: Actions,
@@ -1352,7 +1353,10 @@ const bootstrap = (
   const filePath = getCurrentFilePath(initialState);
 
   if (filePath) {
-    openFile(filePath);
+    if (isPaperclipFile(filePath)) {
+      openFile(filePath);
+    }
+    expandFilePathDirectories(filePath);
   }
 
   syncGraph();

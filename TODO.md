@@ -2,7 +2,6 @@
 
 - Rename option for layer
   - focus on ID param
-- copy layer styles
 - should be able to drop asset to leaf
 - preview for resources
 - Polish

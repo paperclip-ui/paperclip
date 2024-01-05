@@ -128,48 +128,59 @@ const useLeaf = ({
 
   const [{ isDraggingOver }, dropRef] = useDrop(
     {
-      accept: DNDKind.Node,
+      accept: [DNDKind.Node, DNDKind.Resource],
       hover: ({ id: draggedExprId }, monitor) => {
-        const offset = monitor.getClientOffset();
-        const rect = headerRef.current?.getBoundingClientRect();
+        if (monitor.getItemType() === DNDKind.Node) {
+          const offset = monitor.getClientOffset();
+          const rect = headerRef.current?.getBoundingClientRect();
 
-        if (offset && rect && monitor.isOver() && monitor.canDrop()) {
-          let isTop = offset.y < rect.top + BORDER_MARGIN;
-          let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
+          if (offset && rect && monitor.isOver() && monitor.canDrop()) {
+            let isTop = offset.y < rect.top + BORDER_MARGIN;
+            let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
 
-          const expr = ast.getExprInfoById(targetId, graph);
-          const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
+            const expr = ast.getExprInfoById(targetId, graph);
+            const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
 
-          // can only insert before or after text nodes
-          if (
-            [ast.ExprKind.TextNode].includes(expr.kind) ||
-            [
-              ast.ExprKind.Atom,
-              ast.ExprKind.Trigger,
-              ast.ExprKind.Style,
-              ast.ExprKind.Component,
-            ].includes(draggedExpr.kind)
-          ) {
-            isTop = offset.y < rect.top + rect.height / 2;
-            isBottom = offset.y > rect.top + rect.height / 2;
+            // can only insert before or after text nodes
+            if (
+              [ast.ExprKind.TextNode].includes(expr.kind) ||
+              [
+                ast.ExprKind.Atom,
+                ast.ExprKind.Trigger,
+                ast.ExprKind.Style,
+                ast.ExprKind.Component,
+              ].includes(draggedExpr.kind)
+            ) {
+              isTop = offset.y < rect.top + rect.height / 2;
+              isBottom = offset.y > rect.top + rect.height / 2;
+            }
+
+            setDropHotSpot(isTop ? "before" : isBottom ? "after" : "inside");
+          } else {
+            setDropHotSpot(null);
           }
-
-          setDropHotSpot(isTop ? "before" : isBottom ? "after" : "inside");
         } else {
-          setDropHotSpot(null);
+          setDropHotSpot("inside");
         }
       },
-      drop(item: any) {
+      drop(item: any, monitor) {
         dispatch({
           type: "ui/exprNavigatorDroppedNode",
           payload: {
             position: dropHotSpot,
             targetId,
-            droppedExprId: item.id,
+            item: {
+              kind: monitor.getItemType() as any,
+              item,
+            },
           },
         });
       },
-      canDrop({ id: draggedExprId }, _monitor) {
+      canDrop({ id: draggedExprId }, monitor) {
+        if (monitor.getItemType() === DNDKind.Resource) {
+          return true;
+        }
+
         if (draggedExprId === targetId) {
           return false;
         }

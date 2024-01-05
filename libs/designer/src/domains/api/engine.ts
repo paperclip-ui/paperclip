@@ -436,23 +436,31 @@ const createEventHandler = (actions: Actions) => {
     event: ExprNavigatorDroppedNode,
     state: DesignerState
   ) => {
-    const { targetId, droppedExprId, position } = event.payload;
+    const { targetId, item, position } = event.payload;
 
     const resolvedTarget = await resolveTargetExprId(targetId, state);
-
-    actions.applyChanges([
-      {
-        moveNode: {
-          targetId: resolvedTarget.id,
-          nodeId: droppedExprId,
-          position: {
-            before: NodePosition.BEFORE,
-            after: NodePosition.AFTER,
-            inside: NodePosition.INSIDE,
-          }[position],
+    if (item.kind === DNDKind.Node) {
+      actions.applyChanges([
+        {
+          moveNode: {
+            targetId: resolvedTarget.id,
+            nodeId: item.item.id,
+            position: {
+              before: NodePosition.BEFORE,
+              after: NodePosition.AFTER,
+              inside: NodePosition.INSIDE,
+            }[position],
+          },
         },
-      },
-    ]);
+      ]);
+    } else if (item.kind === DNDKind.Resource) {
+      insertAsset(
+        item.item.parentPath + "/" + item.item.name,
+        resolvedTarget.id,
+        null,
+        state
+      );
+    }
   };
 
   const handleStyleDeclarationChanged = (
@@ -978,15 +986,18 @@ const createEventHandler = (actions: Actions) => {
     { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
-    console.log(item);
-
     const bounds = {
       ...DEFAULT_FRAME_BOX,
       ...getScaledPoint(point, state.canvas.transform),
     };
 
     if (item.kind === ResourceKind.File2) {
-      await insertAsset(item.parentPath + "/" + item.name, point, state);
+      await insertAsset(
+        item.parentPath + "/" + item.name,
+        getNodeInfoAtCurrentPoint(state)?.nodeId,
+        point,
+        state
+      );
     } else {
       const expr = ast.getExprInfoById(item.id, state.graph);
 
@@ -1048,26 +1059,31 @@ const createEventHandler = (actions: Actions) => {
     // drop files onto the canvas
     //
     for (const filePath of newFiles) {
-      await insertAsset(filePath, point, state);
+      await insertAsset(
+        filePath,
+        getNodeInfoAtCurrentPoint(state)?.nodeId,
+        point,
+        state
+      );
     }
   };
 
   const insertAsset = async (
     path: string,
+    hoverindNodeId: string,
     point: any,
     state: DesignerState
   ) => {
     const document = getCurrentDependency(state).document;
-    const hoveringNode = getNodeInfoAtCurrentPoint(state);
 
     const modulePath = path.replace(state.projectInfo.srcDirectory + "/", "");
 
-    if (hoveringNode && /svg|png|jpg$/.test(path)) {
+    if (hoverindNodeId && /svg|png|jpg$/.test(path)) {
       actions.applyChanges([
         {
           setStyleDeclarations: {
             variantIds: getSelectedVariantIds(state),
-            expressionId: hoveringNode.nodeId,
+            expressionId: hoverindNodeId,
             declarations: [
               { name: "background", value: `url("${modulePath}")` },
             ],
@@ -1077,7 +1093,7 @@ const createEventHandler = (actions: Actions) => {
     } else {
       let frameMetadata: string = "";
 
-      if (point && !hoveringNode) {
+      if (point && !hoverindNodeId) {
         const bounds = {
           ...DEFAULT_FRAME_BOX,
           ...getScaledPoint(point, state.canvas.transform),
@@ -1110,7 +1126,12 @@ const createEventHandler = (actions: Actions) => {
     { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
-    await insertAsset(item.path, point, state);
+    await insertAsset(
+      item.path,
+      getNodeInfoAtCurrentPoint(state)?.nodeId,
+      point,
+      state
+    );
   };
 
   const handleDropItem = (event: ToolsLayerDrop, state: DesignerState) => {

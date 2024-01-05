@@ -13,6 +13,7 @@ import {
 import { ConfirmDetails } from "../../state/confirm";
 
 import { NativeTypes } from "react-dnd-html5-backend";
+import { Resource } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -161,12 +162,19 @@ export type FrameTitleClicked = BaseEvent<
     frameId: string;
   }
 >;
+
+type ExprNavigatorDroppedItem =
+  | {
+      kind: DNDKind.Resource;
+      item: Resource;
+    }
+  | { kind: DNDKind.Node; item: { id: string } };
 export type ExprNavigatorDroppedNode = BaseEvent<
   "ui/exprNavigatorDroppedNode",
   {
     position: "before" | "after" | "inside";
     targetId: string;
-    droppedExprId: string;
+    item: ExprNavigatorDroppedItem;
   }
 >;
 export type FileNavigatorDroppedFile = BaseEvent<

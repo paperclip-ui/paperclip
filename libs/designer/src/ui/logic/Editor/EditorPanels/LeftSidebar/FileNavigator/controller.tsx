@@ -290,7 +290,7 @@ export const FilteredFile =
           "composite-token": resource.kind === ResourceKind.StyleMixin,
         })}
         basename={resource.name}
-        dirname={resource.parentPath.replace(rootDir, "")}
+        dirname={resource.parentPath.replace(rootDir + "/", "")}
         dirTitle={basename}
       />
     );

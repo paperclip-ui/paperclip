@@ -1000,7 +1000,8 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState
   ) => {
     if (!dir) {
-      return console.error(`Can't find directory to drop file to!`);
+      console.error(`Can't find directory to drop file to!`);
+      return [];
     }
 
     await Promise.all(
@@ -1010,43 +1011,29 @@ const createEventHandler = (actions: Actions) => {
       })
     );
 
-    // return files.map((file) => {
-    //   return (currentDir + "/" + file.name).replace(
-    //     state.projectDirectory + "/",
-    //     ""
-    //   );
-    // });
+    return files.map((file) => {
+      return (dir + "/" + file.name).replace(state.projectDirectory + "/", "");
+    });
   };
 
   const handleDroppedFile = async (
-    { payload: { item } }: ToolsLayerDrop,
+    { payload: { item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
     const files = item.files as File[];
-    const document = getCurrentDependency(state).document;
 
     const currentFilePath = getCurrentFilePath(state);
     const currentDir = currentFilePath
       ? dirname(currentFilePath)
       : state.projectDirectory.path;
 
-    await saveFiles(files, currentDir, state);
+    const newFiles = await saveFiles(files, currentDir, state);
 
     // drop files onto the canvas
-
-    actions.applyChanges(
-      files.map(
-        (file) =>
-          ({
-            appendChild: {
-              parentId: document.id,
-              childSource: `div {
-                  img(src: "./${file.name}")
-                }`,
-            },
-          } as Mutation)
-      )
-    );
+    //
+    for (const filePath of newFiles) {
+      await insertAsset(filePath, point, state);
+    }
   };
 
   const insertAsset = async (
@@ -1054,21 +1041,25 @@ const createEventHandler = (actions: Actions) => {
     point: any,
     state: DesignerState
   ) => {
-    const bounds = {
-      ...DEFAULT_FRAME_BOX,
-      ...getScaledPoint(point, state.canvas.transform),
-    };
+    let frameMetadata: string = "";
+    const document = getCurrentDependency(state).document;
+
+    if (point) {
+      const bounds = {
+        ...DEFAULT_FRAME_BOX,
+        ...getScaledPoint(point, state.canvas.transform),
+      };
+      frameMetadata = `/**
+       * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${bounds.x}, y: ${bounds.y})
+       */`;
+    }
 
     actions.applyChanges([
       {
         appendChild: {
           parentId: document.id,
           childSource: `
-            /**
-             * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${
-            bounds.x
-          }, y: ${bounds.y})
-             */
+            ${frameMetadata}
              div {
                  img(src: "${path.replace(
                    state.projectInfo.srcDirectory + "/",

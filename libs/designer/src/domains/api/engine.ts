@@ -769,7 +769,7 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState
   ) => {
     if (item.files) {
-      await saveFiles(item.files, item.path, state);
+      await saveFiles(item.files, directory, state);
     } else {
       actions.moveFile(item.path, directory + "/" + item.path.split("/").pop());
     }

@@ -4,7 +4,11 @@ use paperclip_parser::{
     core::{errors::ParserError, parser_context::Options},
     pc::parser::parse,
 };
-use paperclip_proto::ast::{graph::Dependency, pc::document_body_item, wrapper::ExpressionWrapper};
+use paperclip_proto::ast::{
+    graph::Dependency,
+    pc::document_body_item,
+    wrapper::{Expression, ExpressionWrapper},
+};
 
 use super::update_expr_imports::UpdateExprImports;
 
@@ -18,7 +22,16 @@ pub fn paste_expression(
     path: Option<String>,
     to_dep: &Dependency,
 ) -> Result<PasteResult, ParserError> {
-    let doc = parse(source, &to_dep.hash, &Options::all_experiments())?;
+    let doc = parse(
+        source,
+        to_dep
+            .document
+            .as_ref()
+            .expect("document must exist")
+            .checksum()
+            .as_str(),
+        &Options::all_experiments(),
+    )?;
 
     let mut imports: HashMap<String, String> = HashMap::new();
 

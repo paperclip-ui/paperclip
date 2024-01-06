@@ -102,6 +102,15 @@ fn parse_document_child(
             parse_trigger(context, is_public)?,
         )
         .get_outer()),
+        Some(Token::Word(b"if")) => {
+            Ok(ast::document_body_item::Inner::Condition(parse_condition(context)?).get_outer())
+        }
+        Some(Token::Word(b"slot")) => {
+            Ok(ast::document_body_item::Inner::Slot(parse_slot(context)?).get_outer())
+        }
+        Some(Token::Word(b"insert")) => {
+            Ok(ast::document_body_item::Inner::Insert(parse_insert(context)?).get_outer())
+        }
         Some(Token::Word(b"text")) => {
             Ok(ast::document_body_item::Inner::Text(parse_text(comment, context)?).get_outer())
         }

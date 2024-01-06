@@ -33,7 +33,7 @@ macro_rules! case {
             }
             println!("{:#?}", graph.dependencies);
 
-            let output = copy_expression($expr_id, &graph, &config_context);
+            let output = copy_expression($expr_id, &graph);
             assert_eq!(strip_extra_ws(&output), strip_extra_ws($expected_output));
         }
     };
@@ -108,7 +108,35 @@ case! {
 
     "80f4925f-12",
     r#"
-    import "entry.pc" as mod
+    import "/entry.pc" as mod
+    /**
+     * @frame(x: 10, y: 10)
+     */
+    mod.A
+    "#
+}
+
+case! {
+    imports_are_included,
+    [
+        (
+            "/entry.pc",
+            r#"
+                /**
+                 * @frame(x: 10, y: 10)
+                 */
+                component A {
+                    render div {
+
+                    }
+                }
+            "#
+        )
+    ],
+
+    "80f4925f-12",
+    r#"
+    import "/entry.pc" as mod
     /**
      * @frame(x: 10, y: 10)
      */

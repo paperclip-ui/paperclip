@@ -23,7 +23,7 @@ mod update_variant;
 mod wrap_in_element;
 #[macro_use]
 
-mod utils;
+pub mod utils;
 use std::{collections::HashMap, rc::Rc};
 
 use crate::config::ConfigContext;

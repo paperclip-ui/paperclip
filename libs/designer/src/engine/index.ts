@@ -1,4 +1,8 @@
-import { combineEngineCreators, EngineCreator } from "@paperclip-ui/common";
+import {
+  combineEngineCreators,
+  Dispatch,
+  EngineCreator,
+} from "@paperclip-ui/common";
 import { DesignerState } from "../state";
 import {
   createDesignerEngine,
@@ -11,22 +15,26 @@ import { createShortcutsEngine } from "../domains/shortcuts/engine";
 import { createUIEngine } from "../domains/ui/engine";
 import { createLogEngine } from "../domains/log/engine";
 import { createClipboardEngine } from "../domains/clipboard/engine";
+import { DesignerEvent } from "../events";
+import { createClient, CreateClientOptions } from "../api";
 
 export type EngineOptions = {
   history: History;
-} & DesignerEngineOptions;
+} & CreateClientOptions;
 
-export const createEngine = (
-  options: EngineOptions,
-  ...otherEngineCreators: EngineCreator<any, any>[]
-) =>
-  combineEngineCreators<DesignerState, any>(
-    createDesignerEngine(options),
-    createShortcutsEngine(),
-    createClipboardEngine,
-    createHistoryEngine(options.history),
-    createKeyboardEngine,
-    createUIEngine(options.history),
-    createLogEngine,
-    ...otherEngineCreators
-  );
+export const createEngine =
+  (options: EngineOptions, ...otherEngineCreators: EngineCreator<any, any>[]) =>
+  (dispatch: Dispatch<DesignerEvent>, getState: () => DesignerState) => {
+    const apiClient = createClient(options, dispatch);
+
+    return combineEngineCreators<DesignerState, any>(
+      createDesignerEngine(apiClient),
+      createShortcutsEngine(apiClient),
+      createClipboardEngine,
+      createHistoryEngine(options.history),
+      createKeyboardEngine,
+      createUIEngine(options.history),
+      createLogEngine,
+      ...otherEngineCreators
+    )(dispatch, getState);
+  };

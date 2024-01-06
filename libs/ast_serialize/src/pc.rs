@@ -41,6 +41,11 @@ pub fn serialize_document(document: &ast::Document, context: &mut Context) {
             }
             ast::document_body_item::Inner::Trigger(expr) => serialize_trigger(&expr, context),
             ast::document_body_item::Inner::Text(text) => serialize_text(&text, true, context),
+            ast::document_body_item::Inner::Slot(text) => serialize_slot(&text, context),
+            ast::document_body_item::Inner::Insert(text) => serialize_insert(&text, context),
+            ast::document_body_item::Inner::Switch(text) => serialize_switch(&text, context),
+            ast::document_body_item::Inner::Repeat(text) => serialize_repeat(&text, context),
+            ast::document_body_item::Inner::Condition(text) => serialize_condition(&text, context),
         }
 
         // extra space for document body items

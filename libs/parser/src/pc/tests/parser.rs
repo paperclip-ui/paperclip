@@ -18,6 +18,7 @@ macro_rules! add_case {
                     "script".to_string(),
                     "switch".to_string(),
                     "repeat".to_string(),
+                    "condition".to_string(),
                     "styleOverride".to_string(),
                 ]),
             );
@@ -545,6 +546,30 @@ add_case! {
                     script(src: "something.tsx")
                 }
             }
+        }
+    "#
+}
+
+add_case! {
+    can_parse_condition,
+    r#"
+        if a {
+
+        }
+    "#
+}
+
+add_case! {
+    can_parse_slot,
+    r#"
+        slot a
+    "#
+}
+add_case! {
+    can_parse_insert,
+    r#"
+        insert a {
+
         }
     "#
 }

@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
+use crate::proto::ast::update_expr_imports::UpdateExprImports;
+
 use super::utils::{get_unique_document_body_item_name, resolve_import_ns};
-use std::cell::RefCell;
-use std::rc::Rc;
 
 use super::base::EditContext;
 use paperclip_common::get_or_short;
@@ -17,7 +17,7 @@ use paperclip_proto::{
     ast_mutate::{mutation, AddImport, MoveExpressionToFile},
 };
 
-use paperclip_proto::ast::visit::{MutableVisitable, MutableVisitor, VisitorResult};
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
     fn visit_document(
@@ -178,63 +178,6 @@ fn insert_document_expr(
     }
 
     imports
-}
-
-struct UpdateExprImports<'a> {
-    from_dep: &'a Dependency,
-    to_dep: &'a Dependency,
-
-    // ns: path
-    imports: Rc<RefCell<HashMap<String, String>>>,
-}
-
-impl<'a> UpdateExprImports<'a> {
-    fn apply(
-        expr: &mut ExpressionWrapper,
-        from_dep: &'a Dependency,
-        to_dep: &'a Dependency,
-    ) -> HashMap<String, String> {
-        let imports = Rc::new(RefCell::new(HashMap::new()));
-
-        let mut imp = UpdateExprImports {
-            from_dep,
-            to_dep,
-            imports: imports.clone(),
-        };
-        expr.accept(&mut imp);
-        let x = imports.borrow().clone();
-        x
-    }
-}
-
-impl<'a> MutableVisitor<()> for UpdateExprImports<'a> {
-    fn visit_reference(&self, expr: &mut Reference) -> VisitorResult<(), UpdateExprImports<'a>> {
-        // Dealing with local instance that needs to be updated
-        if expr.path.len() == 1 {
-            if let Ok(info) = resolve_import_ns(self.to_dep, &self.from_dep.path, None) {
-                expr.path.insert(0, info.namespace.to_string());
-                self.imports
-                    .borrow_mut()
-                    .insert(info.namespace.to_string(), self.from_dep.path.to_string());
-            }
-        } else {
-            let ns = expr.path.get(0).expect("Namespace must exist");
-            let name = expr.path.get(1).expect("Reference name must exist").clone();
-
-            let ns_path = self.from_dep.get_resolved_import_path(ns);
-            ns_path
-                .and_then(|ns_path| resolve_import_ns(self.to_dep, ns_path, None).ok())
-                .and_then(|info| {
-                    self.imports
-                        .borrow_mut()
-                        .insert(info.namespace.to_string(), info.path.to_string());
-                    expr.path = vec![info.namespace.to_string(), name.to_string()];
-                    Some(())
-                });
-        }
-
-        VisitorResult::Continue
-    }
 }
 
 fn get_expr_unique_name(expr: &ExpressionWrapper, to_dep: &Dependency) -> Option<String> {

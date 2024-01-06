@@ -1,6 +1,9 @@
 #### Immediate
 
+- look at Figma wish list items and implement
+
 - Split view!
+  - or maybe show / hide panels when focused on document window?
 - pasted instances should appear where instances as
 
 - Polish

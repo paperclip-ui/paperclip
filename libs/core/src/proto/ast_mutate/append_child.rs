@@ -1,9 +1,10 @@
+use crate::proto::ast::paste::paste_expression;
+
 use super::base::EditContext;
-use super::utils::{get_unique_document_body_item_name, parse_node};
-use paperclip_parser::core::parser_context::Options;
-use paperclip_parser::pc::parser::parse as parse_pc;
+use super::utils::get_unique_document_body_item_name;
+use paperclip_common::log::log_error;
 use paperclip_proto::ast;
-use paperclip_proto::ast::pc::Element;
+use paperclip_proto::ast::pc::{DocumentBodyItem, Node};
 use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInserted};
 
@@ -12,16 +13,25 @@ use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 macro_rules! append_child {
     ($context:expr, $expr: expr) => {{
         if $expr.get_id() == &$context.mutation.parent_id {
-            let child = parse_element_child(&$context.mutation.child_source, &$context.new_id());
+            let paste_result = paste_expression(
+                &$context.mutation.child_source,
+                None,
+                &$context.get_dependency(),
+            )
+            .expect("Unable to parse child source for AppendChild");
 
-            $expr.body.push(child.clone());
-
-            $context.add_change(
-                mutation_result::Inner::ExpressionInserted(ExpressionInserted {
-                    id: child.get_id().to_string(),
-                })
-                .get_outer(),
-            );
+            for child in paste_result.expressions {
+                if let Ok(child) = TryInto::<Node>::try_into(child.clone()) {
+                    let id = child.get_id().to_string();
+                    $expr.body.push(child);
+                    $context.add_change(
+                        mutation_result::Inner::ExpressionInserted(ExpressionInserted { id })
+                            .get_outer(),
+                    );
+                } else {
+                    println!("Cannot append child")
+                }
+            }
         }
         VisitorResult::Continue
     }};
@@ -33,29 +43,35 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
         expr: &mut ast::pc::Document,
     ) -> VisitorResult<(), EditContext<AppendChild>> {
         if expr.get_id() == &self.mutation.parent_id {
-            let child = parse_pc(
-                &self.mutation.child_source,
-                &self.new_id(),
-                &Options::new(vec![]),
-            )
-            .expect("Unable to parse child source for AppendChild");
-            let mut child = child.body.get(0).unwrap().clone();
-            child.set_name(&get_unique_document_body_item_name(
-                child.get_id(),
-                &child.get_name().unwrap_or("unnamed".to_string()),
-                self.get_dependency()
-                    .document
-                    .as_ref()
-                    .expect("Document must exist"),
-            ));
+            let paste_result =
+                paste_expression(&self.mutation.child_source, None, &self.get_dependency())
+                    .expect("Unable to parse child source for AppendChild");
 
-            expr.body.push(child.clone());
-            self.add_change(
-                mutation_result::Inner::ExpressionInserted(ExpressionInserted {
-                    id: child.get_id().to_string(),
-                })
-                .get_outer(),
-            );
+            for child in paste_result.expressions {
+                let mut child: DocumentBodyItem = if let Ok(child) = child.clone().try_into() {
+                    child
+                } else {
+                    log_error(format!("Unable to convert to document item").as_str());
+                    continue;
+                };
+
+                child.set_name(&get_unique_document_body_item_name(
+                    child.get_id(),
+                    &child.get_name().unwrap_or("unnamed".to_string()),
+                    self.get_dependency()
+                        .document
+                        .as_ref()
+                        .expect("Document must exist"),
+                ));
+
+                expr.body.push(child.clone());
+                self.add_change(
+                    mutation_result::Inner::ExpressionInserted(ExpressionInserted {
+                        id: child.get_id().to_string(),
+                    })
+                    .get_outer(),
+                );
+            }
         }
         VisitorResult::Continue
     }
@@ -71,14 +87,4 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
     ) -> VisitorResult<(), EditContext<AppendChild>> {
         append_child!(self, expr)
     }
-}
-
-fn parse_element_child(source: &str, id_seed: &str) -> ast::pc::Node {
-    let div: Element = parse_node(format!("div {{{}}}", source).as_str(), id_seed)
-        .try_into()
-        .expect("Cannot parse node");
-
-    let child = div.body.get(0).expect("Child must exist");
-
-    child.clone()
 }

@@ -6,7 +6,7 @@ import { ShortcutCommand } from "../shortcuts/state";
 export type ClipboardPayload =
   | {
       type: ShortcutCommand.Cut | ShortcutCommand.Copy;
-      data: ast.InnerExpressionInfo;
+      data: string;
     }
   | {
       type: ShortcutCommand.CopyStyles;

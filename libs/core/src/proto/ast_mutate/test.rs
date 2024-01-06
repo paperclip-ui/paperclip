@@ -7,9 +7,6 @@ use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext as graph;
-use paperclip_proto::ast::pc::{
-    component_body_item, node, Component, Element, Render, Slot, TextNode,
-};
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
     DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PrependChild,
@@ -159,6 +156,55 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_insert_an_instance,
+  [(
+    "/entry.pc", r#"
+      component A {
+        render div
+      }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-4".to_string(),
+    child_source: r#"
+        import "/entry.pc" as mod
+        mod.A
+    "#.to_string(),
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render div
+      }
+      A unnamed
+    "#
+  )]
+}
+
+// case! {
+//   can_append_a_style,
+//   [(
+//     "/entry.pc", r#"
+
+//     "#
+//   )],
+//   mutation::Inner::AppendChild(AppendChild {
+//     parent_id: "80f4925f-2".to_string(),
+//     child_source: r#"
+//         style test
+//     "#.to_string(),
+//   }).get_outer(),
+//   [(
+//     "/entry.pc", r#"
+//       component A {
+//         render div
+//       }
+//       A unnamed
+//     "#
+//   )]
+// }
 
 case! {
   can_change_the_frame_bounds_of_a_document_element,

@@ -12,9 +12,10 @@ import {
 } from "./state";
 import { isEventTargetTextInput } from "../../state/utils";
 import { ClipboardPayload } from "../clipboard/events";
+import { APIActions } from "../../api";
 
 export const createShortcutsEngine =
-  () =>
+  (api: APIActions) =>
   (
     dispatch: Dispatch<DesignerEvent>,
     getState: () => DesignerState
@@ -36,7 +37,10 @@ export const createShortcutsEngine =
 
     window.document.addEventListener("keydown", onKeyDown);
 
-    const handleCopy = (command: ShortcutCommand, state: DesignerState) => {
+    const handleCopy = async (
+      command: ShortcutCommand,
+      state: DesignerState
+    ) => {
       if (!getTargetExprId(state)) {
         return;
       }
@@ -50,11 +54,13 @@ export const createShortcutsEngine =
           data: ast.computeElementStyle(info.expr.id, state.graph),
           type: command,
         };
-      } else if (
-        command === ShortcutCommand.Cut ||
-        command === ShortcutCommand.Copy
-      ) {
-        payload = { data: expr, type: command };
+      } else if (command === ShortcutCommand.Copy) {
+        payload = {
+          data: await api.copyExpression(expr.expr.id),
+          type: command,
+        };
+      } else if (command === ShortcutCommand.Cut) {
+        payload = { data: expr.expr.id, type: command };
       }
 
       navigator.clipboard.writeText(JSON.stringify(payload));

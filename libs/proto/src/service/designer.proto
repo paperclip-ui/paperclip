@@ -14,7 +14,7 @@ service Designer {
   rpc SearchResources(SearchResourcesRequest) returns (SearchResourcesResponse);
   rpc OpenFileInNavigator(OpenFileInNavigatorRequest) returns (Empty);
   rpc OnEvent(Empty) returns (stream DesignServerEvent);
-  rpc StringifyExpression(StringifyExpressionRequest) returns (StringifyExpressionResult);
+  rpc CopyExpression(CopyExpresisonRequest) returns (CopyExpressionResult);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ReadDirectory(ReadDirectoryRequest) returns (ReadDirectoryResponse);
   rpc DeleteFile(DeleteFileRequest) returns (Empty);
@@ -31,11 +31,11 @@ service Designer {
   rpc Save(Empty) returns (Empty);
 }
 
-message StringifyExpressionRequest {
+message CopyExpresisonRequest {
     string expression_id = 1;
 }
 
-message StringifyExpressionResult {
+message CopyExpressionResult {
     string content = 1;
 }
 

@@ -426,6 +426,44 @@ case! {
 }
 
 case! {
+  can_append_an_insert_to_a_instance_in_render_node,
+  [(
+    "/entry.pc", r#"
+    component A {
+        render slot a {
+
+        }
+    }
+    component B {
+        render A
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-4".to_string(),
+    child_source: r#"
+      insert a {
+
+      }
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        component A {
+            render slot a
+        }
+        component B {
+            render A {
+                insert a {
+
+                }
+            }
+        }
+    "#
+  )]
+}
+
+case! {
   can_set_the_styles_on_an_element,
   [(
     "/entry.pc", r#"

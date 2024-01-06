@@ -113,6 +113,8 @@ const ComponentLeaf = memo(
         ).length > 0
       : renderNode.body.length > 0;
 
+    console.log(renderNode);
+
     return (
       <Leaf
         id={component.id}

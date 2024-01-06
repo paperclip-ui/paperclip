@@ -316,6 +316,8 @@ impl TryFrom<ExpressionWrapper> for pc::Node {
             ExpressionWrapper::Node(node) => Ok(node.clone()),
             ExpressionWrapper::Element(node) => Ok(node.into()),
             ExpressionWrapper::TextNode(node) => Ok(node.into()),
+            ExpressionWrapper::Insert(node) => Ok(node.into()),
+            ExpressionWrapper::Slot(node) => Ok(node.into()),
             ExpressionWrapper::DocumentBodyItem(node) => node.clone().try_into(),
             _ => Err(()),
         }

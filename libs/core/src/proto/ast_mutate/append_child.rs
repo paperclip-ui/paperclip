@@ -29,7 +29,8 @@ macro_rules! append_child {
                             .get_outer(),
                     );
                 } else {
-                    println!("Cannot append child")
+                    println!("{:#?}", child);
+                    log_error("Cannot append child");
                 }
             }
         }

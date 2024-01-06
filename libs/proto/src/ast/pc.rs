@@ -430,6 +430,12 @@ impl TryFrom<DocumentBodyItem> for Node {
             document_body_item::Inner::Text(text) => {
                 Ok(node::Inner::Text(text.clone()).get_outer())
             }
+            document_body_item::Inner::Insert(text) => {
+                Ok(node::Inner::Insert(text.clone()).get_outer())
+            }
+            document_body_item::Inner::Slot(text) => {
+                Ok(node::Inner::Slot(text.clone()).get_outer())
+            }
             _ => Err(()),
         }
     }
@@ -465,64 +471,42 @@ impl<'a> TryFrom<&'a mut ComponentBodyItem> for &'a mut Render {
     }
 }
 
-impl TryFrom<Node> for Style {
-    type Error = ();
-    fn try_from(value: Node) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            node::Inner::Style(style) => Ok(style.clone()),
-            _ => Err(()),
-        }
-    }
+macro_rules! into_from_node {
+    ($([$expr: path, $outer: ident]), *) => {
+        $(
+            impl<'a> From<&$expr> for Node {
+                fn from(value: &$expr) -> Self {
+                    node::Inner::$outer(value.clone()).get_outer()
+                }
+            }
+
+            impl<'a> TryFrom<&'a mut Node> for &'a mut $expr {
+                type Error = ();
+                fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
+                    match value.get_inner_mut() {
+                        node::Inner::$outer(expr) => Ok(expr),
+                        _ => Err(()),
+                    }
+                }
+            }
+
+            impl TryFrom<Node> for $expr {
+                type Error = ();
+                fn try_from(value: Node) -> Result<Self, Self::Error> {
+                    match value.get_inner() {
+                        node::Inner::$outer(style) => Ok(style.clone()),
+                        _ => Err(()),
+                    }
+                }
+            }
+        )*
+    };
 }
 
-impl TryFrom<Node> for Element {
-    type Error = ();
-    fn try_from(value: Node) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            node::Inner::Element(style) => Ok(style.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl<'a> TryFrom<&'a mut Node> for &'a mut Element {
-    type Error = ();
-    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
-        match value.get_inner_mut() {
-            node::Inner::Element(expr) => Ok(expr),
-            _ => Err(()),
-        }
-    }
-}
-
-impl<'a> From<&Element> for Node {
-    fn from(value: &Element) -> Self {
-        node::Inner::Element(value.clone()).get_outer()
-    }
-}
-
-impl<'a> From<&TextNode> for Node {
-    fn from(value: &TextNode) -> Self {
-        node::Inner::Text(value.clone()).get_outer()
-    }
-}
-
-impl<'a> TryFrom<&'a mut Node> for &'a mut Insert {
-    type Error = ();
-    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
-        match value.get_inner_mut() {
-            node::Inner::Insert(expr) => Ok(expr),
-            _ => Err(()),
-        }
-    }
-}
-
-impl<'a> TryFrom<&'a mut Node> for &'a mut Style {
-    type Error = ();
-    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
-        match value.get_inner_mut() {
-            node::Inner::Style(style) => Ok(style),
-            _ => Err(()),
-        }
-    }
+into_from_node! {
+    [Element, Element],
+    [TextNode, Text],
+    [Insert, Insert],
+    [Slot, Slot],
+    [Style, Style]
 }

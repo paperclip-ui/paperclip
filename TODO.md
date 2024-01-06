@@ -1,5 +1,9 @@
 #### Immediate
 
+- Slots not showing up for some instances
+
+  - See ConfirmModal in Shaya
+
 - ability to define script on component
 
   - properties panel

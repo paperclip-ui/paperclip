@@ -1219,7 +1219,7 @@ const bootstrap = (
     expandFilePathDirectories,
     readDirectory,
     loadProjectInfo,
-  }: Actions,
+  }: APIActions,
   initialState: DesignerState
 ) => {
   loadProjectInfo();

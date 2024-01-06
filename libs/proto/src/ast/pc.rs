@@ -371,7 +371,7 @@ impl DocumentBodyItem {
             document_body_item::Inner::Element(expr) => expr.name = Some(value.to_string()),
             document_body_item::Inner::Text(expr) => expr.name = Some(value.to_string()),
             document_body_item::Inner::Style(expr) => expr.name = Some(value.to_string()),
-            document_body_item::Inner::Import(_) | document_body_item::Inner::DocComment(_) => {}
+            _ => {}
         }
     }
     pub fn get_name(&self) -> Option<String> {
@@ -382,7 +382,7 @@ impl DocumentBodyItem {
             document_body_item::Inner::Element(expr) => expr.name.clone(),
             document_body_item::Inner::Text(expr) => expr.name.clone(),
             document_body_item::Inner::Style(expr) => expr.name.clone(),
-            document_body_item::Inner::Import(_) | document_body_item::Inner::DocComment(_) => None,
+            _ => None,
         }
     }
     pub fn get_comment(&self) -> Option<&Comment> {

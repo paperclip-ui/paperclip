@@ -30,6 +30,13 @@ impl Options {
     pub fn new(experimental: Vec<String>) -> Self {
         Options { experimental }
     }
+    pub fn all_experiments() -> Self {
+        Options::new(vec![
+            "condition".to_string(),
+            "repeat".to_string(),
+            "script".to_string(),
+        ])
+    }
 
     pub fn feature_enabled(&self, feature: &str) -> bool {
         self.experimental.contains(&feature.to_string())

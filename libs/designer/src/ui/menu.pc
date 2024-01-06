@@ -59,6 +59,7 @@ public component MenuItem {
             display: flex
             flex-direction: row
             justify-content: space-between
+            gap: var(module.space03)
         }
         style variant disabled {
             opacity: 0.3

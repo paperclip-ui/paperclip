@@ -14,6 +14,7 @@ service Designer {
   rpc SearchResources(SearchResourcesRequest) returns (SearchResourcesResponse);
   rpc OpenFileInNavigator(OpenFileInNavigatorRequest) returns (Empty);
   rpc OnEvent(Empty) returns (stream DesignServerEvent);
+  rpc CopyExpression(CopyExpresisonRequest) returns (CopyExpressionResult);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ReadDirectory(ReadDirectoryRequest) returns (ReadDirectoryResponse);
   rpc DeleteFile(DeleteFileRequest) returns (Empty);
@@ -28,6 +29,14 @@ service Designer {
   rpc Undo(Empty) returns (Empty);
   rpc Redo(Empty) returns (Empty);
   rpc Save(Empty) returns (Empty);
+}
+
+message CopyExpresisonRequest {
+    string expression_id = 1;
+}
+
+message CopyExpressionResult {
+    string content = 1;
 }
 
 message ProjectInfo {

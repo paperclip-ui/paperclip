@@ -22,6 +22,14 @@ message DocumentBodyItem {
     Atom atom = 6;
     Trigger trigger = 7;
     Element element = 8;
+
+    // to make copy / paste easier
+
+    Slot slot = 9;
+    Insert insert = 10;
+    Switch switch = 12;
+    Repeat repeat = 13;
+    Condition condition = 15;
   }
 }
 

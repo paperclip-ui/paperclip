@@ -8,6 +8,7 @@ use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::{FSItemKind, FileWatchEventKind};
 use paperclip_common::log::log_verbose;
+use paperclip_core::proto::ast::copy::copy_expression;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
@@ -16,11 +17,11 @@ use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
-    CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DeleteFileRequest,
-    DesignServerEvent, Empty, FileChanged, FileChangedKind, FileRequest, FileResponse, FsItem,
-    ModulesEvaluated, MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest,
-    ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, Resource, ResourceFiles,
-    ResourceKind, SaveFileRequest, ScreenshotCaptured, SearchResourcesRequest,
+    CopyExpresisonRequest, CopyExpressionResult, CreateDesignFileRequest, CreateDesignFileResponse,
+    CreateFileRequest, DeleteFileRequest, DesignServerEvent, Empty, FileChanged, FileChangedKind,
+    FileRequest, FileResponse, FsItem, ModulesEvaluated, MoveFileRequest, OpenCodeEditorRequest,
+    OpenFileInNavigatorRequest, ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, Resource,
+    ResourceFiles, ResourceKind, SaveFileRequest, ScreenshotCaptured, SearchResourcesRequest,
     SearchResourcesResponse, UpdateFileRequest,
 };
 use path_absolutize::*;
@@ -83,6 +84,19 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 path
             )))
         }
+    }
+
+    async fn copy_expression(
+        &self,
+        request: Request<CopyExpresisonRequest>,
+    ) -> Result<Response<CopyExpressionResult>, Status> {
+        let expression_id = request.get_ref().expression_id.clone();
+        let store = self.ctx.store.clone();
+        let state = &store.lock().unwrap().state;
+
+        let content = copy_expression(&expression_id, &state.graph);
+
+        Ok(Response::new(CopyExpressionResult { content }))
     }
 
     async fn search_resources(

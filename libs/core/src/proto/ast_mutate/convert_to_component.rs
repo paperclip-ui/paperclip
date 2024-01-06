@@ -186,7 +186,7 @@ fn create_component(name: &str, render: &Node, id_seed: &str) -> Component {
         .get_doc_comment()
         .and_then(|comment| {
             let comment: ExpressionWrapper = (&comment).into();
-            Some(comment.serialize())
+            Some(comment.serialize(true))
         })
         .unwrap_or("".to_string());
 
@@ -201,7 +201,7 @@ public component {} {{
 "#,
         doc_comment,
         name,
-        &render.serialize()
+        &render.serialize(true)
     );
 
     log_verbose(&format!("Create component {}", new_source));

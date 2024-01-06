@@ -11,6 +11,7 @@ use paperclip_proto::{
 
 use super::utils::upsert_render_expr;
 use super::EditContext;
+use crate::proto::ast::duplicate::Duplicate;
 use crate::try_remove_child;
 
 #[macro_export]
@@ -227,10 +228,10 @@ impl MutableVisitor<()> for EditContext<MoveNode> {
 fn append_child(node: &mut Node, child: Node) {
     match node.get_inner_mut() {
         node::Inner::Element(expr) => {
-            expr.body.push(child);
+            expr.body.push(child.duplicate());
         }
         node::Inner::Text(expr) => {
-            expr.body.push(child);
+            expr.body.push(child.duplicate());
         }
         _ => {}
     }

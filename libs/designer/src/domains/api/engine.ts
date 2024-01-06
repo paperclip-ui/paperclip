@@ -1,6 +1,4 @@
 import {
-  DesignerClientImpl,
-  GrpcWebImpl,
   DesignServerEvent,
   ModulesEvaluated,
   FileChanged,
@@ -83,32 +81,19 @@ import {
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
 import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
-import { get, kebabCase } from "lodash";
 import { ConfirmKind } from "../../state/confirm";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
-import { ExpressionKind } from "../../ui/logic/Editor/EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 import { NativeTypes } from "react-dnd-html5-backend";
 import { serializeDeclaration } from "@paperclip-ui/core/lib/proto/ast/serialize";
 import { isImageAsset } from "../ui/state";
-
-export type DesignerEngineOptions = {
-  protocol?: string;
-  host: string;
-  transport?: any;
-};
+import { APIActions } from "../../api";
 
 export const createDesignerEngine =
-  ({ protocol, host, transport }: DesignerEngineOptions) =>
+  (actions: APIActions) =>
   (
-    dispatch: Dispatch<DesignerEngineEvent>,
+    _dispatch: Dispatch<DesignerEvent>,
     getState: () => DesignerState
   ): Engine<DesignerState, DesignerEngineEvent> => {
-    const impl = new GrpcWebImpl((protocol || "http:") + "//" + host, {
-      transport,
-    });
-    const client = new DesignerClientImpl(impl);
-
-    const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
     bootstrap(actions, getState());
 
@@ -119,163 +104,11 @@ export const createDesignerEngine =
     };
   };
 
-type Actions = ReturnType<typeof createActions>;
-
-/**
- * All of the imperative actions that can be invoked in the engine
- */
-
-const createActions = (
-  client: DesignerClientImpl,
-  dispatch: Dispatch<DesignerEngineEvent>
-) => {
-  const openFile = async (filePath: string) => {
-    const data = await client.OpenFile({ path: filePath });
-    dispatch({ type: "designer-engine/documentOpened", payload: data });
-  };
-
-  const readDirectory = async (inputPath: string) => {
-    const { items, path } = await client.ReadDirectory({ path: inputPath });
-    dispatch({
-      type: "designer-engine/directoryRead",
-      payload: { items, path, isRoot: inputPath === "." },
-    });
-  };
-
-  const expandFilePathDirectories = async (filePath: string) => {
-    const dirs = filePath.split("/");
-
-    // pop off file name
-    dirs.pop();
-    while (dirs.length) {
-      try {
-        await readDirectory(dirs.join("/"));
-
-        // outside of project scope
-      } catch (e) {
-        break;
-      }
-      dirs.pop();
-    }
-  };
-
-  return {
-    openFile,
-    readDirectory,
-    expandFilePathDirectories,
-    async deleteFile(filePath: string) {
-      // no need to do anything else since file watcher trigger changes
-      await client.DeleteFile({ path: filePath });
-    },
-    async moveFile(fromPath: string, toPath: string) {
-      // no need to do anything else since file watcher will trigger changes
-      await client.MoveFile({ fromPath, toPath });
-
-      dispatch({
-        type: "designer-engine/fileMoved",
-        payload: { fromPath, toPath },
-      });
-    },
-    async createDirectory(name: string, parentDir?: string) {
-      const filePath = parentDir + "/" + name;
-
-      // // kebab case in case spaces are added
-      await client.CreateFile({
-        path: filePath,
-        kind: FSItemKind.Directory,
-      });
-
-      dispatch({
-        type: "designer-engine/fileCreated",
-        payload: { filePath, kind: FSItemKind.Directory },
-      });
-    },
-    async createDesignFile(name: string, parentDir?: string) {
-      const { filePath } = await client.CreateDesignFile({
-        name,
-        parentDir,
-      });
-      dispatch({
-        type: "designer-engine/designFileCreated",
-        payload: { filePath },
-      });
-    },
-    syncEvents() {
-      client.OnEvent({}).subscribe({
-        next(event) {
-          dispatch({ type: "designer-engine/serverEvent", payload: event });
-        },
-        error: () => {
-          dispatch({ type: "designer-engine/apiError" });
-        },
-      });
-    },
-
-    openCodeEditor(path: string, range?: Range) {
-      client.OpenCodeEditor({ path, range });
-    },
-    openFileInNavigator(filePath: string) {
-      client.OpenFileInNavigator({ filePath });
-    },
-    syncResourceFiles() {
-      client.GetResourceFiles({}).subscribe({
-        next(data) {
-          dispatch({
-            type: "designer-engine/resourceFilePathsLoaded",
-            payload: data.filePaths,
-          });
-        },
-        error: () => {
-          dispatch({ type: "designer-engine/apiError" });
-        },
-      });
-    },
-    undo() {
-      client.Undo({});
-    },
-    redo() {
-      client.Redo({});
-    },
-    save() {
-      client.Save({});
-    },
-    syncGraph() {
-      client.GetGraph({}).subscribe({
-        next(data) {
-          dispatch({ type: "designer-engine/graphLoaded", payload: data });
-        },
-        error: () => {},
-      });
-    },
-    async applyChanges(mutations: Mutation[]) {
-      const changes = await client.ApplyMutations({ mutations }, null);
-      dispatch({ type: "designer-engine/changesApplied", payload: changes });
-      return changes;
-    },
-    async saveFile(path: string, content: Uint8Array) {
-      await client.SaveFile({ path, content }, null);
-    },
-    async loadProjectInfo() {
-      const info = await client.GetProjectInfo({}, null);
-      dispatch({ type: "designer-engine/ProjectInfoResult", payload: info });
-      return info;
-    },
-    async searchFiles(query: string) {
-      const { items, rootDir } = await client.SearchResources({ query }, null);
-
-      dispatch({
-        type: "designer-engine/fileSearchResult",
-        payload: { items, rootDir },
-      });
-    },
-  };
-};
-
 /**
  * Handles all of the globally emitted events in the ap
  */
 
-const createEventHandler = (actions: Actions) => {
+const createEventHandler = (actions: APIActions) => {
   const handleInsert = async (state: DesignerState) => {
     let bounds = roundBox(
       getScaledBox(getInsertBox(state), state.canvas.transform)
@@ -507,20 +340,7 @@ const createEventHandler = (actions: Actions) => {
 
     let targetExpressionId = getTargetExprId(state);
 
-    console.log(event.payload);
-
     if (type === ShortcutCommand.Copy || type === ShortcutCommand.Cut) {
-      const kind = {
-        [ast.ExprKind.TextNode]: "textNode",
-        [ast.ExprKind.Element]: "element",
-        [ast.ExprKind.Component]: "component",
-      }[data.kind];
-
-      if (!kind) {
-        console.error(`Cannot paste: `, data);
-        return;
-      }
-
       if (!targetExpressionId) {
         targetExpressionId = state.currentDocument.paperclip.html.sourceId;
       }
@@ -528,14 +348,16 @@ const createEventHandler = (actions: Actions) => {
       // TODO: need to check when user selects leaf in left sidebar, then need to use
       // that state to insert INTO the element instead of adjacent to it. This is an
       // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
-      targetExpressionId = ast.getParent(targetExpressionId, state.graph)?.id;
+      targetExpressionId =
+        ast.getParent(targetExpressionId, state.graph)?.id ||
+        targetExpressionId;
 
       if (type === ShortcutCommand.Copy) {
         actions.applyChanges([
           {
-            pasteExpression: {
-              targetExpressionId,
-              [kind]: data.expr,
+            appendChild: {
+              parentId: targetExpressionId,
+              childSource: data,
             },
           },
         ]);
@@ -544,7 +366,7 @@ const createEventHandler = (actions: Actions) => {
           {
             moveExpressionToFile: {
               newFilePath: getCurrentFilePath(state),
-              expressionId: data.expr.id,
+              expressionId: data,
             },
           },
         ]);

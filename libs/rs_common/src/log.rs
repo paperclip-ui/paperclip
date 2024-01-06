@@ -22,3 +22,6 @@ pub fn log_notice(message: &str) {
 pub fn log_warning(message: &str) {
     println!("{}", message.bright_yellow());
 }
+pub fn log_error(message: &str) {
+    println!("{}", message.bright_red());
+}

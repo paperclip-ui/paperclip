@@ -172,7 +172,12 @@ visitable! {
         pc::document_body_item::Inner::Text,
         pc::document_body_item::Inner::Atom,
         pc::document_body_item::Inner::Trigger,
-        pc::document_body_item::Inner::Element
+        pc::document_body_item::Inner::Element,
+        pc::document_body_item::Inner::Slot,
+        pc::document_body_item::Inner::Insert,
+        pc::document_body_item::Inner::Switch,
+        pc::document_body_item::Inner::Condition,
+        pc::document_body_item::Inner::Repeat
     )
 }, {
   visit_enum!(self.get_inner_mut(), visitor,
@@ -183,7 +188,12 @@ visitable! {
       pc::document_body_item::Inner::Text,
       pc::document_body_item::Inner::Atom,
       pc::document_body_item::Inner::Trigger,
-      pc::document_body_item::Inner::Element
+      pc::document_body_item::Inner::Element,
+      pc::document_body_item::Inner::Slot,
+      pc::document_body_item::Inner::Insert,
+      pc::document_body_item::Inner::Switch,
+      pc::document_body_item::Inner::Condition,
+      pc::document_body_item::Inner::Repeat
   )
 }),
   (pc::Import, visit_import, (self, _visitor) {

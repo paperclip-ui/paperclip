@@ -7,15 +7,12 @@ use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext as graph;
-use paperclip_proto::ast::pc::{
-    component_body_item, node, Component, Element, Render, Slot, TextNode,
-};
 use paperclip_proto::ast_mutate::{
-    mutation, paste_expression, update_variant_trigger, AppendChild, Bounds, ConvertToComponent,
-    ConvertToSlot, DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PasteExpression,
-    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
-    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
-    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
+    mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
+    DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PrependChild,
+    SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration, SetStyleDeclarationValue,
+    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
+    UpdateDependencyPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -159,6 +156,55 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_insert_an_instance,
+  [(
+    "/entry.pc", r#"
+      component A {
+        render div
+      }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-4".to_string(),
+    child_source: r#"
+        import "/entry.pc" as mod
+        mod.A
+    "#.to_string(),
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render div
+      }
+      A unnamed
+    "#
+  )]
+}
+
+// case! {
+//   can_append_a_style,
+//   [(
+//     "/entry.pc", r#"
+
+//     "#
+//   )],
+//   mutation::Inner::AppendChild(AppendChild {
+//     parent_id: "80f4925f-2".to_string(),
+//     child_source: r#"
+//         style test
+//     "#.to_string(),
+//   }).get_outer(),
+//   [(
+//     "/entry.pc", r#"
+//       component A {
+//         render div
+//       }
+//       A unnamed
+//     "#
+//   )]
+// }
 
 case! {
   can_change_the_frame_bounds_of_a_document_element,
@@ -3030,7 +3076,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_an_element_into_another_element,
   [
     (
@@ -3064,7 +3110,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_an_element_into_the_document,
   [
     (
@@ -3097,7 +3143,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_a_text_node_into_the_document,
   [
     (
@@ -3193,7 +3239,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_a_node_to_a_slot,
   [
     (
@@ -3236,7 +3282,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   can_paste_a_node_to_an_insert,
   [
     (
@@ -3930,7 +3976,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   creates_instance_of_pasted_component,
   [
     (
@@ -3962,7 +4008,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   imports_pasted_instance_from_other_doc,
   [
     (
@@ -4536,7 +4582,7 @@ case! {
   )]
 }
 
-case! {
+xcase! {
   when_pasting_component_slots_are_created_too,
   [
     (

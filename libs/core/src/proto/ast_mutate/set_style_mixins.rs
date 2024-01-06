@@ -11,7 +11,7 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
     fn visit_document(&self, expr: &mut ast::pc::Document) -> VisitorResult<(), Self> {
         if self
             .expr_map
-            .get_expr(&self.mutation.target_expr_id)
+            .get_expr_in(&self.mutation.target_expr_id, &expr.id)
             .is_none()
         {
             return VisitorResult::Continue;

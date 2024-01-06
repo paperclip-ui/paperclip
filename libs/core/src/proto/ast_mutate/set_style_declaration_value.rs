@@ -19,7 +19,10 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarationValue> {
     }
 
     fn visit_document(&self, doc: &mut ast::pc::Document) -> VisitorResult<(), Self> {
-        if !matches!(self.expr_map.get_expr(&self.mutation.target_id), Some(_)) {
+        if !matches!(
+            self.expr_map.get_expr_in(&self.mutation.target_id, &doc.id),
+            Some(_)
+        ) {
             return VisitorResult::Continue;
         }
 

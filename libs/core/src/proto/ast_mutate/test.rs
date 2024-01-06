@@ -78,12 +78,26 @@ macro_rules! case {
                 .collect::<HashMap<String, String>>();
 
             // println!("{:#?}", graph.dependencies);
+            //
 
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {
                     assert_eq!(strip_extra_ws(serialized_content), strip_extra_ws(&content));
                 } else {
                     panic!("File {} not found", path);
+                }
+            }
+
+            // make sure that all untouched files are still untouched
+            for (path, content) in $mock_files {
+                if $expected_mock_files
+                    .iter()
+                    .any(|(changed_path, _)| changed_path == &path)
+                {
+                    continue;
+                }
+                if let Some(serialized_content) = edited_docs.get(path) {
+                    assert_eq!(strip_extra_ws(serialized_content), strip_extra_ws(&content));
                 }
             }
         }
@@ -2183,6 +2197,13 @@ case! {
     "/entry.pc", r#"
       import "/test.pc" as ent
       ent.B
+    "#
+  ),
+  (
+    "/test.pc", r#"
+    public component B {
+      render div
+    }
     "#
   )]
 }
@@ -5505,7 +5526,13 @@ case! {
   (
       "/a.pc", r#"
       "#
-    )]
+    ),
+    (
+        "/b.pc", r#"
+            public style b { background: orange }
+            public style a { background: blue }
+        "#
+      )]
 }
 
 case! {

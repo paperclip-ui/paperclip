@@ -1,5 +1,5 @@
 use paperclip_common::serialize_context::Context;
-use paperclip_proto::ast::wrapper::ExpressionWrapper;
+use paperclip_proto::ast::{pc::Node, wrapper::ExpressionWrapper};
 
 use crate::pc::{
     serialize_array, serialize_atom, serialize_boolean, serialize_component,
@@ -23,7 +23,7 @@ impl Serializable for ExpressionWrapper {
             ExpressionWrapper::Component(expr) => serialize_component(expr, &mut context),
             ExpressionWrapper::Element(expr) => serialize_element(expr, is_root, &mut context),
             ExpressionWrapper::TextNode(expr) => serialize_text(expr, is_root, &mut context),
-            ExpressionWrapper::Node(expr) => serialize_node(expr, &mut context),
+            ExpressionWrapper::Node(expr) => serialize_node(expr, false, &mut context),
             ExpressionWrapper::Slot(expr) => serialize_slot(expr, &mut context),
             ExpressionWrapper::Insert(expr) => serialize_insert(expr, &mut context),
             _ => {
@@ -31,6 +31,14 @@ impl Serializable for ExpressionWrapper {
             }
         }
 
+        context.buffer.to_string()
+    }
+}
+
+impl Serializable for Node {
+    fn serialize(&self, is_root: bool) -> String {
+        let mut context = Context::new(0);
+        serialize_node(self, is_root, &mut context);
         context.buffer.to_string()
     }
 }

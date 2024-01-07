@@ -274,7 +274,7 @@ const InstanceLeaf = ({
       depth={depth}
       instanceOf={instanceOf}
     >
-      {() => <InstanceChildren instance={instance} depth={depth} />}
+      {() => <InstanceChildren instance={instance} depth={depth + 1} />}
     </Leaf>
   );
 };

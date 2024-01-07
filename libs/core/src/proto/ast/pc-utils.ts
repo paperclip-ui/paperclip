@@ -849,6 +849,13 @@ export namespace ast {
       return null;
     }
   );
+  export const getComponentScripts = memoize(
+    (component: Component): Script[] => {
+      return component.body
+        .map((child) => child.script)
+        .filter(Boolean) as Script[];
+    }
+  );
 
   export const getOwnerDependency = (exprId: string, graph: Graph) => {
     return graph.dependencies[getOwnerDependencyPath(exprId, graph)];

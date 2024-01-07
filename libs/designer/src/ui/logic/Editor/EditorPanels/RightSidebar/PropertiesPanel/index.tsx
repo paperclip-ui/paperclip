@@ -19,6 +19,7 @@ import { UsedBySection } from "./UsedBySection";
 import { TextValueField } from "./TextValueInput";
 import { AtomValueField } from "./AtomValueInput";
 import { TriggersSection } from "./TriggersSection";
+import { ScriptsSection } from "./ScriptsSection";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -40,6 +41,7 @@ export const PropertiesPanel = () => {
             <AtomValueField />
             <ExprTagNameField />
             <VariantsSection />
+            <ScriptsSection />
             <TriggersSection />
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>

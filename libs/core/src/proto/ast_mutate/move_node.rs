@@ -1,9 +1,9 @@
-use paperclip_proto::ast::pc::{DocumentBodyItem, Node};
+use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionDeleted};
 use paperclip_proto::{
     ast::{
-        pc::{document_body_item, node},
+        pc::node,
         wrapper::{Expression, ExpressionWrapper},
     },
     ast_mutate::MoveNode,
@@ -16,7 +16,7 @@ use crate::try_remove_child;
 
 #[macro_export]
 macro_rules! move_child {
-    ($self: expr, $expr: expr, $child_type: ident) => {{
+    ($self: expr, $expr: expr) => {{
         if let Some(_) = try_remove_child!($expr.body, &$self.mutation.node_id) {
             $self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
@@ -40,7 +40,7 @@ macro_rules! move_child {
         if ($expr.id == $self.mutation.target_id && $self.mutation.position == 2)
             || (pos > -1 && $self.mutation.position != 2)
         {
-            let child: $child_type = $self
+            let child: Node = $self
                 .expr_map
                 .get_expr(&$self.mutation.node_id)
                 .expect("Expr must exist")
@@ -68,25 +68,25 @@ impl MutableVisitor<()> for EditContext<MoveNode> {
         &self,
         expr: &mut paperclip_proto::ast::pc::Element,
     ) -> VisitorResult<(), EditContext<MoveNode>> {
-        move_child!(self, expr, Node)
+        move_child!(self, expr)
     }
     fn visit_slot(
         &self,
         expr: &mut paperclip_proto::ast::pc::Slot,
     ) -> VisitorResult<(), EditContext<MoveNode>> {
-        move_child!(self, expr, Node)
+        move_child!(self, expr)
     }
     fn visit_insert(
         &self,
         expr: &mut paperclip_proto::ast::pc::Insert,
     ) -> VisitorResult<(), EditContext<MoveNode>> {
-        move_child!(self, expr, Node)
+        move_child!(self, expr)
     }
     fn visit_document(
         &self,
         expr: &mut paperclip_proto::ast::pc::Document,
     ) -> VisitorResult<(), EditContext<MoveNode>> {
-        move_child!(self, expr, DocumentBodyItem)
+        move_child!(self, expr)
     }
 
     fn visit_component(

@@ -27,7 +27,7 @@ fn compile_document(document: &ast::Document, context: &mut Context) -> Result<(
     compile_imports(document, context);
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Component(component) => {
+            ast::node::Inner::Component(component) => {
                 compile_component(&component, context)?;
             }
             _ => {}
@@ -49,7 +49,7 @@ fn compile_imports(document: &ast::Document, context: &mut Context) {
     );
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Import(import) => {
+            ast::node::Inner::Import(import) => {
                 compile_import(import, context);
             }
             _ => {}

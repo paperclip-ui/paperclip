@@ -55,14 +55,14 @@ fn collect_component_imports(imports: &mut BTreeMap<String, String>, context: &m
         .expect("Document must exist")
         .body
     {
-        if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
+        if let ast::node::Inner::Component(component) = item.get_inner() {
             if let Some(script) = component.get_script(COMPILER_NAME) {
                 let src = script.get_src().expect("src must exist");
                 let hash = format!("{:x}", crc::crc32::checksum_ieee(src.as_bytes())).to_string();
                 imports.insert(src.to_string(), format!("_{}", hash));
             }
         }
-        if let ast::document_body_item::Inner::Import(import) = item.get_inner() {
+        if let ast::node::Inner::Import(import) = item.get_inner() {
             imports.insert(import.path.to_string(), import.namespace.to_string());
         }
     }
@@ -76,7 +76,7 @@ fn compile_components(context: &mut Context) {
         .expect("Document must exist")
         .body
     {
-        if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
+        if let ast::node::Inner::Component(component) = item.get_inner() {
             if component.is_public {
                 compile_component(component, context);
             }

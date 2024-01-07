@@ -1,5 +1,6 @@
 #### Immediate
 
+- ability to define comments
 - "Used by" section polished up
 - ability to define scripts
 

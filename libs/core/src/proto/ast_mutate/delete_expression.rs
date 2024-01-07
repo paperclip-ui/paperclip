@@ -20,10 +20,7 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
             ];
             if prev_index >= 0 {
                 if let Some(child) = expr.body.get(prev_index as usize) {
-                    if matches!(
-                        child.get_inner(),
-                        ast::pc::document_body_item::Inner::DocComment(_)
-                    ) {
+                    if matches!(child.get_inner(), ast::pc::node::Inner::DocComment(_)) {
                         results.push(
                             mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                                 id: child.get_id().to_string(),

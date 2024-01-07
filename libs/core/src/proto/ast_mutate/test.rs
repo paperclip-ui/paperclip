@@ -77,7 +77,7 @@ macro_rules! case {
                 })
                 .collect::<HashMap<String, String>>();
 
-            // println!("{:#?}", graph.dependencies);
+            println!("{:#?}", graph.dependencies);
             //
 
             for (path, content) in $expected_mock_files {

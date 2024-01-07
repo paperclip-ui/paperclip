@@ -144,6 +144,8 @@ impl MutableVisitor<()> for EditContext<SetId> {
 
         let new_expr_name = get_unique_name(expr.get_id(), &self.mutation.value, &self.expr_map);
 
+        println!("UNIQUE {}", new_expr_name);
+
         if reference.path.len() == 1 {
             reference.path = vec![new_expr_name];
         } else {

@@ -73,9 +73,7 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
     compile_nested_components(document, context);
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Component(component) => {
-                compile_component(&component, context)
-            }
+            ast::node::Inner::Component(component) => compile_component(&component, context),
             _ => {}
         }
     }
@@ -102,7 +100,7 @@ fn collect_imports(
 
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Import(import) => {
+            ast::node::Inner::Import(import) => {
                 let resolved_path = context.dependency.imports.get(&import.path);
                 if let Some(resolved_path) = resolved_path {
                     let mut rel_path = pathdiff::diff_paths(
@@ -125,7 +123,7 @@ fn collect_imports(
                     imports.insert(rel_path, Some(import.namespace.to_string()));
                 }
             }
-            ast::document_body_item::Inner::Component(component) => {
+            ast::node::Inner::Component(component) => {
                 if let Some(script) = component.get_script(COMPILER_NAME) {
                     let src = script.get_src().expect("src must exist");
 

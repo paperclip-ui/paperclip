@@ -11,7 +11,7 @@ use paperclip_proto::ast::pc::{
 };
 use paperclip_proto::ast::{
     graph_ext::Dependency,
-    pc::{Document, DocumentBodyItem, Node},
+    pc::{Document, Node},
 };
 use regex::Regex;
 use std::{collections::HashMap, fmt::Debug};
@@ -85,7 +85,7 @@ pub fn get_named_expr_id<TVisitable: Visitable + Debug>(
     }
 }
 
-pub fn create_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
+pub fn create_import(path: &str, ns: &str, checksum: &str) -> Node {
     let new_imp_doc = parse(
         format!("import \"{}\" as {}", path, ns).as_str(),
         checksum,

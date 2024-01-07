@@ -141,7 +141,7 @@ fn evaluate_document_rules<F: FileResolver>(
 
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Component(component) => {
+            ast::node::Inner::Component(component) => {
                 evaluate_component(component, context);
             }
             _ => {}
@@ -151,10 +151,10 @@ fn evaluate_document_rules<F: FileResolver>(
     for item in &document.body {
         // everything else
         match item.get_inner() {
-            ast::document_body_item::Inner::Element(component) => {
+            ast::node::Inner::Element(component) => {
                 evaluate_element(component, context);
             }
-            ast::document_body_item::Inner::Text(text) => {
+            ast::node::Inner::Text(text) => {
                 evaluate_text(text, context);
             }
             _ => {}
@@ -194,7 +194,6 @@ fn evaluate_node<'a, F: FileResolver>(
         ast::node::Inner::Insert(expr) => {
             evaluate_insert(expr, context);
         }
-        ast::node::Inner::Script(_expr) => {}
         ast::node::Inner::Slot(expr) => {
             evaluate_slot(expr, context);
         }
@@ -213,6 +212,12 @@ fn evaluate_node<'a, F: FileResolver>(
         ast::node::Inner::Repeat(expr) => {
             evaluate_repeat(expr, parent, context);
         }
+        ast::node::Inner::Component(_)
+        | ast::node::Inner::Atom(_)
+        | ast::node::Inner::Import(_)
+        | ast::node::Inner::DocComment(_)
+        | ast::node::Inner::Trigger(_)
+        | ast::node::Inner::Script(_) => {}
     }
 }
 

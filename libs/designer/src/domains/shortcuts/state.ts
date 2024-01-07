@@ -14,7 +14,6 @@ export enum ShortcutCommand {
   SearchFiles,
   CreateDesignFile,
   CreateDirectory,
-  RenameLayer,
   InsertElement,
   GoToMain,
   GoToRenderNodeComponent,

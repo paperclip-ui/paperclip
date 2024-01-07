@@ -15,7 +15,7 @@ pub fn serialize(document: &ast::Document) -> String {
 pub fn serialize_imports(document: &ast::Document, context: &mut Context) {
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Import(imp) => {
+            ast::node::Inner::Import(imp) => {
                 serialize_import(&imp, context);
                 context.add_buffer("\n");
             }
@@ -26,27 +26,7 @@ pub fn serialize_imports(document: &ast::Document, context: &mut Context) {
 }
 pub fn serialize_document(document: &ast::Document, context: &mut Context) {
     for item in &document.body {
-        match item.get_inner() {
-            ast::document_body_item::Inner::DocComment(docco) => {
-                serialize_doc_comment2(&docco, context)
-            }
-            ast::document_body_item::Inner::Import(_imp) => {
-                continue;
-            }
-            ast::document_body_item::Inner::Atom(imp) => serialize_atom(&imp, context),
-            ast::document_body_item::Inner::Component(comp) => serialize_component(&comp, context),
-            ast::document_body_item::Inner::Style(style) => serialize_style(&style, context),
-            ast::document_body_item::Inner::Element(element) => {
-                serialize_element(&element, true, context)
-            }
-            ast::document_body_item::Inner::Trigger(expr) => serialize_trigger(&expr, context),
-            ast::document_body_item::Inner::Text(text) => serialize_text(&text, true, context),
-            ast::document_body_item::Inner::Slot(text) => serialize_slot(&text, context),
-            ast::document_body_item::Inner::Insert(text) => serialize_insert(&text, context),
-            ast::document_body_item::Inner::Switch(text) => serialize_switch(&text, context),
-            ast::document_body_item::Inner::Repeat(text) => serialize_repeat(&text, context),
-            ast::document_body_item::Inner::Condition(text) => serialize_condition(&text, context),
-        }
+        serialize_node(&item, true, context);
 
         // extra space for document body items
         context.add_buffer("\n");
@@ -216,6 +196,13 @@ pub fn serialize_node(node: &ast::Node, is_root: bool, context: &mut Context) {
         ast::node::Inner::Condition(expr) => serialize_condition(expr, context),
         ast::node::Inner::Switch(expr) => serialize_switch(expr, context),
         ast::node::Inner::Repeat(expr) => serialize_repeat(expr, context),
+        ast::node::Inner::Component(expr) => serialize_component(expr, context),
+        ast::node::Inner::DocComment(expr) => serialize_doc_comment2(expr, context),
+        ast::node::Inner::Atom(expr) => serialize_atom(expr, context),
+        ast::node::Inner::Trigger(expr) => serialize_trigger(expr, context),
+
+        // already done at the top
+        ast::node::Inner::Import(_) => {}
     }
 }
 

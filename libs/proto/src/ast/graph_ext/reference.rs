@@ -225,27 +225,27 @@ fn get_doc_body_expr<'expr>(part: &String, doc: &'expr pc::Document) -> Option<E
     for child in &doc.body {
         // any way to make this more DRY? Macros???
         match child.get_inner() {
-            pc::document_body_item::Inner::Import(import) => {
+            pc::node::Inner::Import(import) => {
                 if part == &import.namespace {
                     return Some(Expr::Import(&import));
                 }
             }
-            pc::document_body_item::Inner::Atom(atom) => {
+            pc::node::Inner::Atom(atom) => {
                 if part == &atom.name {
                     return Some(Expr::Atom(&atom));
                 }
             }
-            pc::document_body_item::Inner::Component(component) => {
+            pc::node::Inner::Component(component) => {
                 if part == &component.name {
                     return Some(Expr::Component(&component));
                 }
             }
-            pc::document_body_item::Inner::Trigger(trigger) => {
+            pc::node::Inner::Trigger(trigger) => {
                 if part == &trigger.name {
                     return Some(Expr::Trigger(&trigger));
                 }
             }
-            pc::document_body_item::Inner::Style(style) => {
+            pc::node::Inner::Style(style) => {
                 if let Some(name) = &style.name {
                     if name == part {
                         return Some(Expr::Style(&style));

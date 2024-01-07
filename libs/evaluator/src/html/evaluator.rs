@@ -75,7 +75,7 @@ fn evaluate_document<F: FileResolver>(
         }
 
         match item.get_inner() {
-            ast::document_body_item::Inner::Component(component) => {
+            ast::node::Inner::Component(component) => {
                 if context.options.include_components {
                     evaluate_component::<F>(
                         component,
@@ -85,7 +85,7 @@ fn evaluate_document<F: FileResolver>(
                     );
                 }
             }
-            ast::document_body_item::Inner::Element(element) => {
+            ast::node::Inner::Element(element) => {
                 evaluate_element::<F>(
                     element,
                     &mut children,
@@ -95,7 +95,7 @@ fn evaluate_document<F: FileResolver>(
                     false,
                 );
             }
-            ast::document_body_item::Inner::Text(text_node) => {
+            ast::node::Inner::Text(text_node) => {
                 evaluate_text_node(
                     text_node,
                     &mut children,
@@ -540,6 +540,11 @@ fn evaluate_node<F: FileResolver>(
         }
         ast::node::Inner::Override(_)
         | ast::node::Inner::Style(_)
+        | ast::node::Inner::Component(_)
+        | ast::node::Inner::Import(_)
+        | ast::node::Inner::DocComment(_)
+        | ast::node::Inner::Atom(_)
+        | ast::node::Inner::Trigger(_)
         | ast::node::Inner::Script(_)
         | ast::node::Inner::Insert(_) => {}
     }

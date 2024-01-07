@@ -8,7 +8,6 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import {
   Component,
-  DocumentBodyItem,
   Element,
   Node,
   Condition,
@@ -69,31 +68,29 @@ type LeafProps<Expr> = {
   instanceOf?: string[];
 };
 
-const DocumentBodyItemLeaf = memo(
-  ({ expr: item, depth }: LeafProps<DocumentBodyItem>) => {
-    if (item.component) {
-      return <ComponentLeaf expr={item.component} depth={depth} />;
-    }
-    if (item.element) {
-      return <ElementLeaf expr={item.element} depth={depth} />;
-    }
-    if (item.text) {
-      return <TextLeaf expr={item.text} depth={depth} />;
-    }
-    if (item.trigger) {
-      return <TriggerLeaf expr={item.trigger} depth={depth} />;
-    }
-
-    if (item.atom) {
-      return <AtomLeaf expr={item.atom} depth={depth} />;
-    }
-    if (item.style) {
-      return <StyleMixinLeaf expr={item.style} depth={depth} />;
-    }
-
-    return null;
+const DocumentBodyItemLeaf = memo(({ expr: item, depth }: LeafProps<Node>) => {
+  if (item.component) {
+    return <ComponentLeaf expr={item.component} depth={depth} />;
   }
-);
+  if (item.element) {
+    return <ElementLeaf expr={item.element} depth={depth} />;
+  }
+  if (item.text) {
+    return <TextLeaf expr={item.text} depth={depth} />;
+  }
+  if (item.trigger) {
+    return <TriggerLeaf expr={item.trigger} depth={depth} />;
+  }
+
+  if (item.atom) {
+    return <AtomLeaf expr={item.atom} depth={depth} />;
+  }
+  if (item.style) {
+    return <StyleMixinLeaf expr={item.style} depth={depth} />;
+  }
+
+  return null;
+});
 
 const ComponentLeaf = memo(
   ({ expr: component, depth, instanceOf }: LeafProps<Component>) => {

@@ -12,21 +12,7 @@ npx paperclip designer --open
 
 https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-613c1686cdda
 
-Paperclip emits primitive components that you can use in your existing codebase. For example:
-
-```jsx
-import React from "react";
-import * as styles from "./button.pc";
-export const Button = ({ children, onClick }) => {
-  return <styles.Button onClick={onClick}>{children}</styles.Button>;
-};
-```
-
-Paperclip compliments our existing codebase by covering _just_ the visual aspect - HTML and CSS. In a way, you can think of Paperclip like a design system creator.
-
-Paperclip can replace your existing CSS-in-JS solution since components are compiled straight to code and don't require a runtime.
-
-You may use Paperclip with existing CSS frameworks like Tailwind. If you want, you may even be able to load these CSS frameworks into the Paperclip designer so that you can build with these CSS frameworks visually.
+Paperclip compliments your existing codebase by covering _just_ the visual aspect - HTML and CSS. UIs created in Paperclip are compiled straight to code, and can be imported like any ordinary module. You may use Paperclip with existing CSS frameworks like Tailwind. If you want, you may even be able to load these CSS frameworks into the Paperclip designer so that you can build with these CSS frameworks visually.
 
 ### Project goals + highlights
 
@@ -105,7 +91,7 @@ export const Button = ({ children }) => (
 
 ### Getting Started
 
-`. **run this command in your project directory:**
+1. **run this command in your project directory:**
 
 ```
 npx paperclip init

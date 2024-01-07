@@ -1,10 +1,5 @@
 #### Immediate
 
-- export styles
-- automated script for captuing native styles
-
-- ability to define comments
-- "Used by" section polished up
 - ability to define scripts
 
   - right sidebar section

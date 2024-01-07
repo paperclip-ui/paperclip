@@ -1,4 +1,4 @@
-import "state/theme.pc" as theme
+import "ui/theme.pc" as theme
 import "./input.pc" as module1
 import "./button.pc" as module
 import "./theme.pc" as mod
@@ -168,4 +168,3 @@ ModalContainer confirmPreview {
         }
     }
 }
-

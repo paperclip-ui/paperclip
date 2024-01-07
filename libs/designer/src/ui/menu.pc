@@ -1,4 +1,4 @@
-import "state/theme.pc" as module
+import "ui/theme.pc" as module
 import "./theme.pc" as theme
 
 /**
@@ -139,4 +139,3 @@ div sillyPreview {
         }
     }
 }
-

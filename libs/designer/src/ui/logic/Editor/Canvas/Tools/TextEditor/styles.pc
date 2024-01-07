@@ -1,4 +1,4 @@
-import "state/theme.pc" as module
+import "ui/theme.pc" as module
 import "../../../../../input.pc" as imp
 import "../../../../../theme.pc" as theme
 
@@ -21,4 +21,3 @@ public component TextInput {
         }
     }
 }
-

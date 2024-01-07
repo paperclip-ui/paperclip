@@ -1,4 +1,3 @@
-import "state/theme.pc" as module1
 import "ui/theme.pc" as module
 import "./test.pc" as imp
 
@@ -14,4 +13,3 @@ div {
         position: relative
     }
 }
-

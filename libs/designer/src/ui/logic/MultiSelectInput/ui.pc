@@ -1,4 +1,3 @@
-import "state/theme.pc" as module
 import "ui/theme.pc" as theme
 
 /**
@@ -62,4 +61,3 @@ public component MultiSelect {
         }
     }
 }
-

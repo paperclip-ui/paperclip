@@ -1,4 +1,4 @@
-import "state/theme.pc" as module
+import "ui/theme.pc" as module
 
 public token hoverColor var(gray04)
 

@@ -1,4 +1,4 @@
-import "state/theme.pc" as module1
+import "ui/theme.pc" as module1
 import "./input.pc" as imp1
 import "./theme.pc" as module
 import "./utils.pc" as imp
@@ -262,4 +262,3 @@ div preview {
         }
     }
 }
-

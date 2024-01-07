@@ -1,4 +1,4 @@
-import "state/theme.pc" as module1
+import "ui/theme.pc" as module1
 import "./logic/Editor/Canvas/Tools/Selectable/index.pc" as module
 import "./theme.pc" as theme
 import "./logic/Sidebar/sidebar.pc" as sidebar
@@ -672,4 +672,3 @@ div textInputPreview {
         TextInput(class: "medium active", placeholder: "Medium")
     }
 }
-

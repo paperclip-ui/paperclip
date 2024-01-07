@@ -1,4 +1,3 @@
-import "state/theme.pc" as theme1
 import "ui/input.pc" as module
 import "ui/logic/Sidebar/sidebar.pc" as sidebar
 import "ui/theme.pc" as theme
@@ -140,16 +139,16 @@ public component FilteredFile {
                             width: 25px
                             height: 25px
                             background: white
-                            border-radius: var(theme1.roundedSM)
+                            border-radius: var(theme.roundedSM)
                             position: relative
-                            padding: var(theme1.space01)
+                            padding: var(theme.space01)
                             flex-shrink: 0
                         }
                     }
                     style {
                         display: flex
                         align-items: center
-                        gap: var(theme1.space03)
+                        gap: var(theme.space03)
                         overflow: hidden
                         flex-shrink: 0
                     }
@@ -231,7 +230,7 @@ public component FileNavigator {
                     style variant isCollapsed {
                         transform: rotate(0deg)
                     }
-                    style extends theme.reset, theme1.icon {
+                    style extends theme.reset, theme.icon {
                         mask-image: url("ui/chevron2.svg")
                         opacity: 0.5
                         transform: rotate(90deg)
@@ -281,7 +280,7 @@ component FileResources {
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
                 button {
-                    style extends theme.reset, theme1.icon {
+                    style extends theme.reset, theme.icon {
                         mask-image: url("ui/chevron2.svg")
                         opacity: 0.5
                     }

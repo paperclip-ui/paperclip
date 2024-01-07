@@ -27,6 +27,8 @@ import {
   ToolsLayerDrop,
   VariantEdited,
   TriggersEdited,
+  ScriptSaved,
+  ScriptRemoved,
 } from "../ui/events";
 
 import {
@@ -641,6 +643,13 @@ const createEventHandler = (actions: APIActions) => {
     ]);
   };
 
+  const handleScriptSaved = (event: ScriptSaved, state: DesignerState) => {};
+
+  const handleScriptRemoved = (
+    event: ScriptRemoved,
+    state: DesignerState
+  ) => {};
+
   const handleMovedFile = async (
     { payload: { directory, item } }: FileNavigatorDroppedFile,
     state: DesignerState
@@ -1135,6 +1144,12 @@ const createEventHandler = (actions: APIActions) => {
       }
       case "ui/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);
+      }
+      case "ui/scriptSaved": {
+        return handleScriptSaved(event, newState);
+      }
+      case "ui/scriptRemoved": {
+        return handleScriptRemoved(event, newState);
       }
       case "ui/FileNavigatorDroppedFile": {
         return handleMovedFile(event, newState);

@@ -10,9 +10,9 @@ use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
     DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PrependChild,
-    SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration, SetStyleDeclarationValue,
-    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
-    UpdateDependencyPath, UpdateVariant, WrapInElement,
+    SaveComponentScript, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
+    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
+    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -48,7 +48,11 @@ macro_rules! case {
             );
             let mut graph = graph::Graph::new();
 
-            let features = vec!["condition".to_string(), "styleOverride".to_string()];
+            let features = vec![
+                "condition".to_string(),
+                "styleOverride".to_string(),
+                "script".to_string(),
+            ];
 
             for (path, _) in $mock_files {
                 block_on(graph.load(&path, &mock_fs, Options::new(features.clone())))
@@ -77,7 +81,7 @@ macro_rules! case {
                 })
                 .collect::<HashMap<String, String>>();
 
-            println!("{:#?}", graph.dependencies);
+            // println!("{:#?}", graph.dependencies);
             //
 
             for (path, content) in $expected_mock_files {
@@ -5810,4 +5814,56 @@ case! {
       text "ab"
       "#
     )]
+}
+
+case! {
+  can_define_a_script_on_component,
+  [
+      (
+          "/entry.pc", r#"
+          public component A {
+
+          }
+          "#
+      )
+  ],
+
+  mutation::Inner::SaveComponentScript(SaveComponentScript {
+      component_id: "80f4925f-1".to_string(),
+      src: "./src.tsx".to_string(),
+      target: "react".to_string(),
+      name: "SomeComponent".to_string()
+  }).get_outer(),
+  [(
+      "/entry.pc", r#"
+      public component A {
+        script(src: "./src.tsx", target: "react", name: "SomeComponent")
+      }
+      "#
+  )]
+}
+case! {
+  can_update_an_existing_script,
+  [
+      (
+          "/entry.pc", r#"
+          public component A {
+            script(src: "./src.tsx", target: "react", name: "SomeComponent")
+          }
+          "#
+      )
+  ],
+  mutation::Inner::SaveComponentScript(SaveComponentScript {
+      component_id: "80f4925f-8".to_string(),
+      src: "./srccc.tsx".to_string(),
+      target: "react".to_string(),
+      name: "Blarg".to_string()
+  }).get_outer(),
+  [(
+      "/entry.pc", r#"
+      public component A {
+        script(src: "./srccc.tsx", target: "react", name: "Blarg")
+      }
+      "#
+  )]
 }

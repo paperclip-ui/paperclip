@@ -1,17 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/ui/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
-  getActiveVariant,
-  getEditVariantPopupOpened,
   getSelectedExpression,
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
-import { EditVariantPopup } from "./EditVariantPopup";
-import { Component, Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Component, Script } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { EditScriptPopup } from "./EditScriptPopup";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { getEditorState } from "@paperclip-ui/designer/src/state";
 
 export const ScriptsSection = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -24,8 +21,16 @@ export const ScriptsSection = () => {
 };
 
 export const ScriptsSectionInner = () => {
-  const { scripts, onAddClick } = useScriptsSection();
-  const projectDir = useSelector(getEditorState).projectDirectory;
+  const {
+    editScriptPopupOpen,
+    onCloseEditScriptPopup,
+    scripts,
+    onAddClick,
+    onSelectScript,
+    onRemoveScript,
+    activeScript,
+    onSaveCurrentScript,
+  } = useScriptsSection();
 
   const inputs = [
     ...scripts.map((script) => {
@@ -33,13 +38,13 @@ export const ScriptsSectionInner = () => {
         <inputStyles.ListItemInput
           key={script.id}
           root={{
-            // onClick: () => onSelectVariant(variant),
+            onClick: () => onSelectScript(script),
             className: "removable",
           }}
           removeButton={{
             onClick: (event: React.MouseEvent<any>) => {
               event.stopPropagation();
-              // onRemoveVariant(variant);
+              onRemoveScript(script);
             },
           }}
         >
@@ -58,14 +63,13 @@ export const ScriptsSectionInner = () => {
 
   return (
     <>
-      {/* {editVariantPopupOpen && (
-        <EditVariantPopup
-          name={activeVariant?.name}
-          onSave={onSaveCurrentVariant}
-          onClose={onCloseEditVariantPopup}
-          triggers={activeVariant?.triggers}
+      {editScriptPopupOpen && (
+        <EditScriptPopup
+          script={activeScript}
+          onSave={onSaveCurrentScript}
+          onClose={onCloseEditScriptPopup}
         />
-      )} */}
+      )}
       <inputStyles.Field name="Scripts" input={inputs[0]} />
       {...inputs
         .slice(1)
@@ -79,10 +83,32 @@ export const ScriptsSectionInner = () => {
 const useScriptsSection = () => {
   const component = useSelector(getSelectedExpression) as Component;
   const scripts = ast.getComponentScripts(component);
-  const onAddClick = () => {};
+  const dispatch = useDispatch<DesignerEvent>();
+
+  const [editScriptPopupOpen, setEditScriptPopupOpen] = useState(false);
+  const [activeScript, setActiveScript] = useState<Script>();
+  const onAddClick = () => setEditScriptPopupOpen(true);
+  const onSelectScript = (value: Script) => setActiveScript(value);
+  const onRemoveScript = (value: Script) => {
+    dispatch({ type: "ui/scriptRemoved", payload: { id: value.id } });
+  };
+  const onCloseEditScriptPopup = () => {
+    setEditScriptPopupOpen(false);
+  };
+
+  const onSaveCurrentScript = (data: any) => {
+    dispatch({ type: "ui/scriptSaved", payload: data });
+    setActiveScript(null);
+  };
 
   return {
+    activeScript,
+    editScriptPopupOpen,
     component,
+    onSelectScript,
+    onSaveCurrentScript,
+    onCloseEditScriptPopup,
+    onRemoveScript,
     scripts,
     onAddClick,
   };

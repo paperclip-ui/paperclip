@@ -251,6 +251,11 @@ export type EditVariantClicked = BaseEvent<
   { variantId: string }
 >;
 
+export type ScriptSaved = BaseEvent<
+  "ui/scriptSaved",
+  { id?: string; src: string; target: string; name: string }
+>;
+
 export type ResourceModalDragLeft = BaseEvent<"ui/resourceModalDragLeft">;
 export type ResourceModalBackgroundClicked =
   BaseEvent<"ui/resourceModalBackgroundClicked">;

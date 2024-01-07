@@ -8,6 +8,7 @@ mod insert_frame;
 mod move_expression_to_file;
 mod move_node;
 mod prepend_child;
+mod save_component_script;
 mod set_element_parameter;
 mod set_frame_bounds;
 mod set_id;
@@ -42,6 +43,7 @@ pub use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 pub use paperclip_proto::ast_mutate::*;
+pub use save_component_script::*;
 pub use set_element_parameter::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;
@@ -141,8 +143,9 @@ mutations! {
   SetTextNodeValue,
   ConvertToComponent,
   SetStyleMixins,
-  // PasteExpression,
+
   SetStyleDeclarationValue,
+  SaveComponentScript,
   SetElementParameter,
   ConvertToSlot,
   MoveNode,

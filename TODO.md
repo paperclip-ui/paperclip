@@ -1,7 +1,5 @@
 #### Immediate
 
-- open script in code editor
-- better job finding UI from code
 - ability to change declaration name (just click it)
 
 - ability to define scripts

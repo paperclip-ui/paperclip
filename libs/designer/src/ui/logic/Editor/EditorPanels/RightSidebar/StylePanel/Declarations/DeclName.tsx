@@ -12,20 +12,27 @@ import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { useSelector } from "@paperclip-ui/common";
 import { getGraph } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
+import { NameInput } from "./NameInput";
 
 export type DeclNameProps = {
   name: string;
   style: ComputedStyle;
   inherited: boolean;
+  onChange?: (value: string) => void;
 };
 
 export const DeclName = ({ name, style, inherited }: DeclNameProps) => {
-  const { onClick, open, anchorRef, targetRef } = useDeclName();
+  const { onClick, change, anchorRef, targetRef } = useDeclName();
+
+  // WIP
+  // if (!inherited && change) {
+  //   return <NameInput name={name} onChange={onChange} />;
+  // }
 
   return (
     <styles.DeclInheritanceInfo
       class={classNames({
-        open,
+        open: change,
       })}
     >
       <styles.DeclName
@@ -38,7 +45,7 @@ export const DeclName = ({ name, style, inherited }: DeclNameProps) => {
       >
         {name}
       </styles.DeclName>
-      {open && (!!style.prevValues?.length || inherited) && (
+      {change && (!!style.prevValues?.length || inherited) ? (
         <Portal>
           <styles.DeclInfoCard
             ref={targetRef}
@@ -50,7 +57,7 @@ export const DeclName = ({ name, style, inherited }: DeclNameProps) => {
             })}
           </styles.DeclInfoCard>
         </Portal>
-      )}
+      ) : null}
     </styles.DeclInheritanceInfo>
   );
 };
@@ -125,7 +132,7 @@ const PreValue = ({ name: declName, value }: PreValueProps) => {
 };
 
 const useDeclName = () => {
-  const [open, setOpen] = useState(false);
+  const [change, setChange] = useState(false);
 
   const { anchorRef, targetRef } = usePositioner({
     x: "center",
@@ -133,7 +140,7 @@ const useDeclName = () => {
   });
 
   useEffect(() => {
-    const close = () => setOpen(false);
+    const close = () => setChange(false);
     const onResize = close;
     const onMouseDown = close;
     window.addEventListener("resize", onResize);
@@ -142,11 +149,11 @@ const useDeclName = () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("mousedown", onMouseDown);
     };
-  }, [open]);
+  }, [change]);
 
   const onClick = () => {
-    setOpen(!open);
+    setChange(!change);
   };
 
-  return { onClick, open, anchorRef, targetRef };
+  return { onClick, change, anchorRef, targetRef };
 };

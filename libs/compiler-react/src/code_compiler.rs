@@ -73,8 +73,38 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
     compile_nested_components(document, context);
     for item in &document.body {
         match item.get_inner() {
-            ast::node::Inner::Component(component) => compile_component(&component, context),
+            ast::node::Inner::Component(expr) => compile_component(&expr, context),
+            ast::node::Inner::Atom(expr) => compile_atom(&expr, context),
+            ast::node::Inner::Style(expr) => compile_style_mixin(&expr, context),
             _ => {}
+        }
+    }
+}
+
+fn compile_atom(atom: &ast::Atom, context: &mut Context) {
+    if atom.is_public {
+        context.add_buffer(
+            format!(
+                "export const {} = \"var({})\";\n",
+                atom.name,
+                atom.get_var_name()
+            )
+            .as_str(),
+        );
+    }
+}
+
+fn compile_style_mixin(style: &ast::Style, context: &mut Context) {
+    if style.is_public {
+        if let Some(name) = &style.name {
+            context.add_buffer(
+                format!(
+                    "export const {} = \"{}\";\n",
+                    name,
+                    get_style_namespace(&style.name, &style.id, None)
+                )
+                .as_str(),
+            );
         }
     }
 }

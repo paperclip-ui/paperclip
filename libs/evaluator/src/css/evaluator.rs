@@ -130,7 +130,21 @@ fn evaluate_style_mixins<F: FileResolver>(
             }),
         })
         .get_outer(),
-    })
+    });
+
+    for style in styles {
+        let id = context.next_id();
+        context.rules.borrow_mut().push(PrioritizedRule {
+            priority: context.priority,
+            rule: virt::rule::Inner::Style(virt::StyleRule {
+                id,
+                source_id: None,
+                selector_text: format!(".{}", get_style_namespace(&style.name, &style.id, None)),
+                style: create_extended_style_declarations(style, context),
+            })
+            .get_outer(),
+        })
+    }
 }
 
 fn evaluate_document_rules<F: FileResolver>(

@@ -7,6 +7,7 @@ use crate::{
 
 use super::context::Context;
 use anyhow::Result;
+use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
 use paperclip_proto::ast::{graph_container::GraphContainer, graph_ext::Dependency, pc as ast};
@@ -29,7 +30,7 @@ pub fn compile_typed_definition(
 
 fn compile_document(context: &mut Context) {
     compile_imports(context);
-    compile_components(context);
+    compile_exports(context);
 }
 
 fn collect_imports(imports: &mut BTreeMap<String, String>, context: &mut Context) {
@@ -68,7 +69,7 @@ fn collect_component_imports(imports: &mut BTreeMap<String, String>, context: &m
     }
 }
 
-fn compile_components(context: &mut Context) {
+fn compile_exports(context: &mut Context) {
     for item in &context
         .dependency
         .document
@@ -80,6 +81,46 @@ fn compile_components(context: &mut Context) {
             if component.is_public {
                 compile_component(component, context);
             }
+        }
+        if let ast::node::Inner::Atom(atom) = item.get_inner() {
+            if atom.is_public {
+                compile_atom(atom, context);
+            }
+        }
+        if let ast::node::Inner::Style(style) = item.get_inner() {
+            if style.is_public {
+                compile_style_mixin(style, context);
+            }
+        }
+    }
+}
+
+fn compile_atom(atom: &ast::Atom, context: &mut Context) {
+    if atom.is_public {
+        // provide atom value since this makes definition files a bit easier to parse
+        context.add_buffer(
+            format!(
+                "export const {}: \"var({})\";\n",
+                atom.name,
+                atom.get_var_name()
+            )
+            .as_str(),
+        );
+    }
+}
+
+fn compile_style_mixin(style: &ast::Style, context: &mut Context) {
+    if style.is_public {
+        if let Some(name) = &style.name {
+            // provide mixin value since this makes definition files a bit easier to parse
+            context.add_buffer(
+                format!(
+                    "export const {}: \"{}\";\n",
+                    name,
+                    get_style_namespace(&style.name, &style.id, None)
+                )
+                .as_str(),
+            );
         }
     }
 }

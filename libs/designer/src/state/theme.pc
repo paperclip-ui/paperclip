@@ -1,5 +1,6 @@
 import "ui/theme.pc" as module
 
+
 public token popupBackgroundColor var(gray06)
 public token gray0 rgb(210, 210, 210)
 public token gray02 rgb(115, 115, 115)
@@ -132,5 +133,3 @@ public style centered {
 trigger mobile {
     "@media screen and (max-width: 480px)"
 }
-
-

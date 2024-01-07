@@ -7,11 +7,26 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
+
+
+
+
+
+
+
+
 /**
  * @frame(x: 1424, y: 1394, width: 140, height: 35)
 */
 public component UsedBy {
-    render div root {
+    variant hover trigger {
+        ".hover"
+        ":hover"
+    }
+    render div root(class: class) {
+        style variant hover {
+            background: var(module.gray04)
+        }
         style {
             color: var(theme.gray02)
             text-align: right
@@ -23,8 +38,10 @@ public component UsedBy {
             cursor: pointer
             text-decoration: underline
         }
-        slot children {
-            text "./some/file.pc ➜"
+        slot left {
+            text "./some/file.pc"
+        }
+        slot right {
             text unnamed "something"
         }
     }
@@ -123,23 +140,31 @@ public component RightSidebar {
                         sidebar.SidebarPanelContent {
                             input.Fields {
                                 UsedBy {
-                                    insert children {
+                                    insert left {
                                         text "./another/file.pc"
+                                    }
+                                    insert left {
+                                    }
+                                }
+                                UsedBy(class: "hover") {
+                                    insert left {
+                                        text "./another/file.pc"
+                                    }
+                                    insert left {
                                     }
                                 }
                                 UsedBy {
-                                    insert children {
+                                    insert left {
                                         text "./another/file.pc"
+                                    }
+                                    insert left {
                                     }
                                 }
                                 UsedBy {
-                                    insert children {
+                                    insert left {
                                         text "./another/file.pc"
                                     }
-                                }
-                                UsedBy {
-                                    insert children {
-                                        text "./another/file.pc"
+                                    insert left {
                                     }
                                 }
                             }

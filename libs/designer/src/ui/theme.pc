@@ -1,5 +1,7 @@
 import "state/theme.pc" as module
 
+public token hoverColor var(gray04)
+
 public token roundedXl 0.75rem
 public token roundedLg 0.5rem
 public token popupBackgroundColor var(gray06)
@@ -136,5 +138,3 @@ public style centered {
 trigger mobile {
     "@media screen and (max-width: 480px)"
 }
-
-

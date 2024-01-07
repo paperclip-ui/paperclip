@@ -4,6 +4,11 @@ import "ui/logic/Sidebar/sidebar.pc" as sidebar
 import "ui/theme.pc" as theme
 import "ui/etc.pc" as etc
 
+
+
+
+
+
 /**
  * @frame(x: 258, y: 1039, width: 347, height: 252)
 */
@@ -95,7 +100,7 @@ public component FilteredFile {
         }
         div container {
             style variant hovering {
-                background: var(theme.gray04)
+                background: var(theme.hoverColor)
             }
             style {
                 display: flex
@@ -873,4 +878,3 @@ LayerNavigationItemHeader(class: "insert") {
     insert controls {
     }
 }
-

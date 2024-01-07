@@ -1,6 +1,6 @@
 {
   "name": "paperclip-loader",
-  "version": "20.4.36",
+  "version": "20.4.37",
   "description": "",
   "main": "lib/index.js",
   "scripts": {

@@ -1,15 +1,10 @@
 import React, { memo, useCallback, useRef, useState } from "react";
 import * as styles from "./index.pc";
+import cx from "classnames";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Transform, Point } from "@paperclip-ui/designer/src/state/geom";
 
-import {
-  DEFAULT_FRAME_BOX,
-  getCurrentDependency,
-  getCurrentDocument,
-  getGraph,
-} from "@paperclip-ui/designer/src/state";
-import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
+import { DEFAULT_FRAME_BOX, getGraph } from "@paperclip-ui/designer/src/state";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
@@ -114,6 +109,8 @@ const Frame = memo(
       }, 50);
     }, [inputRef, readonly, setEditing]);
 
+    const hasScript = frameExpr?.body?.some((item: any) => item.script != null);
+
     const onChanged = useCallback(() => {
       if (!editing) {
         return;
@@ -156,6 +153,7 @@ const Frame = memo(
         }}
       >
         <styles.FrameTitle
+          class={cx({ hasScript })}
           // onBlur={onBlur}
           // onKeyPress={onKeyPress}
           onDoubleClick={onDoubleClick}

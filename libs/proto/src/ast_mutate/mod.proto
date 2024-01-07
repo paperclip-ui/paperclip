@@ -48,9 +48,17 @@ message Mutation {
     // Module
     UpdateDependencyPath update_dependency_path = 25;
 
+    SaveComponentScript save_component_script = 29;
   }
 }
 
+message SaveComponentScript {
+    string component_id = 1;
+    optional string script_id = 2;
+    string src = 3;
+    string target = 4;
+    string name = 5;
+}
 
 message AddImport {
   string ns = 1;

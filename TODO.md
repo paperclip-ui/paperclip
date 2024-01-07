@@ -1,15 +1,6 @@
 #### Immediate
 
-- ability to define script on component
-
-  - properties panel
-  - display icon for frames that have controller
-
-- Rename option for layer
-
-  - focus on ID param
-
-  - export public styles and vars too
+- ability to change declaration name (just click it)
 
 - look at Figma wish list items and implement
 

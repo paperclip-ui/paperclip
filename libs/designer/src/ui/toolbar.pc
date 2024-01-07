@@ -1,4 +1,4 @@
-import "state/theme.pc" as module
+import "ui/theme.pc" as module
 import "./theme.pc" as theme
 import "./logic/Sidebar/sidebar.pc" as sidebar
 
@@ -151,4 +151,3 @@ public component Toolbar {
         }
     }
 }
-

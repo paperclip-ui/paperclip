@@ -4,10 +4,7 @@ import {
   EngineCreator,
 } from "@paperclip-ui/common";
 import { DesignerState } from "../state";
-import {
-  createDesignerEngine,
-  DesignerEngineOptions,
-} from "../domains/api/engine";
+import { createDesignerEngine } from "../domains/api/engine";
 import { createHistoryEngine } from "../domains/history/engine";
 import { createKeyboardEngine } from "../domains/keyboard/engine";
 import { History } from "../domains/history/history";

@@ -1,8 +1,11 @@
-import "state/theme.pc" as theme1
 import "ui/input.pc" as module
 import "ui/logic/Sidebar/sidebar.pc" as sidebar
 import "ui/theme.pc" as theme
 import "ui/etc.pc" as etc
+
+
+
+
 
 /**
  * @frame(x: 258, y: 1039, width: 347, height: 252)
@@ -95,7 +98,7 @@ public component FilteredFile {
         }
         div container {
             style variant hovering {
-                background: var(theme.gray04)
+                background: var(theme.hoverColor)
             }
             style {
                 display: flex
@@ -135,16 +138,16 @@ public component FilteredFile {
                             width: 25px
                             height: 25px
                             background: white
-                            border-radius: var(theme1.roundedSM)
+                            border-radius: var(theme.roundedSM)
                             position: relative
-                            padding: var(theme1.space01)
+                            padding: var(theme.space01)
                             flex-shrink: 0
                         }
                     }
                     style {
                         display: flex
                         align-items: center
-                        gap: var(theme1.space03)
+                        gap: var(theme.space03)
                         overflow: hidden
                         flex-shrink: 0
                     }
@@ -226,7 +229,7 @@ public component FileNavigator {
                     style variant isCollapsed {
                         transform: rotate(0deg)
                     }
-                    style extends theme.reset, theme1.icon {
+                    style extends theme.reset, theme.icon {
                         mask-image: url("ui/chevron2.svg")
                         opacity: 0.5
                         transform: rotate(90deg)
@@ -276,7 +279,7 @@ component FileResources {
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
                 button {
-                    style extends theme.reset, theme1.icon {
+                    style extends theme.reset, theme.icon {
                         mask-image: url("ui/chevron2.svg")
                         opacity: 0.5
                     }
@@ -398,7 +401,7 @@ public component Layers {
                         }
                         TreeNavigationItemContent {
                             TreeNavigationItem {
-                                LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
+                                LayerNavigationItemHeader(class: "shadow hasScript element container open showDropOver") {
                                     text "container"
                                 }
                             }
@@ -767,6 +770,9 @@ public component TreeNavigationItemHeader {
  * @frame(x: 795, y: 1167, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
+    variant hasScript trigger {
+        ".hasScript"
+    }
     variant isInsert trigger {
         ".insert"
     }
@@ -859,7 +865,17 @@ public component LayerNavigationItemHeader {
             text "some layer"
         }
         insert controls {
-            slot controls
+            div scriptIndicator {
+                style variant hasScript {
+                    display: inline-block
+                }
+                style extends theme.icon {
+                    mask-image: url("ui/lightning.svg")
+                    width: 1em
+                    height: 1em
+                    display: none
+                }
+            }
         }
     }
 }

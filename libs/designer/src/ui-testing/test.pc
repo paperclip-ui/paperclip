@@ -1,4 +1,3 @@
-import "state/theme.pc" as module1
 import "ui/theme.pc" as module
 
 /**
@@ -11,18 +10,21 @@ public component Test {
             font-family: sans-serif
             color: white
         }
-        text "hello world"
+        slot test {
+            text "hello world"
+        }
     }
 }
 
 /**
  * @frame(x: -269, y: 27, width: 592, height: 388)
 */
-div {
-    text "a"
-    style {
-        position: relative
+public component Test1 {
+    render Test {
+        text "a"
+        style {
+            position: relative
+        }
+        text "b"
     }
-    text "b"
 }
-

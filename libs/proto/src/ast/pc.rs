@@ -37,7 +37,6 @@ macro_rules! get_body_items {
 add_inner_wrapper!(simple_expression::Inner, SimpleExpression);
 add_inner_wrapper!(node::Inner, Node);
 add_inner_wrapper!(component_body_item::Inner, ComponentBodyItem);
-add_inner_wrapper!(document_body_item::Inner, DocumentBodyItem);
 add_inner_wrapper!(override_body_item::Inner, OverrideBodyItem);
 add_inner_wrapper!(trigger_body_item::Inner, TriggerBodyItem);
 add_inner_wrapper!(switch_item::Inner, SwitchItem);
@@ -46,31 +45,31 @@ add_inner_wrapper!(switch_item::Inner, SwitchItem);
 
 impl Document {
     pub fn get_imports(&self) -> Vec<&Import> {
-        get_body_items!(&self.body, document_body_item::Inner::Import, Import)
+        get_body_items!(&self.body, node::Inner::Import, Import)
     }
     pub fn get_atoms(&self) -> Vec<&Atom> {
-        get_body_items!(&self.body, document_body_item::Inner::Atom, Atom)
+        get_body_items!(&self.body, node::Inner::Atom, Atom)
     }
     pub fn get_styles(&self) -> Vec<&Style> {
-        get_body_items!(&self.body, document_body_item::Inner::Style, Style)
+        get_body_items!(&self.body, node::Inner::Style, Style)
     }
     pub fn get_triggers(&self) -> Vec<&Trigger> {
-        get_body_items!(&self.body, document_body_item::Inner::Trigger, Trigger)
+        get_body_items!(&self.body, node::Inner::Trigger, Trigger)
     }
     pub fn get_declarations(&self) -> HashMap<String, ExpressionWrapper> {
         let mut exports = HashMap::new();
         for child in &self.body {
             match child.get_inner() {
-                document_body_item::Inner::Atom(expr) => {
+                node::Inner::Atom(expr) => {
                     exports.insert(expr.name.to_string(), expr.into());
                 }
-                document_body_item::Inner::Component(expr) => {
+                node::Inner::Component(expr) => {
                     exports.insert(expr.name.to_string(), expr.into());
                 }
-                document_body_item::Inner::Trigger(expr) => {
+                node::Inner::Trigger(expr) => {
                     exports.insert(expr.name.to_string(), expr.into());
                 }
-                document_body_item::Inner::Style(expr) => {
+                node::Inner::Style(expr) => {
                     if let Some(name) = &expr.name {
                         exports.insert(name.to_string(), expr.into());
                     }
@@ -91,24 +90,24 @@ impl Document {
     pub fn get_export(&self, name: &str) -> Option<ExpressionWrapper> {
         for child in &self.body {
             match child.get_inner() {
-                document_body_item::Inner::Component(component) => {
+                node::Inner::Component(component) => {
                     if component.name == name {
                         return Some(component.into());
                     }
                 }
-                document_body_item::Inner::Style(style) => {
+                node::Inner::Style(style) => {
                     if let Some(style_name) = &style.name {
                         if style_name == name {
                             return Some(style.into());
                         }
                     }
                 }
-                document_body_item::Inner::Atom(atom) => {
+                node::Inner::Atom(atom) => {
                     if atom.name == name {
                         return Some(atom.into());
                     }
                 }
-                document_body_item::Inner::Trigger(trigger) => {
+                node::Inner::Trigger(trigger) => {
                     if trigger.name == name {
                         return Some(trigger.into());
                     }
@@ -127,11 +126,11 @@ impl Document {
         vec![]
     }
     pub fn get_components(&self) -> Vec<&Component> {
-        get_body_items!(&self.body, document_body_item::Inner::Component, Component)
+        get_body_items!(&self.body, node::Inner::Component, Component)
     }
     pub fn get_style(&self, name: &String) -> Option<&Style> {
         for item in &self.body {
-            if let Some(document_body_item::Inner::Style(style)) = &item.inner {
+            if let Some(node::Inner::Style(style)) = &item.inner {
                 if let Some(style_name) = &style.name {
                     if style_name == name {
                         return Some(style);
@@ -314,12 +313,28 @@ impl Node {
             node::Inner::Text(text) => text.name.clone(),
             node::Inner::Insert(insert) => Some(insert.name.clone()),
             node::Inner::Slot(slot) => Some(slot.name.clone()),
-            node::Inner::Style(_)
-            | node::Inner::Override(_)
+            node::Inner::Component(slot) => Some(slot.name.clone()),
+            node::Inner::Atom(slot) => Some(slot.name.clone()),
+            node::Inner::Style(style) => style.name.clone(),
+            node::Inner::Trigger(slot) => Some(slot.name.clone()),
+            node::Inner::Override(_)
             | node::Inner::Repeat(_)
+            | node::Inner::Import(_)
+            | node::Inner::DocComment(_)
             | node::Inner::Script(_)
             | node::Inner::Switch(_)
             | node::Inner::Condition(_) => None,
+        }
+    }
+    pub fn set_name(&mut self, value: &str) {
+        match self.get_inner_mut() {
+            node::Inner::Atom(expr) => expr.name = value.to_string(),
+            node::Inner::Component(expr) => expr.name = value.to_string(),
+            node::Inner::Trigger(expr) => expr.name = value.to_string(),
+            node::Inner::Element(expr) => expr.name = Some(value.to_string()),
+            node::Inner::Text(expr) => expr.name = Some(value.to_string()),
+            node::Inner::Style(expr) => expr.name = Some(value.to_string()),
+            _ => {}
         }
     }
     pub fn strip_doc_comment(&self) -> Node {
@@ -335,6 +350,14 @@ impl Node {
                 (&text).into()
             }
             _ => self.clone(),
+        }
+    }
+    pub fn get_comment(&self) -> Option<&Comment> {
+        match self.get_inner() {
+            node::Inner::Component(expr) => expr.comment.as_ref(),
+            node::Inner::Element(expr) => expr.comment.as_ref(),
+            node::Inner::Text(expr) => expr.comment.as_ref(),
+            _ => None,
         }
     }
 
@@ -362,99 +385,6 @@ impl Atom {
     }
 }
 
-impl DocumentBodyItem {
-    pub fn set_name(&mut self, value: &str) {
-        match self.get_inner_mut() {
-            document_body_item::Inner::Atom(expr) => expr.name = value.to_string(),
-            document_body_item::Inner::Component(expr) => expr.name = value.to_string(),
-            document_body_item::Inner::Trigger(expr) => expr.name = value.to_string(),
-            document_body_item::Inner::Element(expr) => expr.name = Some(value.to_string()),
-            document_body_item::Inner::Text(expr) => expr.name = Some(value.to_string()),
-            document_body_item::Inner::Style(expr) => expr.name = Some(value.to_string()),
-            _ => {}
-        }
-    }
-    pub fn get_name(&self) -> Option<String> {
-        match self.get_inner() {
-            document_body_item::Inner::Atom(expr) => Some(expr.name.clone()),
-            document_body_item::Inner::Component(expr) => Some(expr.name.clone()),
-            document_body_item::Inner::Trigger(expr) => Some(expr.name.clone()),
-            document_body_item::Inner::Element(expr) => expr.name.clone(),
-            document_body_item::Inner::Text(expr) => expr.name.clone(),
-            document_body_item::Inner::Style(expr) => expr.name.clone(),
-            _ => None,
-        }
-    }
-    pub fn get_comment(&self) -> Option<&Comment> {
-        match self.get_inner() {
-            document_body_item::Inner::Component(expr) => expr.comment.as_ref(),
-            document_body_item::Inner::Element(expr) => expr.comment.as_ref(),
-            document_body_item::Inner::Text(expr) => expr.comment.as_ref(),
-            _ => None,
-        }
-    }
-}
-
-impl TryFrom<Node> for DocumentBodyItem {
-    type Error = ();
-    fn try_from(value: Node) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            node::Inner::Element(element) => {
-                Ok(document_body_item::Inner::Element(element.clone()).get_outer())
-            }
-            node::Inner::Text(text) => {
-                Ok(document_body_item::Inner::Text(text.clone()).get_outer())
-            }
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<&Node> for Script {
-    type Error = ();
-    fn try_from(value: &Node) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            node::Inner::Script(script) => Ok(script.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<DocumentBodyItem> for Node {
-    type Error = ();
-    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            document_body_item::Inner::Element(element) => {
-                Ok(node::Inner::Element(element.clone()).get_outer())
-            }
-            document_body_item::Inner::Text(text) => {
-                Ok(node::Inner::Text(text.clone()).get_outer())
-            }
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<DocumentBodyItem> for Atom {
-    type Error = ();
-    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            document_body_item::Inner::Atom(element) => Ok(element.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<DocumentBodyItem> for Style {
-    type Error = ();
-    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            document_body_item::Inner::Style(style) => Ok(style.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
 impl<'a> TryFrom<&'a mut ComponentBodyItem> for &'a mut Render {
     type Error = ();
     fn try_from(value: &'a mut ComponentBodyItem) -> Result<Self, Self::Error> {
@@ -465,64 +395,57 @@ impl<'a> TryFrom<&'a mut ComponentBodyItem> for &'a mut Render {
     }
 }
 
-impl TryFrom<Node> for Style {
-    type Error = ();
-    fn try_from(value: Node) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            node::Inner::Style(style) => Ok(style.clone()),
-            _ => Err(()),
-        }
-    }
+macro_rules! into_from_node {
+    ($([$expr: path, $outer: ident]), *) => {
+        $(
+            impl<'a> From<&$expr> for Node {
+                fn from(value: &$expr) -> Self {
+                    node::Inner::$outer(value.clone()).get_outer()
+                }
+            }
+
+            impl<'a> TryFrom<&'a mut Node> for &'a mut $expr {
+                type Error = ();
+                fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
+                    match value.get_inner_mut() {
+                        node::Inner::$outer(expr) => Ok(expr),
+                        _ => Err(()),
+                    }
+                }
+            }
+
+            impl TryFrom<Node> for $expr {
+                type Error = ();
+                fn try_from(value: Node) -> Result<Self, Self::Error> {
+                    match value.get_inner() {
+                        node::Inner::$outer(style) => Ok(style.clone()),
+                        _ => Err(()),
+                    }
+                }
+            }
+
+            impl TryFrom<&Node> for $expr {
+                  type Error = ();
+                  fn try_from(value: &Node) -> Result<Self, Self::Error> {
+                      match value.get_inner() {
+                          node::Inner::$outer(style) => Ok(style.clone()),
+                          _ => Err(()),
+                      }
+                  }
+              }
+        )*
+    };
 }
 
-impl TryFrom<Node> for Element {
-    type Error = ();
-    fn try_from(value: Node) -> Result<Self, Self::Error> {
-        match value.get_inner() {
-            node::Inner::Element(style) => Ok(style.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl<'a> TryFrom<&'a mut Node> for &'a mut Element {
-    type Error = ();
-    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
-        match value.get_inner_mut() {
-            node::Inner::Element(expr) => Ok(expr),
-            _ => Err(()),
-        }
-    }
-}
-
-impl<'a> From<&Element> for Node {
-    fn from(value: &Element) -> Self {
-        node::Inner::Element(value.clone()).get_outer()
-    }
-}
-
-impl<'a> From<&TextNode> for Node {
-    fn from(value: &TextNode) -> Self {
-        node::Inner::Text(value.clone()).get_outer()
-    }
-}
-
-impl<'a> TryFrom<&'a mut Node> for &'a mut Insert {
-    type Error = ();
-    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
-        match value.get_inner_mut() {
-            node::Inner::Insert(expr) => Ok(expr),
-            _ => Err(()),
-        }
-    }
-}
-
-impl<'a> TryFrom<&'a mut Node> for &'a mut Style {
-    type Error = ();
-    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
-        match value.get_inner_mut() {
-            node::Inner::Style(style) => Ok(style),
-            _ => Err(()),
-        }
-    }
+into_from_node! {
+    [Element, Element],
+    [TextNode, Text],
+    [Insert, Insert],
+    [Slot, Slot],
+    [Style, Style],
+    [Component, Component],
+    [Import, Import],
+    [Atom, Atom],
+    [Trigger, Trigger],
+    [Script, Script]
 }

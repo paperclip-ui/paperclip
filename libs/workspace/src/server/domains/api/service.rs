@@ -12,7 +12,7 @@ use paperclip_core::proto::ast::copy::copy_expression;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto::ast::pc::document_body_item;
+use paperclip_proto::ast::pc::node;
 use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
@@ -624,9 +624,9 @@ fn find_resources(pattern: &str, graph: &Graph, found: &mut Vec<Resource>) {
             }
 
             let kind = match item.get_inner() {
-                document_body_item::Inner::Component(_) => ResourceKind::Component,
-                document_body_item::Inner::Atom(_) => ResourceKind::Token,
-                document_body_item::Inner::Style(_) => ResourceKind::StyleMixin,
+                node::Inner::Component(_) => ResourceKind::Component,
+                node::Inner::Atom(_) => ResourceKind::Token,
+                node::Inner::Style(_) => ResourceKind::StyleMixin,
                 _ => {
                     continue;
                 }

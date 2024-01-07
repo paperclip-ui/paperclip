@@ -3,6 +3,7 @@ use colored::Colorize;
 fn is_log_level_enabled(value: &str) -> bool {
     std::env::var("PC_LOG_LEVEL")
         .unwrap_or("NOTICE".to_string())
+        .to_lowercase()
         .split("|")
         .map(|v| v.to_string())
         .collect::<Vec<String>>()
@@ -10,7 +11,7 @@ fn is_log_level_enabled(value: &str) -> bool {
 }
 
 pub fn log_verbose(message: &str) {
-    if is_log_level_enabled("VERBOSE") || is_log_level_enabled("ALL") {
+    if is_log_level_enabled("verbose") || is_log_level_enabled("all") {
         println!("{}", message.dimmed());
     }
 }

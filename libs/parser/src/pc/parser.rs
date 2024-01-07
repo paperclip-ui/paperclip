@@ -49,7 +49,7 @@ pub fn parse_with_context<'src>(
 }
 
 fn parse_document(context: &mut PCContext) -> Result<ast::Document, err::ParserError> {
-    let mut body: Vec<ast::DocumentBodyItem> = vec![];
+    let mut body: Vec<ast::Node> = vec![];
     let start = context.curr_u16pos.clone();
     loop {
         context.skip(is_superfluous_or_newline)?;
@@ -67,9 +67,7 @@ fn parse_document(context: &mut PCContext) -> Result<ast::Document, err::ParserE
     })
 }
 
-fn parse_document_child(
-    context: &mut PCContext,
-) -> Result<ast::DocumentBodyItem, err::ParserError> {
+fn parse_document_child(context: &mut PCContext) -> Result<ast::Node, err::ParserError> {
     let comment = if matches!(context.curr_token, Some(Token::DoccoStart)) {
         Some(parse_docco(context)?)
     } else {
@@ -85,39 +83,35 @@ fn parse_document_child(
     };
 
     match context.curr_token {
-        Some(Token::KeywordComponent) => Ok(ast::document_body_item::Inner::Component(
-            parse_component(context, comment, is_public)?,
-        )
-        .get_outer()),
-        Some(Token::KeywordImport) => {
-            Ok(ast::document_body_item::Inner::Import(parse_import(context)?).get_outer())
-        }
-        Some(Token::Word(b"style")) => {
-            Ok(ast::document_body_item::Inner::Style(parse_style(context, is_public)?).get_outer())
-        }
-        Some(Token::Word(b"token")) => {
-            Ok(ast::document_body_item::Inner::Atom(parse_atom(context, is_public)?).get_outer())
-        }
-        Some(Token::Word(b"trigger")) => Ok(ast::document_body_item::Inner::Trigger(
-            parse_trigger(context, is_public)?,
-        )
-        .get_outer()),
-        Some(Token::Word(b"if")) => {
-            Ok(ast::document_body_item::Inner::Condition(parse_condition(context)?).get_outer())
-        }
-        Some(Token::Word(b"slot")) => {
-            Ok(ast::document_body_item::Inner::Slot(parse_slot(context)?).get_outer())
-        }
-        Some(Token::Word(b"insert")) => {
-            Ok(ast::document_body_item::Inner::Insert(parse_insert(context)?).get_outer())
-        }
-        Some(Token::Word(b"text")) => {
-            Ok(ast::document_body_item::Inner::Text(parse_text(comment, context)?).get_outer())
-        }
-        Some(Token::Word(_)) => Ok(ast::document_body_item::Inner::Element(parse_element(
-            comment, context,
+        Some(Token::KeywordComponent) => Ok(ast::node::Inner::Component(parse_component(
+            context, comment, is_public,
         )?)
         .get_outer()),
+        Some(Token::KeywordImport) => {
+            Ok(ast::node::Inner::Import(parse_import(context)?).get_outer())
+        }
+        Some(Token::Word(b"style")) => {
+            Ok(ast::node::Inner::Style(parse_style(context, is_public)?).get_outer())
+        }
+        Some(Token::Word(b"token")) => {
+            Ok(ast::node::Inner::Atom(parse_atom(context, is_public)?).get_outer())
+        }
+        Some(Token::Word(b"trigger")) => {
+            Ok(ast::node::Inner::Trigger(parse_trigger(context, is_public)?).get_outer())
+        }
+        Some(Token::Word(b"if")) => {
+            Ok(ast::node::Inner::Condition(parse_condition(context)?).get_outer())
+        }
+        Some(Token::Word(b"slot")) => Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer()),
+        Some(Token::Word(b"insert")) => {
+            Ok(ast::node::Inner::Insert(parse_insert(context)?).get_outer())
+        }
+        Some(Token::Word(b"text")) => {
+            Ok(ast::node::Inner::Text(parse_text(comment, context)?).get_outer())
+        }
+        Some(Token::Word(_)) => {
+            Ok(ast::node::Inner::Element(parse_element(comment, context)?).get_outer())
+        }
         _ => {
             return Err(context.new_unexpected_token_error());
         }

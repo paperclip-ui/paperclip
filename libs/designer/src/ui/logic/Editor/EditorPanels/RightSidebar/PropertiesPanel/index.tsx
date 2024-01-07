@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getSelectedExpressionInfo,
   getExprBounds,
+  isRenamingSelectedLayer,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
@@ -18,6 +19,7 @@ import { UsedBySection } from "./UsedBySection";
 import { TextValueField } from "./TextValueInput";
 import { AtomValueField } from "./AtomValueInput";
 import { TriggersSection } from "./TriggersSection";
+import { ScriptsSection } from "./ScriptsSection";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -39,6 +41,7 @@ export const PropertiesPanel = () => {
             <AtomValueField />
             <ExprTagNameField />
             <VariantsSection />
+            <ScriptsSection />
             <TriggersSection />
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
@@ -52,10 +55,15 @@ export const PropertiesPanel = () => {
 
 const IDField = () => {
   const expr = useSelector(getSelectedExpressionInfo);
+  const renameLayer = useSelector(isRenamingSelectedLayer);
   const dispatch = useDispatch<DesignerEvent>();
 
   const onSave = (value: string) => {
     dispatch({ type: "ui/idChanged", payload: { value } });
+  };
+
+  const onIDFieldBlur = () => {
+    dispatch({ type: "ui/IDFieldBlurred" });
   };
 
   if (
@@ -78,6 +86,8 @@ const IDField = () => {
         <TextInput
           placeholder="Undefined"
           value={getExprName(expr)}
+          autoFocus={renameLayer}
+          onBlur={onIDFieldBlur}
           onSave={onSave}
         />
       }

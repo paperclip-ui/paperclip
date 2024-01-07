@@ -28,6 +28,7 @@ export enum ShortcutCommand {
   OpenFileInNavigator,
   ConvertToSlot,
   WrapInElement,
+  RenameLayer,
   OpenCodeEditor,
   CenterInCanvas,
   Cut,
@@ -81,6 +82,12 @@ export const getEntityShortcuts = memoize(
         label: "Wrap in Element",
         shortcut: ["alt", "shift", "e"],
         command: ShortcutCommand.WrapInElement,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Rename",
+        shortcut: [],
+        command: ShortcutCommand.RenameLayer,
       },
       { kind: MenuItemKind.Divider },
       {

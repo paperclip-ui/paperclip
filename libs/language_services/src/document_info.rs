@@ -29,19 +29,19 @@ pub fn get_document_info(path: &str, graph: &Graph) -> Result<DocumentInfo> {
 
     for item in &ast.body {
         match item.get_inner() {
-            document_body_item::Inner::Atom(expr) => {
+            node::Inner::Atom(expr) => {
                 scan_atom(expr, &mut ctx);
             }
-            document_body_item::Inner::Style(expr) => {
+            node::Inner::Style(expr) => {
                 scan_style(expr, &mut ctx);
             }
-            document_body_item::Inner::Component(expr) => {
+            node::Inner::Component(expr) => {
                 scan_component(expr, &mut ctx);
             }
-            document_body_item::Inner::Element(expr) => {
+            node::Inner::Element(expr) => {
                 scan_element(expr, &mut ctx);
             }
-            document_body_item::Inner::Text(expr) => {
+            node::Inner::Text(expr) => {
                 scan_text(expr, &mut ctx);
             }
             _ => {}

@@ -1,4 +1,4 @@
-import "state/theme.pc" as module
+import "ui/theme.pc" as module
 import "./menu.pc" as imp1
 import "./logic/SuggestionMenu/ui.pc" as sugg
 import "./color-picker.pc" as imp
@@ -7,25 +7,55 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
+
+
+
+
+
+
+
+
 /**
- * @frame(x: 1424, y: 1394, width: 140, height: 35)
+ * @frame(x: 1414, y: 1439, width: 324, height: 35)
 */
 public component UsedBy {
-    render div root {
+    variant hover trigger {
+        ".hover"
+        ":hover"
+    }
+    render div root(class: class) {
+        style variant hover {
+            background: var(module.gray04)
+        }
         style {
             color: var(theme.gray02)
             text-align: right
             font-family: var(theme.defaultFontFamily)
             display: flex
             align-items: center
-            justify-content: flex-start
+            justify-content: space-between
             gap: var(theme.space03)
             cursor: pointer
-            text-decoration: underline
+            padding: var(theme.space03) var(theme.space05)
         }
-        slot children {
-            text "./some/file.pc ➜"
-            text unnamed "something"
+        div baseName {
+            style {
+                white-space: nowrap
+            }
+            slot left {
+                text "file.pc"
+            }
+        }
+        div rightContainer {
+            style {
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+                direction: rtl
+            }
+            slot right {
+                text unnamed "some/deeply/nested/directory/in/there"
+            }
         }
     }
 }
@@ -104,7 +134,7 @@ public component RightSidebar {
                                     }
                                     insert input {
                                         input.ListItemInput(class: "removable") {
-                                            text "isHover"
+                                            text "some super long text that should push the x"
                                         }
                                     }
                                 }
@@ -120,27 +150,25 @@ public component RightSidebar {
                         sidebar.SidebarPanelHeader {
                             text "Used by"
                         }
-                        sidebar.SidebarPanelContent {
-                            input.Fields {
-                                UsedBy {
-                                    insert children {
-                                        text "./another/file.pc"
-                                    }
+                        div {
+                            UsedBy(class: "hover") {
+                                insert left {
+                                    text "./another/file.pc"
                                 }
-                                UsedBy {
-                                    insert children {
-                                        text "./another/file.pc"
-                                    }
+                            }
+                            UsedBy {
+                                insert left {
+                                    text "./another/file.pc"
                                 }
-                                UsedBy {
-                                    insert children {
-                                        text "./another/file.pc"
-                                    }
+                            }
+                            UsedBy {
+                                insert left {
+                                    text "./another/file.pc"
                                 }
-                                UsedBy {
-                                    insert children {
-                                        text "./another/file.pc"
-                                    }
+                            }
+                            UsedBy {
+                                insert left {
+                                    text "./another/file.pc"
                                 }
                             }
                         }

@@ -6,7 +6,7 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
-        pc::{document_body_item, node, Component, Document, DocumentBodyItem, Element, Node},
+        pc::{node, Component, Document, Element, Node},
         wrapper::{Expression, ExpressionWrapper},
     },
     ast_mutate::{mutation_result, ConvertToComponent, ExpressionInserted},
@@ -68,7 +68,7 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
 
         expr.body.insert(
             insert_index,
-            document_body_item::Inner::Component(new_component).get_outer(),
+            node::Inner::Component(new_component).get_outer(),
         );
 
         // filter out expression if at the document body level
@@ -77,7 +77,7 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
             .clone()
             .into_iter()
             .filter(|expr| expr.get_id() != self.mutation.expression_id)
-            .collect::<Vec<DocumentBodyItem>>();
+            .collect::<Vec<Node>>();
 
         VisitorResult::Continue
     }
@@ -119,17 +119,21 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
 }
 
 fn get_component_insert_index(matching_id: &str, expr: &Document) -> usize {
-    let first_component =
-        expr.body
+    let first_component = expr
+        .body
+        .iter()
+        .enumerate()
+        .find(|(_i, item)| item.get_id() == matching_id)
+        .or(expr
+            .body
             .iter()
             .enumerate()
-            .find(|(_i, item)| item.get_id() == matching_id)
-            .or(expr.body.iter().enumerate().find(|(_i, item)| {
-                matches!(item.get_inner(), document_body_item::Inner::Component(_))
-            }))
-            .or(expr.body.iter().enumerate().find(|(_i, item)| {
-                matches!(item.get_inner(), document_body_item::Inner::Import(_))
-            }));
+            .find(|(_i, item)| matches!(item.get_inner(), node::Inner::Component(_))))
+        .or(expr
+            .body
+            .iter()
+            .enumerate()
+            .find(|(_i, item)| matches!(item.get_inner(), node::Inner::Import(_))));
 
     if let Some((i, _)) = first_component {
         i
@@ -174,7 +178,7 @@ pub fn get_unique_component_name(base_name: &str, doc: &Document) -> String {
 fn create_element(tag_name: &str, id_seed: &str) -> Element {
     let doc = parse(tag_name, id_seed, &Options::new(vec![])).unwrap();
     match doc.body.get(0).unwrap().get_inner() {
-        document_body_item::Inner::Element(element) => Some(element),
+        node::Inner::Element(element) => Some(element),
         _ => None,
     }
     .unwrap()
@@ -208,7 +212,7 @@ public component {} {{
 
     let doc = parse(&new_source, id_seed, &Options::new(vec![])).unwrap();
     match doc.body.get(0).unwrap().get_inner() {
-        document_body_item::Inner::Component(expr) => Some(expr),
+        node::Inner::Component(expr) => Some(expr),
         _ => None,
     }
     .unwrap()

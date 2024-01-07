@@ -10,7 +10,7 @@ use paperclip_proto::{
     ast::pc::Element,
     ast::{
         graph_ext::Dependency,
-        pc::{document_body_item, Document},
+        pc::Document,
         shared::Reference,
         wrapper::{Expression, ExpressionWrapper},
     },
@@ -151,29 +151,8 @@ fn insert_document_expr(
     let imports = UpdateExprImports::apply(&mut expr, expr_dep, new_dep);
 
     // TODO: should move this to TryFrom instead of having a match here
-    let body_item = match expr {
-        ExpressionWrapper::Component(expr) => {
-            Some(document_body_item::Inner::Component(expr.clone()).get_outer())
-        }
-        ExpressionWrapper::Style(expr) => {
-            Some(document_body_item::Inner::Style(expr.clone()).get_outer())
-        }
-        ExpressionWrapper::TextNode(expr) => {
-            Some(document_body_item::Inner::Text(expr.clone()).get_outer())
-        }
-        ExpressionWrapper::Element(expr) => {
-            Some(document_body_item::Inner::Element(expr.clone()).get_outer())
-        }
-        ExpressionWrapper::Atom(expr) => {
-            Some(document_body_item::Inner::Atom(expr.clone()).get_outer())
-        }
-        ExpressionWrapper::Trigger(expr) => {
-            Some(document_body_item::Inner::Trigger(expr.clone()).get_outer())
-        }
-        _ => None,
-    };
 
-    if let Some(item) = body_item {
+    if let Ok(item) = expr.try_into() {
         doc.body.push(item);
     }
 

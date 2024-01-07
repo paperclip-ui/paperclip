@@ -1,4 +1,3 @@
-import "state/theme.pc" as module
 import "ui/theme.pc" as theme
 
 public style panel extends theme.card
@@ -243,4 +242,3 @@ public component SidebarPopupPanelContent {
         slot children
     }
 }
-

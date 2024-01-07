@@ -2,7 +2,6 @@ use super::base;
 use super::css;
 use super::docco;
 use super::pc;
-use super::pc::document_body_item;
 use super::shared;
 use super::visit;
 
@@ -48,6 +47,15 @@ macro_rules! expressions {
                 $(
                     ExpressionWrapper::$name(exp) => {
                         exp.get_id()
+                    },
+                )*
+            }
+        }
+        pub fn checksum(&self) -> String {
+            match self {
+                $(
+                    ExpressionWrapper::$name(exp) => {
+                        exp.checksum()
                     },
                 )*
             }
@@ -162,22 +170,6 @@ macro_rules! match_each_expr_id {
 
 expressions! {
   (Document, pc::Document, self => &self.id),
-  (DocumentBodyItem, pc::DocumentBodyItem, self => &match_each_expr_id!(&self.get_inner(),
-      pc::document_body_item::Inner::Import,
-      pc::document_body_item::Inner::Style,
-      pc::document_body_item::Inner::Component,
-      pc::document_body_item::Inner::DocComment,
-      pc::document_body_item::Inner::Text,
-      pc::document_body_item::Inner::Atom,
-      pc::document_body_item::Inner::Trigger,
-      pc::document_body_item::Inner::Element,
-      pc::document_body_item::Inner::Slot,
-      pc::document_body_item::Inner::Insert,
-      pc::document_body_item::Inner::Switch,
-      pc::document_body_item::Inner::Condition,
-      pc::document_body_item::Inner::Repeat
-  )),
-
   (Import, pc::Import, self => &self.id),
   (Style, pc::Style, self => &self.id),
   (Component, pc::Component, self => &self.id),
@@ -219,14 +211,18 @@ expressions! {
   (Reference, shared::Reference, self => &self.id),
   (Ary, pc::Ary, self => &self.id),
   (Element, pc::Element, self => &self.id),
-  // (Node, pc::Node, self => &self.get_inner().get_id()),
   (Node, pc::Node, self => match_each_expr_id!(&self.get_inner(),
     pc::node::Inner::Slot,
     pc::node::Inner::Insert,
     pc::node::Inner::Style,
     pc::node::Inner::Element,
     pc::node::Inner::Text,
+    pc::node::Inner::Atom,
+    pc::node::Inner::Trigger,
     pc::node::Inner::Override,
+    pc::node::Inner::Component,
+    pc::node::Inner::DocComment,
+    pc::node::Inner::Import,
     pc::node::Inner::Repeat,
     pc::node::Inner::Switch,
     pc::node::Inner::Script,
@@ -316,7 +312,13 @@ impl TryFrom<ExpressionWrapper> for pc::Node {
             ExpressionWrapper::Node(node) => Ok(node.clone()),
             ExpressionWrapper::Element(node) => Ok(node.into()),
             ExpressionWrapper::TextNode(node) => Ok(node.into()),
-            ExpressionWrapper::DocumentBodyItem(node) => node.clone().try_into(),
+            ExpressionWrapper::Insert(node) => Ok(node.into()),
+            ExpressionWrapper::Slot(node) => Ok(node.into()),
+            ExpressionWrapper::Component(node) => Ok(node.into()),
+            ExpressionWrapper::Import(node) => Ok(node.into()),
+            ExpressionWrapper::Style(node) => Ok(node.into()),
+            ExpressionWrapper::Atom(node) => Ok(node.into()),
+            ExpressionWrapper::Trigger(node) => Ok(node.into()),
             _ => Err(()),
         }
     }
@@ -328,41 +330,6 @@ impl TryFrom<ExpressionWrapper> for pc::Document {
     fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
         match &value {
             ExpressionWrapper::Document(node) => Ok(node.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<ExpressionWrapper> for pc::DocumentBodyItem {
-    type Error = ();
-
-    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
-        match &value {
-            ExpressionWrapper::Element(node) => {
-                Ok(document_body_item::Inner::Element(node.clone()).get_outer())
-            }
-            ExpressionWrapper::DocumentBodyItem(node) => Ok(node.clone()),
-            ExpressionWrapper::TextNode(node) => {
-                Ok(document_body_item::Inner::Text(node.clone()).get_outer())
-            }
-            ExpressionWrapper::Component(node) => {
-                Ok(document_body_item::Inner::Component(node.clone()).get_outer())
-            }
-            ExpressionWrapper::Style(node) => {
-                Ok(document_body_item::Inner::Style(node.clone()).get_outer())
-            }
-            ExpressionWrapper::Atom(node) => {
-                Ok(document_body_item::Inner::Atom(node.clone()).get_outer())
-            }
-            ExpressionWrapper::Trigger(node) => {
-                Ok(document_body_item::Inner::Trigger(node.clone()).get_outer())
-            }
-            ExpressionWrapper::Slot(node) => {
-                Ok(document_body_item::Inner::Slot(node.clone()).get_outer())
-            }
-            ExpressionWrapper::Condition(node) => {
-                Ok(document_body_item::Inner::Condition(node.clone()).get_outer())
-            }
             _ => Err(()),
         }
     }

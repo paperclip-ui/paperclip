@@ -126,7 +126,12 @@ const RawInput = (props: RawInputProps) => {
             }
           >
             <inputStyles.TokenMenuContent
-              root={{ root: { style: { "--color": item.previewValue } as any, title: item.previewValue } }}
+              root={{
+                root: {
+                  style: { "--color": item.previewValue } as any,
+                  title: item.previewValue,
+                },
+              }}
               context={item.source?.split("/").pop()}
             >
               {item.label ?? item.value}
@@ -160,7 +165,6 @@ const RawInput = (props: RawInputProps) => {
         placeholder={placeholder}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
-        onClick={onInputClick}
       />
     </DeclSuggestionMenu>
   );

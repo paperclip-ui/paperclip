@@ -61,7 +61,9 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
         }
     }
     fn visit_document(&self, document: &mut ast::pc::Document) -> VisitorResult<(), Self> {
-        let expr = self.expr_map.get_expr(&self.mutation.element_id);
+        let expr = self
+            .expr_map
+            .get_expr_in(&self.mutation.element_id, &document.id);
         if expr.is_none() {
             return VisitorResult::Continue;
         }

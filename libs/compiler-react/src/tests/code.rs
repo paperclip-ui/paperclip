@@ -1381,3 +1381,55 @@ add_case! {
   export { A };
   "#
 }
+
+add_case! {
+  can_compile_atoms,
+  r#"
+  public token a blue
+  token b red
+  "#,
+  r#"
+  import "./entry.pc.css";
+  import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
+  export const a = "var(--a-80f4925f-2)";
+  "#
+}
+
+add_case! {
+  can_compile_style_mixins,
+  r#"
+  public style a {
+    color: blue
+}
+  style b {
+    color: red
+    }
+  "#,
+  r#"
+  import "./entry.pc.css";
+  import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
+    export const a = "_a-80f4925f-3";
+  "#
+}

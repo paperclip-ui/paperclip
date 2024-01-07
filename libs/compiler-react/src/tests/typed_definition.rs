@@ -491,3 +491,41 @@ add_case! {
   export const A: React.FC<BaseAProps>;
   "#
 }
+
+add_case! {
+  can_compile_tokens,
+  [
+      (
+          "/entry.pc",
+          r#"
+           public token a red
+           token b blue
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export const a: "var(--a-80f4925f-2)";
+  "#
+}
+
+add_case! {
+  can_compile_styles,
+  [
+      (
+          "/entry.pc",
+          r#"
+           public style a {
+                color: blue
+           }
+           style b {
+                color: red
+           }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export const a: "_a-80f4925f-3";
+  "#
+}

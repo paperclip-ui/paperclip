@@ -6,7 +6,7 @@ use paperclip_parser::{
 };
 use paperclip_proto::ast::{
     graph::Dependency,
-    pc::document_body_item,
+    pc::node,
     wrapper::{Expression, ExpressionWrapper},
 };
 
@@ -42,7 +42,7 @@ pub fn paste_expression(
         .body
         .clone()
         .into_iter()
-        .filter(|item| !matches!(item.get_inner(), document_body_item::Inner::Import(_)))
+        .filter(|item| !matches!(item.get_inner(), node::Inner::Import(_)))
         .map(|item| item.into())
         .collect();
     let mut resolved_imports = HashMap::new();

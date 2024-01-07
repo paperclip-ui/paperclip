@@ -73,10 +73,38 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
     compile_nested_components(document, context);
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Component(component) => {
-                compile_component(&component, context)
-            }
+            ast::node::Inner::Component(expr) => compile_component(&expr, context),
+            ast::node::Inner::Atom(expr) => compile_atom(&expr, context),
+            ast::node::Inner::Style(expr) => compile_style_mixin(&expr, context),
             _ => {}
+        }
+    }
+}
+
+fn compile_atom(atom: &ast::Atom, context: &mut Context) {
+    if atom.is_public {
+        context.add_buffer(
+            format!(
+                "export const {} = \"var({})\";\n",
+                atom.name,
+                atom.get_var_name()
+            )
+            .as_str(),
+        );
+    }
+}
+
+fn compile_style_mixin(style: &ast::Style, context: &mut Context) {
+    if style.is_public {
+        if let Some(name) = &style.name {
+            context.add_buffer(
+                format!(
+                    "export const {} = \"{}\";\n",
+                    name,
+                    get_style_namespace(&style.name, &style.id, None)
+                )
+                .as_str(),
+            );
         }
     }
 }
@@ -102,7 +130,7 @@ fn collect_imports(
 
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Import(import) => {
+            ast::node::Inner::Import(import) => {
                 let resolved_path = context.dependency.imports.get(&import.path);
                 if let Some(resolved_path) = resolved_path {
                     let mut rel_path = pathdiff::diff_paths(
@@ -125,7 +153,7 @@ fn collect_imports(
                     imports.insert(rel_path, Some(import.namespace.to_string()));
                 }
             }
-            ast::document_body_item::Inner::Component(component) => {
+            ast::node::Inner::Component(component) => {
                 if let Some(script) = component.get_script(COMPILER_NAME) {
                     let src = script.get_src().expect("src must exist");
 

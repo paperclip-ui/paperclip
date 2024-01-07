@@ -1,10 +1,19 @@
-import "state/theme.pc" as module
+import "ui/theme.pc" as module
 import "./theme.pc" as mod
 
+
+
 /**
- * @frame(x: 960, y: 89, width: 144, height: 39)
+ * @frame(x: 962, y: 167, width: 144, height: 39)
 */
 public component Button {
+    variant disabled trigger {
+        ".disabled"
+        ":disabled"
+    }
+    variant small trigger {
+        ".small"
+    }
     variant hover trigger {
         ":hover"
         ".hover"
@@ -19,6 +28,15 @@ public component Button {
         ".warning"
     }
     render button root(class: class) {
+        style variant disabled {
+            opacity: 0.5
+            cursor: not-allowed
+            pointer-events: none
+        }
+        style variant small {
+            padding: var(mod.space03) var(mod.space05)
+            font-size: var(module.fontSize01)
+        }
         style variant secondary + hover {
             color: var(mod.blue00)
             border-color: var(mod.blue00)
@@ -52,7 +70,7 @@ public component Button {
 }
 
 /**
- * @frame(x: 960, y: -56, width: 449, height: 105)
+ * @frame(x: 960, y: -56, width: 458, height: 174)
 */
 div preview {
     style {
@@ -96,6 +114,16 @@ div preview {
         Button(class: "secondary hover") {
             insert children {
                 text "secondary:hover"
+            }
+        }
+        Button(class: "small") {
+            insert children {
+                text "primary small"
+            }
+        }
+        Button(class: "small disabled") {
+            insert children {
+                text "disabled primary small"
             }
         }
     }

@@ -1,4 +1,4 @@
-import "state/theme.pc" as module
+import "ui/theme.pc" as module
 import "../../../../../theme.pc" as theme
 
 component Selectable {
@@ -12,4 +12,3 @@ component Selectable {
  * @frame(width: 100, height: 100, x: 100, y: 100)
  */
 Selectable
-

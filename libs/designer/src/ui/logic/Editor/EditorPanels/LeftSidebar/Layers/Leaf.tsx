@@ -30,10 +30,11 @@ type LeafProps = {
   altText?: any;
   controls?: any;
   instanceOf?: string[];
+  hasScript?: boolean;
 };
 
 export const Leaf = (props: LeafProps) => {
-  const { children, className, depth, text, altText, controls, instanceOf } =
+  const { children, hasScript, className, depth, text, altText, instanceOf } =
     props;
   const {
     selected,
@@ -61,6 +62,7 @@ export const Leaf = (props: LeafProps) => {
               open,
               cutting,
               selected,
+              hasScript,
               shadow,
               showDropTop: dropHotSpot === "before",
               showDropOver: dropHotSpot === "inside",
@@ -69,7 +71,6 @@ export const Leaf = (props: LeafProps) => {
             style={{ "--depth": depth }}
             onClick={onClick}
             onArrowClick={onArrowClick}
-            controls={controls}
           >
             <span ref={labelRef}>{text}</span>
             {altText}
@@ -126,7 +127,7 @@ const useLeaf = ({ id: targetId, instanceOf }: LeafProps) => {
             let isTop = offset.y < rect.top + BORDER_MARGIN;
             let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
 
-            const expr = ast.getExprInfoById(targetId, graph);
+            const expr = ast.getExprByVirtId(targetId, graph);
             const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
 
             // can only insert before or after text nodes

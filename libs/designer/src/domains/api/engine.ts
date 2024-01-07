@@ -27,6 +27,9 @@ import {
   ToolsLayerDrop,
   VariantEdited,
   TriggersEdited,
+  ScriptSaved,
+  ScriptRemoved,
+  MetaClickScript,
 } from "../ui/events";
 
 import {
@@ -199,6 +202,21 @@ const createEventHandler = (actions: APIActions) => {
     if (prevState.insertMode != null) {
       return handleInsert(prevState);
     }
+  };
+
+  const handleMetaClickScript = (
+    event: MetaClickScript,
+    state: DesignerState
+  ) => {
+    const relativePath = event.payload.parameters.find(
+      (param) => param.name === "src"
+    ).value.str.value;
+    const currentDesignFile = getCurrentFilePath(state);
+    const fullPath =
+      relativePath.charAt(0) === "."
+        ? dirname(currentDesignFile) + "/" + relativePath
+        : state.projectDirectory.path + "/" + relativePath;
+    actions.openCodeEditor(fullPath);
   };
 
   const handleDeleteKeyPressed = (
@@ -636,6 +654,33 @@ const createEventHandler = (actions: APIActions) => {
       {
         deleteExpression: {
           expressionId,
+        },
+      },
+    ]);
+  };
+
+  const handleScriptRemoved = (event: ScriptRemoved) => {
+    actions.applyChanges([
+      {
+        deleteExpression: {
+          expressionId: event.payload.id,
+        },
+      },
+    ]);
+  };
+
+  const handleScriptSaved = (
+    { payload: { id, src, target, name } }: ScriptSaved,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        saveComponentScript: {
+          componentId: getSelectedExpression(state).id,
+          scriptId: id,
+          src,
+          target,
+          name,
         },
       },
     ]);
@@ -1095,6 +1140,9 @@ const createEventHandler = (actions: APIActions) => {
       case "ui/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
       }
+      case "ui/metaClickScript": {
+        return handleMetaClickScript(event, prevState);
+      }
       case "ui/FileNavigatorContextMenuOpened":
       case "ui/FileNavigatorItemClicked": {
         return handleFileNavigatorItemClicked(event.payload);
@@ -1135,6 +1183,12 @@ const createEventHandler = (actions: APIActions) => {
       }
       case "ui/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);
+      }
+      case "ui/scriptSaved": {
+        return handleScriptSaved(event, newState);
+      }
+      case "ui/scriptRemoved": {
+        return handleScriptRemoved(event);
       }
       case "ui/FileNavigatorDroppedFile": {
         return handleMovedFile(event, newState);
@@ -1219,7 +1273,7 @@ const bootstrap = (
     expandFilePathDirectories,
     readDirectory,
     loadProjectInfo,
-  }: Actions,
+  }: APIActions,
   initialState: DesignerState
 ) => {
   loadProjectInfo();

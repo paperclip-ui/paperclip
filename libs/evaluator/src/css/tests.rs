@@ -116,6 +116,10 @@ add_case! {
     --fontRegular-font-family-80f4925f-2: Helvetica;
     --fontRegular-font-weight-80f4925f-4: 600;
   }
+  ._fontRegular-80f4925f-5 {
+    font-family: var(--fontRegular-font-family-80f4925f-2, Helvetica);
+    font-weight: var(--fontRegular-font-weight-80f4925f-4, 600);
+  }
 
   ._80f4925f-10 {
       font-family:  var(--fontRegular-font-family-80f4925f-2, Helvetica);
@@ -149,7 +153,8 @@ add_case! {
       --a-color-80f4925f-2: red;
       --b-color-80f4925f-5: orange;
     }
-
+    ._a-80f4925f-3 { color: var(--a-color-80f4925f-2, red); }
+    ._b-80f4925f-6 { color: var(--b-color-80f4925f-5, orange); }
     ._80f4925f-12 {
     color: var(--a-color-80f4925f-2, red);
     color: var(--b-color-80f4925f-5, orange);
@@ -485,6 +490,7 @@ div {
   )],
   r#"
   :root { --fontRegular-font-family-80f4925f-2: Helvetica; }
+  ._fontRegular-80f4925f-3 { font-family: var(--fontRegular-font-family-80f4925f-2, Helvetica); }
   ._80f4925f-6 { font-family: var(--fontRegular-font-family-80f4925f-2, Helvetica); }
   "#
 }
@@ -517,6 +523,13 @@ div {
     --b-color-80f4925f-5: red; --c-font-family-80f4925f-2:
     var(--a-font-family-80f4925f-2, Helvetica);
     --c-color-80f4925f-5: var(--b-color-80f4925f-5, red);
+  }
+
+  ._a-80f4925f-3 { font-family: var(--a-font-family-80f4925f-2, Helvetica); }
+  ._b-80f4925f-6 { color: var(--b-color-80f4925f-5, red); }
+  ._c-80f4925f-9 {
+    font-family: var(--a-font-family-80f4925f-2, Helvetica);
+    color: var(--b-color-80f4925f-5, red);
   }
 
   ._80f4925f-12 {
@@ -1122,6 +1135,7 @@ add_case! {
   ],
   r#"
   :root { --something-background-80f4925f-3: orange; }
+  ._something-80f4925f-4 { background: var(--something-background-80f4925f-3, orange); }
   ._A-80f4925f-8 ._B-root-139cec8e-6 { background: var(--something-background-80f4925f-3, orange); }
   "#
 }
@@ -1312,6 +1326,7 @@ add_case! {
   ],
   r#"
   :root { --test-color-80f4925f-2: white; }
+  ._test-80f4925f-3 { color: var(--test-color-80f4925f-2, white); }
   ._A-root-80f4925f-13._variant-80f4925f-4 { color: blue; }
   ._A-root-80f4925f-13 { color: var(--test-color-80f4925f-2, white); color: white; }
   ._instance-80f4925f-20._A-root-80f4925f-13 { color: blue; }
@@ -1360,6 +1375,7 @@ add_case! {
   ],
   r#"
   :root { --test-color-80f4925f-2: white; }
+  ._test-80f4925f-3 { color: var(--test-color-80f4925f-2, white); }
 
   ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; }
   ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-14._variant-80f4925f-17 { color: blue; }
@@ -1425,6 +1441,7 @@ add_case! {
   ],
   r#"
   :root { --test-color-80f4925f-2: white; }
+  ._test-80f4925f-3 { color: var(--test-color-80f4925f-2, white); }
   ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; }
   ._B-80f4925f-23._variant-80f4925f-12 ._B-element-80f4925f-17._A-root-80f4925f-9 { color: blue; }
   ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }

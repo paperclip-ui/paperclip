@@ -8,7 +8,6 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import {
   Component,
-  DocumentBodyItem,
   Element,
   Node,
   Condition,
@@ -69,44 +68,54 @@ type LeafProps<Expr> = {
   instanceOf?: string[];
 };
 
-const DocumentBodyItemLeaf = memo(
-  ({ expr: item, depth }: LeafProps<DocumentBodyItem>) => {
-    if (item.component) {
-      return <ComponentLeaf expr={item.component} depth={depth} />;
-    }
-    if (item.element) {
-      return <ElementLeaf expr={item.element} depth={depth} />;
-    }
-    if (item.text) {
-      return <TextLeaf expr={item.text} depth={depth} />;
-    }
-    if (item.trigger) {
-      return <TriggerLeaf expr={item.trigger} depth={depth} />;
-    }
-
-    if (item.atom) {
-      return <AtomLeaf expr={item.atom} depth={depth} />;
-    }
-    if (item.style) {
-      return <StyleMixinLeaf expr={item.style} depth={depth} />;
-    }
-
-    return null;
+const DocumentBodyItemLeaf = memo(({ expr: item, depth }: LeafProps<Node>) => {
+  if (item.component) {
+    return <ComponentLeaf expr={item.component} depth={depth} />;
   }
-);
+  if (item.element) {
+    return <ElementLeaf expr={item.element} depth={depth} />;
+  }
+  if (item.text) {
+    return <TextLeaf expr={item.text} depth={depth} />;
+  }
+  if (item.trigger) {
+    return <TriggerLeaf expr={item.trigger} depth={depth} />;
+  }
+
+  if (item.atom) {
+    return <AtomLeaf expr={item.atom} depth={depth} />;
+  }
+  if (item.style) {
+    return <StyleMixinLeaf expr={item.style} depth={depth} />;
+  }
+
+  return null;
+});
 
 const ComponentLeaf = memo(
   ({ expr: component, depth, instanceOf }: LeafProps<Component>) => {
     const render = ast.getComponentRenderExpr(component);
+    const graph = useSelector(getGraph);
 
     const renderNode =
       render?.node && (ast.getNodeInner(render.node) as ast.InnerNode);
 
+    const renderNodeIsInstance =
+      renderNode && ast.isInstance(renderNode, graph);
+
+    const hasChildren = renderNodeIsInstance
+      ? ast.getComponentSlots(
+          ast.getInstanceComponent(renderNode, graph),
+          graph
+        ).length > 0
+      : renderNode.body.length > 0;
+
     return (
       <Leaf
         id={component.id}
-        className={cx("component", { container: renderNode?.body?.length > 0 })}
+        className={cx("component", { container: hasChildren })}
         text={<>{component.name}</>}
+        hasScript={component.body.some((item) => item.script)}
         altText={
           <styles.TagType>
             {render?.node.element
@@ -120,7 +129,11 @@ const ComponentLeaf = memo(
         instanceOf={instanceOf}
       >
         {() => {
-          return <RenderNodeLeaf expr={render} depth={depth + 1} />;
+          return renderNodeIsInstance ? (
+            <InstanceChildren instance={renderNode} depth={depth + 1} />
+          ) : (
+            <RenderNodeLeaf expr={render} depth={depth + 1} />
+          );
         }}
       </Leaf>
     );
@@ -192,15 +205,15 @@ const ElementLeaf = memo(
   }
 );
 
-const InstanceLeaf = ({
-  expr: instance,
-  depth,
-  instanceOf,
-}: LeafProps<Element>) => {
+type InstancChildrenProps = {
+  instance: Element;
+  depth: number;
+};
+
+const InstanceChildren = ({ instance, depth }: InstancChildrenProps) => {
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(instance, graph);
   const slots = ast.getComponentSlots(component, graph);
-
   const instanceSlots = slots.reduce((map, slot) => {
     map[slot.name] = {
       targetId: `${instance.id}.${slot.id}`,
@@ -220,6 +233,33 @@ const InstanceLeaf = ({
   }
 
   return (
+    <>
+      {Object.keys(instanceSlots).map((key) => {
+        const { targetId, insert } = instanceSlots[key];
+        return (
+          <InsertLeaf
+            depth={depth}
+            targetId={targetId}
+            name={key}
+            key={key}
+            insert={insert}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+const InstanceLeaf = ({
+  expr: instance,
+  depth,
+  instanceOf,
+}: LeafProps<Element>) => {
+  const graph = useSelector(getGraph);
+  const component = ast.getInstanceComponent(instance, graph);
+  const slots = ast.getComponentSlots(component, graph);
+
+  return (
     <Leaf
       id={instance.id}
       className={cx("instance", {
@@ -230,24 +270,7 @@ const InstanceLeaf = ({
       depth={depth}
       instanceOf={instanceOf}
     >
-      {() => {
-        return (
-          <>
-            {Object.keys(instanceSlots).map((key) => {
-              const { targetId, insert } = instanceSlots[key];
-              return (
-                <InsertLeaf
-                  depth={depth + 1}
-                  targetId={targetId}
-                  name={key}
-                  key={key}
-                  insert={insert}
-                />
-              );
-            })}
-          </>
-        );
-      }}
+      {() => <InstanceChildren instance={instance} depth={depth + 1} />}
     </Leaf>
   );
 };

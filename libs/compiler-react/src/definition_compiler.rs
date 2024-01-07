@@ -7,6 +7,7 @@ use crate::{
 
 use super::context::Context;
 use anyhow::Result;
+use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
 use paperclip_proto::ast::{graph_container::GraphContainer, graph_ext::Dependency, pc as ast};
@@ -29,7 +30,7 @@ pub fn compile_typed_definition(
 
 fn compile_document(context: &mut Context) {
     compile_imports(context);
-    compile_components(context);
+    compile_exports(context);
 }
 
 fn collect_imports(imports: &mut BTreeMap<String, String>, context: &mut Context) {
@@ -55,20 +56,20 @@ fn collect_component_imports(imports: &mut BTreeMap<String, String>, context: &m
         .expect("Document must exist")
         .body
     {
-        if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
+        if let ast::node::Inner::Component(component) = item.get_inner() {
             if let Some(script) = component.get_script(COMPILER_NAME) {
                 let src = script.get_src().expect("src must exist");
                 let hash = format!("{:x}", crc::crc32::checksum_ieee(src.as_bytes())).to_string();
                 imports.insert(src.to_string(), format!("_{}", hash));
             }
         }
-        if let ast::document_body_item::Inner::Import(import) = item.get_inner() {
+        if let ast::node::Inner::Import(import) = item.get_inner() {
             imports.insert(import.path.to_string(), import.namespace.to_string());
         }
     }
 }
 
-fn compile_components(context: &mut Context) {
+fn compile_exports(context: &mut Context) {
     for item in &context
         .dependency
         .document
@@ -76,10 +77,50 @@ fn compile_components(context: &mut Context) {
         .expect("Document must exist")
         .body
     {
-        if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
+        if let ast::node::Inner::Component(component) = item.get_inner() {
             if component.is_public {
                 compile_component(component, context);
             }
+        }
+        if let ast::node::Inner::Atom(atom) = item.get_inner() {
+            if atom.is_public {
+                compile_atom(atom, context);
+            }
+        }
+        if let ast::node::Inner::Style(style) = item.get_inner() {
+            if style.is_public {
+                compile_style_mixin(style, context);
+            }
+        }
+    }
+}
+
+fn compile_atom(atom: &ast::Atom, context: &mut Context) {
+    if atom.is_public {
+        // provide atom value since this makes definition files a bit easier to parse
+        context.add_buffer(
+            format!(
+                "export const {}: \"var({})\";\n",
+                atom.name,
+                atom.get_var_name()
+            )
+            .as_str(),
+        );
+    }
+}
+
+fn compile_style_mixin(style: &ast::Style, context: &mut Context) {
+    if style.is_public {
+        if let Some(name) = &style.name {
+            // provide mixin value since this makes definition files a bit easier to parse
+            context.add_buffer(
+                format!(
+                    "export const {}: \"{}\";\n",
+                    name,
+                    get_style_namespace(&style.name, &style.id, None)
+                )
+                .as_str(),
+            );
         }
     }
 }

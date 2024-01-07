@@ -1,4 +1,3 @@
-import "state/theme.pc" as module2
 import "ui/AssetPreview/ui.pc" as module1
 import "ui/logic/Sidebar/sidebar.pc" as module
 import "ui/theme.pc" as theme
@@ -292,4 +291,3 @@ Editor splashPreview(showCanvas: false, showSplash: true)
  * @frame(x: 5796, y: -4274, width: 1949, height: 1236)
 */
 Editor canvasPreview(showCanvas: false, showAssetPreview: true)
-

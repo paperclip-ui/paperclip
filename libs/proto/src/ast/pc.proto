@@ -9,10 +9,10 @@ package ast.pc;
 message Document {
   string id = 1;
   ast.base.Range range = 2;
-  repeated DocumentBodyItem body = 3;
+  repeated Node body = 3;
 }
 
-message DocumentBodyItem {
+message Node {
   oneof inner {
     Import import = 1;
     Style style = 2;
@@ -22,14 +22,13 @@ message DocumentBodyItem {
     Atom atom = 6;
     Trigger trigger = 7;
     Element element = 8;
-
-    // to make copy / paste easier
-
     Slot slot = 9;
     Insert insert = 10;
     Switch switch = 12;
     Repeat repeat = 13;
     Condition condition = 15;
+    Script script = 16;
+    Override override = 17;
   }
 }
 
@@ -84,21 +83,6 @@ message Render {
   string id = 1;
   ast.base.Range range = 2;
   Node node = 3;
-}
-
-message Node {
-  oneof inner {
-    Slot slot = 1;
-    Insert insert = 2;
-    Style style = 3;
-    Element element = 4;
-    TextNode text = 5;
-    Override override = 6;
-    Switch switch = 7;
-    Repeat repeat = 8;
-    Script script = 10;
-    Condition condition = 9;
-  }
 }
 
 

@@ -4,7 +4,7 @@ use super::base::EditContext;
 use super::utils::get_unique_document_body_item_name;
 use paperclip_common::log::log_error;
 use paperclip_proto::ast;
-use paperclip_proto::ast::pc::{DocumentBodyItem, Node};
+use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInserted};
 
@@ -29,7 +29,8 @@ macro_rules! append_child {
                             .get_outer(),
                     );
                 } else {
-                    println!("Cannot append child")
+                    println!("{:#?}", child);
+                    log_error("Cannot append child");
                 }
             }
         }
@@ -48,7 +49,7 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
                     .expect("Unable to parse child source for AppendChild");
 
             for child in paste_result.expressions {
-                let mut child: DocumentBodyItem = if let Ok(child) = child.clone().try_into() {
+                let mut child: Node = if let Ok(child) = child.clone().try_into() {
                     child
                 } else {
                     log_error(format!("Unable to convert to document item").as_str());

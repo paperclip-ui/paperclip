@@ -134,7 +134,7 @@ public component RightSidebar {
                                     }
                                     insert input {
                                         input.ListItemInput(class: "removable") {
-                                            text "isHover"
+                                            text "some super long text that should push the x"
                                         }
                                     }
                                 }
@@ -242,3 +242,4 @@ imp1.Menu {
         }
     }
 }
+

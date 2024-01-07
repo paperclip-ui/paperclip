@@ -29,6 +29,7 @@ import {
   TriggersEdited,
   ScriptSaved,
   ScriptRemoved,
+  MetaClickScript,
 } from "../ui/events";
 
 import {
@@ -201,6 +202,21 @@ const createEventHandler = (actions: APIActions) => {
     if (prevState.insertMode != null) {
       return handleInsert(prevState);
     }
+  };
+
+  const handleMetaClickScript = (
+    event: MetaClickScript,
+    state: DesignerState
+  ) => {
+    const relativePath = event.payload.parameters.find(
+      (param) => param.name === "src"
+    ).value.str.value;
+    const currentDesignFile = getCurrentFilePath(state);
+    const fullPath =
+      relativePath.charAt(0) === "."
+        ? dirname(currentDesignFile) + "/" + relativePath
+        : state.projectDirectory.path + "/" + relativePath;
+    actions.openCodeEditor(fullPath);
   };
 
   const handleDeleteKeyPressed = (
@@ -1123,6 +1139,9 @@ const createEventHandler = (actions: APIActions) => {
     switch (event.type) {
       case "ui/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
+      }
+      case "ui/metaClickScript": {
+        return handleMetaClickScript(event, prevState);
       }
       case "ui/FileNavigatorContextMenuOpened":
       case "ui/FileNavigatorItemClicked": {

@@ -30,10 +30,11 @@ type LeafProps = {
   altText?: any;
   controls?: any;
   instanceOf?: string[];
+  hasScript?: boolean;
 };
 
 export const Leaf = (props: LeafProps) => {
-  const { children, className, depth, text, altText, controls, instanceOf } =
+  const { children, hasScript, className, depth, text, altText, instanceOf } =
     props;
   const {
     selected,
@@ -61,6 +62,7 @@ export const Leaf = (props: LeafProps) => {
               open,
               cutting,
               selected,
+              hasScript,
               shadow,
               showDropTop: dropHotSpot === "before",
               showDropOver: dropHotSpot === "inside",
@@ -69,7 +71,6 @@ export const Leaf = (props: LeafProps) => {
             style={{ "--depth": depth }}
             onClick={onClick}
             onArrowClick={onArrowClick}
-            controls={controls}
           >
             <span ref={labelRef}>{text}</span>
             {altText}

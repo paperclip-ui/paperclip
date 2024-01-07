@@ -4,6 +4,11 @@ import "./theme.pc" as theme
 import "./logic/Sidebar/sidebar.pc" as sidebar
 import "./menu.pc" as menu
 
+
+
+
+
+
 /**
  * @frame(x: -717, y: -1108, width: 136, height: 28)
 */
@@ -583,18 +588,28 @@ public component AddListItemButton {
     }
 }
 
+/**
+ * @frame(x: 124, y: 1285, width: 1024, height: 768)
+*/
 public component ListItemInput {
     variant isRemovable trigger {
         ".removable"
     }
-    render div root {
+    render div root(class: class) {
         style extends theme.input {
             display: flex
             justify-content: space-between
             cursor: pointer
         }
-        slot children {
-            text "value"
+        div {
+            style {
+                overflow: hidden
+                text-overflow: ellipsis
+                white-space: nowrap
+            }
+            slot children {
+                text "value"
+            }
         }
         button removeButton {
             style extends theme.reset {
@@ -672,3 +687,4 @@ div textInputPreview {
         TextInput(class: "medium active", placeholder: "Medium")
     }
 }
+

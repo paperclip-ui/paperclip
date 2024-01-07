@@ -1,5 +1,19 @@
 import "ui/theme.pc" as module
 
+
+/**
+ * @frame(x: 2887, y: 300, width: 301, height: 304)
+*/
+public component LightningIcon {
+    render div {
+        style extends module.icon {
+            mask-image: url("ui/lightning.svg")
+            width: 1.2em
+            height: 1.2em
+        }
+    }
+}
+
 /**
  * @frame(width: 1024, height: 768, x: 1457, y: -176)
  */
@@ -30,7 +44,31 @@ public component Frame {
  * @frame(width: 1024, height: 768, x: 91, y: -1397)
  */
 public component FrameTitle {
-    render div(onDoubleClick: onDoubleClick, style: style, onClick: onClick, onMouseUp: onMouseUp) {
+    variant hasScript trigger {
+        ".hasScript"
+        ".has-script"
+    }
+    render div(onDoubleClick: onDoubleClick, style: style, onClick: onClick, onMouseUp: onMouseUp, class: class) {
+        span title {
+            style {
+                cursor: default
+                white-space: nowrap
+                overflow: hidden
+                font-size: 12px
+                text-overflow: ellipsis
+                display: flex
+                gap: var(module.space02)
+            }
+            LightningIcon {
+                style variant hasScript {
+                    display: block
+                }
+                style {
+                    display: none
+                }
+            }
+            slot value
+        }
         style {
             transform: translateY(calc(-100% - 6px))
             position: absolute
@@ -43,15 +81,28 @@ public component FrameTitle {
             display: flex
             justify-content: space-between
         }
-        span title {
-            style {
-                cursor: default
-                white-space: nowrap
-                overflow: hidden
-                font-size: 12px
-                text-overflow: ellipsis
+    }
+}
+
+/**
+ * @frame(x: 4506, y: -828, width: 1839, height: 1260)
+*/
+div preview {
+    style extends module.fontDefault {
+        position: relative
+        background: rgba(80, 80, 80, 1)
+    }
+    Frame unnamed(class: "hasScript") {
+        style extends module.centered {
+            width: 400px
+            height: 300px
+            background: grey
+        }
+        FrameTitle unnamed(class: "hasScript") {
+            insert value {
+                text "some title"
             }
-            slot value
         }
     }
 }
+

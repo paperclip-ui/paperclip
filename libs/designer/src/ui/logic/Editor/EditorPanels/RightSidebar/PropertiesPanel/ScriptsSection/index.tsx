@@ -9,11 +9,17 @@ import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { Component, Script } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { EditScriptPopup } from "./EditScriptPopup";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
+import { getEditorState } from "@paperclip-ui/designer/src/state";
 
 export const ScriptsSection = () => {
   const expr = useSelector(getSelectedExpressionInfo);
+  const capabilities =
+    useSelector(getEditorState).projectInfo?.experimentalCapabilities || [];
 
-  if (expr.kind !== ast.ExprKind.Component) {
+  if (
+    expr.kind !== ast.ExprKind.Component ||
+    !capabilities.includes("script")
+  ) {
     return null;
   }
 
@@ -23,7 +29,6 @@ export const ScriptsSection = () => {
 export const ScriptsSectionInner = () => {
   const {
     editScriptPopupOpen,
-    onCloseEditScriptPopup,
     scripts,
     onAddClick,
     onSelectScript,
@@ -38,7 +43,7 @@ export const ScriptsSectionInner = () => {
         <inputStyles.ListItemInput
           key={script.id}
           root={{
-            onClick: () => onSelectScript(script),
+            onClick: (event) => onSelectScript(script, event),
             className: "removable",
           }}
           removeButton={{
@@ -84,15 +89,16 @@ const useScriptsSection = () => {
   const [editScriptPopupOpen, setEditScriptPopupOpen] = useState(false);
   const [activeScript, setActiveScript] = useState<Script>();
   const onAddClick = () => setEditScriptPopupOpen(true);
-  const onSelectScript = (value: Script) => {
-    setActiveScript(value);
-    setEditScriptPopupOpen(true);
+  const onSelectScript = (value: Script, event: React.MouseEvent<any>) => {
+    if (event.metaKey) {
+      dispatch({ type: "ui/metaClickScript", payload: value });
+    } else {
+      setActiveScript(value);
+      setEditScriptPopupOpen(true);
+    }
   };
   const onRemoveScript = (value: Script) => {
     dispatch({ type: "ui/scriptRemoved", payload: { id: value.id } });
-  };
-  const onCloseEditScriptPopup = () => {
-    setEditScriptPopupOpen(false);
   };
 
   const onCloseScriptPopup = (data: any) => {
@@ -110,7 +116,6 @@ const useScriptsSection = () => {
     component,
     onSelectScript,
     onCloseScriptPopup,
-    onCloseEditScriptPopup,
     onRemoveScript,
     scripts,
     onAddClick,

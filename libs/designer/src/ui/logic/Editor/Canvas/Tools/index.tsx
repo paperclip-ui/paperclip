@@ -21,7 +21,6 @@ import {
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
-import { ExpressionKind } from "../../EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 
 export const Tools = () => {
   const {
@@ -32,14 +31,12 @@ export const Tools = () => {
     toolsRef,
     resizeable,
     onMouseUp,
-    showEmpty,
     insertMode,
     resizerMoving,
     currentDocument,
     selectedExpr,
     showTextEditor,
     canvas,
-    dispatch,
     contextMenu,
     selectedBox,
     readonly,
@@ -125,7 +122,6 @@ const useTools = () => {
     readonly,
     showTextEditor,
     insertMode,
-    rects,
     currentDocument,
   } = useSelector(getEditorState);
 
@@ -143,10 +139,8 @@ const useTools = () => {
     ast.getParentExprInfo(selectedExpr.expr.id, graph)?.kind ==
       ast.ExprKind.Document;
 
-  const getMousePoint = (event) => {
-    const rect: ClientRect = (
-      event.currentTarget as any
-    ).getBoundingClientRect();
+  const getMousePoint = (event: any) => {
+    const rect = (event.currentTarget as any).getBoundingClientRect();
     return {
       x: event.pageX - rect.left,
       y: event.pageY - rect.top,

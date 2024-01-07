@@ -8,12 +8,12 @@ import {
   LayerKind,
   NewFileKind,
   PromptDetails,
-  PromptKind,
 } from "../../state";
 import { ConfirmDetails } from "../../state/confirm";
 
 import { NativeTypes } from "react-dnd-html5-backend";
 import { Resource } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { Script } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -257,6 +257,7 @@ export type ScriptSaved = BaseEvent<
 >;
 
 export type ScriptRemoved = BaseEvent<"ui/scriptRemoved", { id: string }>;
+export type MetaClickScript = BaseEvent<"ui/metaClickScript", Script>;
 
 export type ResourceModalDragLeft = BaseEvent<"ui/resourceModalDragLeft">;
 export type ResourceModalBackgroundClicked =
@@ -294,6 +295,7 @@ export type CollapseFileNavigatorToggle = BaseEvent<
 
 export type UIEvent =
   | ExprNavigatorDroppedNode
+  | MetaClickScript
   | ElementTagChanged
   | AddVariantPopupClicked
   | FileFilterBlurred

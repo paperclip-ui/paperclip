@@ -115,6 +115,7 @@ const ComponentLeaf = memo(
         id={component.id}
         className={cx("component", { container: hasChildren })}
         text={<>{component.name}</>}
+        hasScript={component.body.some((item) => item.script)}
         altText={
           <styles.TagType>
             {render?.node.element

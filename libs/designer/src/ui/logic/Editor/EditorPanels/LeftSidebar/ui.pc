@@ -7,7 +7,6 @@ import "ui/etc.pc" as etc
 
 
 
-
 /**
  * @frame(x: 258, y: 1039, width: 347, height: 252)
 */
@@ -402,7 +401,7 @@ public component Layers {
                         }
                         TreeNavigationItemContent {
                             TreeNavigationItem {
-                                LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
+                                LayerNavigationItemHeader(class: "shadow hasScript element container open showDropOver") {
                                     text "container"
                                 }
                             }
@@ -771,6 +770,9 @@ public component TreeNavigationItemHeader {
  * @frame(x: 795, y: 1167, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
+    variant hasScript trigger {
+        ".hasScript"
+    }
     variant isInsert trigger {
         ".insert"
     }
@@ -863,7 +865,17 @@ public component LayerNavigationItemHeader {
             text "some layer"
         }
         insert controls {
-            slot controls
+            div scriptIndicator {
+                style variant hasScript {
+                    display: inline-block
+                }
+                style extends theme.icon {
+                    mask-image: url("ui/lightning.svg")
+                    width: 1em
+                    height: 1em
+                    display: none
+                }
+            }
         }
     }
 }
@@ -877,3 +889,4 @@ LayerNavigationItemHeader(class: "insert") {
     insert controls {
     }
 }
+

@@ -3,6 +3,7 @@ import * as styles from "./sidebar.pc";
 import cx from "classnames";
 import { startDOMDrag } from "../utils/dnd";
 import { clamp } from "lodash";
+import { useLocalState } from "../../hooks/useLocalState";
 
 type SidebarContainerProps = {
   children?: any;
@@ -12,7 +13,7 @@ type SidebarContainerProps = {
 export const SidebarContainer =
   (Base: React.FC<styles.BaseSidebarContainerProps>) =>
   ({ children, position }: SidebarContainerProps) => {
-    const [width, setWidth] = useState(300);
+    const [width, setWidth] = useLocalState(`${position}Sidebar`, 300);
 
     const ref = useRef<HTMLDivElement>(null);
     const onSidebarMouseDown = (e: React.MouseEvent) => {

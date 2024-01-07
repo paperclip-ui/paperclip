@@ -155,28 +155,20 @@ public component RightSidebar {
                                 insert left {
                                     text "./another/file.pc"
                                 }
+                            }
+                            UsedBy {
                                 insert left {
+                                    text "./another/file.pc"
                                 }
                             }
                             UsedBy {
                                 insert left {
                                     text "./another/file.pc"
                                 }
-                                insert left {
-                                }
                             }
                             UsedBy {
                                 insert left {
                                     text "./another/file.pc"
-                                }
-                                insert left {
-                                }
-                            }
-                            UsedBy {
-                                insert left {
-                                    text "./another/file.pc"
-                                }
-                                insert left {
                                 }
                             }
                         }
@@ -250,4 +242,3 @@ imp1.Menu {
         }
     }
 }
-

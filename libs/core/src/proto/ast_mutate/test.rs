@@ -2808,33 +2808,36 @@ case! {
 }
 
 case! {
-  can_move_from_a_slot,
+  can_move_from_a_slot_to_a_component,
   [
     (
       "/entry.pc", r#"
-        public component A {
-            render div {
-                slot children {
-                    text "a"
-                    text "b"
-                }
-            }
-        }
+      public component UsedBy {
+          render div root {
+              slot children {
+                  text "./some/file.pc ➜"
+                  text unnamed "something"
+              }
+          }
+      }
       "#
     )
   ],
 
   mutation::Inner::MoveNode(MoveNode {
     position: 2,
-    target_id: "80f4925f-4".to_string(),
+    target_id: "80f4925f-6".to_string(),
     node_id: "80f4925f-2".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    div {
-      span {
-        text "b"
-      }
+    public component UsedBy {
+        render div root {
+            slot children {
+                text "./some/file.pc ➜"
+            }
+            text unnamed "something"
+        }
     }
     "#
   )]

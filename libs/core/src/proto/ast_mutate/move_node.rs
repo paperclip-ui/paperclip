@@ -2,10 +2,7 @@ use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionDeleted};
 use paperclip_proto::{
-    ast::{
-        pc::node,
-        wrapper::{Expression, ExpressionWrapper},
-    },
+    ast::{pc::node, wrapper::Expression},
     ast_mutate::MoveNode,
 };
 
@@ -101,16 +98,13 @@ impl MutableVisitor<()> for EditContext<MoveNode> {
             return VisitorResult::Continue;
         }
 
-        let node = self
+        let node: Node = self
             .expr_map
             .get_expr(&self.mutation.node_id)
-            .expect("Expr must exist");
-
-        let node = match node {
-            ExpressionWrapper::Element(node) => node::Inner::Element(node.clone()).get_outer(),
-            ExpressionWrapper::TextNode(node) => node::Inner::Text(node.clone()).get_outer(),
-            _ => return VisitorResult::Return(()),
-        };
+            .expect("Expr must exist")
+            .duplicate()
+            .try_into()
+            .expect("Must be node");
 
         let existing_render_node = upsert_render_expr(expr, false, &self);
 
@@ -120,7 +114,7 @@ impl MutableVisitor<()> for EditContext<MoveNode> {
             existing_render_node.node = Some(node);
         }
 
-        VisitorResult::Return(())
+        VisitorResult::Continue
     }
 }
 

@@ -10,6 +10,7 @@ import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import produce from "immer";
 import { get } from "lodash";
+import { ShortcutCommand } from "../../shortcuts/state";
 
 export const rightSidebarReducer = (
   state: DesignerState,
@@ -37,7 +38,9 @@ export const rightSidebarReducer = (
     }
     case "shortcuts/itemSelected": {
       return produce(state, (draft) => {
-        draft.renameSelectedLayer = true;
+        if (event.payload.command === ShortcutCommand.RenameLayer) {
+          draft.renameSelectedLayer = true;
+        }
       });
     }
     case "ui/IDFieldBlurred": {

@@ -2,26 +2,6 @@
 
 - ability to change declaration name (just click it)
 
-- ability to define scripts
-
-  - right sidebar section
-  - icon in frame
-
-- Slots not showing up for some instances
-
-  - See ConfirmModal in Shaya
-
-- ability to define script on component
-
-  - properties panel
-  - display icon for frames that have controller
-
-- Rename option for layer
-
-  - focus on ID param
-
-  - export public styles and vars too
-
 - look at Figma wish list items and implement
 
 - Split view!

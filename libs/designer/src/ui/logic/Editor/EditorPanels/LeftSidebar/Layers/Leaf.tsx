@@ -126,7 +126,7 @@ const useLeaf = ({ id: targetId, instanceOf }: LeafProps) => {
             let isTop = offset.y < rect.top + BORDER_MARGIN;
             let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
 
-            const expr = ast.getExprInfoById(targetId, graph);
+            const expr = ast.getExprByVirtId(targetId, graph);
             const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
 
             // can only insert before or after text nodes

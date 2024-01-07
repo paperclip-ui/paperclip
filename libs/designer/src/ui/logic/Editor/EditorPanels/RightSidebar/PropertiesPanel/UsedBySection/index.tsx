@@ -1,6 +1,7 @@
 import { useSelector } from "@paperclip-ui/common";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import {
+  getEditorState,
   getGraph,
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state";
@@ -19,6 +20,7 @@ export const UsedBySection = () => {
   const expr = useSelector(getSelectedExpressionInfo);
   const graph = useSelector(getGraph);
   const history = useHistory();
+  const projectDirectory = useSelector(getEditorState).projectDirectory;
 
   if (!expr || expr.kind !== ast.ExprKind.Component) {
     return null;
@@ -29,30 +31,33 @@ export const UsedBySection = () => {
   return (
     <SidebarSection>
       <SidebarPanelHeader>Instances</SidebarPanelHeader>
-      <SidebarPanelContent>
-        <Fields>
-          {instances.map((instance) => {
-            const instancePath = ast.getOwnerDependencyPath(instance.id, graph);
-            return (
-              <UsedBy
-                key={instance.id}
-                root={{
-                  onClick: () => {
-                    history.redirect(
-                      routes.editor({
-                        filePath: instancePath,
-                        nodeId: instance.id,
-                      })
-                    );
-                  },
-                }}
-              >
-                {instancePath.split("/").pop()}
-              </UsedBy>
-            );
-          })}
-        </Fields>
-      </SidebarPanelContent>
+      <div>
+        {instances.map((instance) => {
+          const instancePath = ast.getOwnerDependencyPath(instance.id, graph);
+          const ownerComponent = ast.getExprOwnerComponent(instance, graph);
+          return (
+            <UsedBy
+              key={instance.id}
+              right={instancePath.replace(projectDirectory?.path + "/", "")}
+              left={
+                (ownerComponent && ownerComponent.name) ||
+                instance.name ||
+                "Unnamed instance"
+              }
+              root={{
+                onClick: () => {
+                  history.redirect(
+                    routes.editor({
+                      filePath: instancePath,
+                      nodeId: instance.id,
+                    })
+                  );
+                },
+              }}
+            ></UsedBy>
+          );
+        })}
+      </div>
     </SidebarSection>
   );
 };

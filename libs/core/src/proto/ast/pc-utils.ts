@@ -11,7 +11,6 @@ import {
   Component,
   ComponentBodyItem,
   Document,
-  DocumentBodyItem,
   Element,
   Script,
   Import,
@@ -37,7 +36,7 @@ export namespace ast {
   export type InnerNode = Element | Insert | Slot | TextNode;
   export type InnerExpression = Document | InnerNode | Style;
 
-  export type OuterExpression = DocumentBodyItem | Node | DeclarationValue;
+  export type OuterExpression = Node | DeclarationValue;
 
   export enum ExprKind {
     Atom,
@@ -97,18 +96,9 @@ export namespace ast {
     | BaseExprInfo<Bool, ExprKind.Bool>
     | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
-  export const getDocumentBodyInner = (item: DocumentBodyItem) => {
+  export const getDocumentBodyInner = (item: Node) => {
     // oneof forces us to do this :(
-    return (
-      item.atom ||
-      item.component ||
-      item.docComment ||
-      item.element ||
-      item.import ||
-      item.style ||
-      item.text ||
-      item.trigger
-    );
+    return getNodeInner(item);
   };
 
   export const getNodeInner = (item: Node) => {
@@ -122,7 +112,12 @@ export namespace ast {
       item.text ||
       item.switch ||
       item.repeat ||
-      item.condition
+      item.condition ||
+      item.atom ||
+      item.component ||
+      item.docComment ||
+      item.import ||
+      item.trigger
     );
   };
 
@@ -148,12 +143,8 @@ export namespace ast {
     return item.render || item.script || item.variant;
   };
 
-  export const getInnerExpression = (
-    item: DocumentBodyItem | Node | ComponentBodyItem
-  ) =>
-    getNodeInner(item as DocumentBodyItem) ||
-    getDocumentBodyInner(item as Node) ||
-    getComponentBodyInner(item as ComponentBodyItem);
+  export const getInnerExpression = (item: Node | ComponentBodyItem) =>
+    getNodeInner(item) || getComponentBodyInner(item as ComponentBodyItem);
 
   export const getChildren = memoize(
     ({ expr, kind }: InnerExpressionInfo): InnerExpressionInfo[] => {
@@ -184,38 +175,38 @@ export namespace ast {
   );
 
   export const getChildExprInner = (
-    expr: DocumentBodyItem | Node | ComponentBodyItem | Slot
+    expr: Node | ComponentBodyItem | Slot
   ): InnerExpressionInfo => {
-    if ((expr as DocumentBodyItem).atom) {
-      return { expr: (expr as DocumentBodyItem).atom, kind: ExprKind.Atom };
+    if ((expr as Node).atom) {
+      return { expr: (expr as Node).atom, kind: ExprKind.Atom };
     }
-    if ((expr as DocumentBodyItem).component) {
+    if ((expr as Node).component) {
       return {
-        expr: (expr as DocumentBodyItem).component,
+        expr: (expr as Node).component,
         kind: ExprKind.Component,
       };
     }
-    if ((expr as DocumentBodyItem).element) {
+    if ((expr as Node).element) {
       return {
-        expr: (expr as DocumentBodyItem).element,
+        expr: (expr as Node).element,
         kind: ExprKind.Element,
       };
     }
-    if ((expr as DocumentBodyItem).docComment) {
+    if ((expr as Node).docComment) {
       return {
-        expr: (expr as DocumentBodyItem).docComment,
+        expr: (expr as Node).docComment,
         kind: ExprKind.DocComment,
       };
     }
-    if ((expr as DocumentBodyItem).import) {
-      return { expr: (expr as DocumentBodyItem).import, kind: ExprKind.Import };
+    if ((expr as Node).import) {
+      return { expr: (expr as Node).import, kind: ExprKind.Import };
     }
-    if ((expr as DocumentBodyItem).text) {
-      return { expr: (expr as DocumentBodyItem).text, kind: ExprKind.TextNode };
+    if ((expr as Node).text) {
+      return { expr: (expr as Node).text, kind: ExprKind.TextNode };
     }
-    if ((expr as DocumentBodyItem).trigger) {
+    if ((expr as Node).trigger) {
       return {
-        expr: (expr as DocumentBodyItem).trigger,
+        expr: (expr as Node).trigger,
         kind: ExprKind.Trigger,
       };
     }
@@ -362,7 +353,7 @@ export namespace ast {
   );
 
   export const getExprRef = memoize(
-    (ref: Reference, graph: Graph): DocumentBodyItem | null => {
+    (ref: Reference, graph: Graph): Node | null => {
       const dep = getOwnerDependency(ref.id, graph);
       if (ref.path.length === 1) {
         return getDocumentBodyExprByName(ref.path[0], dep.document);
@@ -933,33 +924,15 @@ export namespace ast {
         {
           [expr.id]: { expr, kind: ExprKind.Document },
         },
-        ...expr.body.map(flattenDocumentBodyItem)
+        ...expr.body.map(flattenNode)
       );
     }
   );
 
   export const flattenDocumentBodyItem = (
-    expr: DocumentBodyItem
+    expr: Node
   ): Record<string, InnerExpressionInfo> => {
-    if (expr.element) {
-      return flattenElement(expr.element);
-    }
-    if (expr.text) {
-      return flattenTextNode(expr.text);
-    }
-    if (expr.component) {
-      return flattenComponent(expr.component);
-    }
-    if (expr.atom) {
-      return flattenAtom(expr.atom);
-    }
-    if (expr.style) {
-      return flattenStyle(expr.style);
-    }
-    if (expr.trigger) {
-      return flattenTrigger(expr.trigger);
-    }
-    return {};
+    return flattenNode(expr);
   };
 
   export const flattenElement = memoize(
@@ -1162,6 +1135,15 @@ export namespace ast {
       return flattenTextNode(expr.text);
     }
 
+    if (expr.component) {
+      return flattenComponent(expr.component);
+    }
+    if (expr.atom) {
+      return flattenAtom(expr.atom);
+    }
+    if (expr.trigger) {
+      return flattenTrigger(expr.trigger);
+    }
     if (expr.slot) {
       return flattenSlot(expr.slot);
     }

@@ -16,7 +16,7 @@ import "./styles-panel.pc" as stylesPanel
 
 
 /**
- * @frame(x: 1424, y: 1394, width: 140, height: 35)
+ * @frame(x: 1414, y: 1439, width: 324, height: 35)
 */
 public component UsedBy {
     variant hover trigger {
@@ -33,16 +33,29 @@ public component UsedBy {
             font-family: var(theme.defaultFontFamily)
             display: flex
             align-items: center
-            justify-content: flex-start
+            justify-content: space-between
             gap: var(theme.space03)
             cursor: pointer
-            text-decoration: underline
+            padding: var(theme.space03) var(theme.space05)
         }
-        slot left {
-            text "./some/file.pc"
+        div baseName {
+            style {
+                white-space: nowrap
+            }
+            slot left {
+                text "file.pc"
+            }
         }
-        slot right {
-            text unnamed "something"
+        div rightContainer {
+            style {
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+                direction: rtl
+            }
+            slot right {
+                text unnamed "some/deeply/nested/directory/in/there"
+            }
         }
     }
 }
@@ -137,35 +150,33 @@ public component RightSidebar {
                         sidebar.SidebarPanelHeader {
                             text "Used by"
                         }
-                        sidebar.SidebarPanelContent {
-                            input.Fields {
-                                UsedBy {
-                                    insert left {
-                                        text "./another/file.pc"
-                                    }
-                                    insert left {
-                                    }
+                        div {
+                            UsedBy(class: "hover") {
+                                insert left {
+                                    text "./another/file.pc"
                                 }
-                                UsedBy(class: "hover") {
-                                    insert left {
-                                        text "./another/file.pc"
-                                    }
-                                    insert left {
-                                    }
+                                insert left {
                                 }
-                                UsedBy {
-                                    insert left {
-                                        text "./another/file.pc"
-                                    }
-                                    insert left {
-                                    }
+                            }
+                            UsedBy {
+                                insert left {
+                                    text "./another/file.pc"
                                 }
-                                UsedBy {
-                                    insert left {
-                                        text "./another/file.pc"
-                                    }
-                                    insert left {
-                                    }
+                                insert left {
+                                }
+                            }
+                            UsedBy {
+                                insert left {
+                                    text "./another/file.pc"
+                                }
+                                insert left {
+                                }
+                            }
+                            UsedBy {
+                                insert left {
+                                    text "./another/file.pc"
+                                }
+                                insert left {
                                 }
                             }
                         }
@@ -239,3 +250,4 @@ imp1.Menu {
         }
     }
 }
+

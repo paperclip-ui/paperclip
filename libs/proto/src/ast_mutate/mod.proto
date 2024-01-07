@@ -54,9 +54,10 @@ message Mutation {
 
 message SaveComponentScript {
     string component_id = 1;
-    string src = 2;
-    string target = 3;
-    string name = 4;
+    optional string script_id = 2;
+    string src = 3;
+    string target = 4;
+    string name = 5;
 }
 
 message AddImport {

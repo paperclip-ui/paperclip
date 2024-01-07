@@ -2,6 +2,7 @@ use super::base::EditContext;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast::pc::{component_body_item, Component};
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::SaveComponentScript;
 
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
@@ -14,6 +15,9 @@ impl MutableVisitor<()> for EditContext<SaveComponentScript> {
 
         doc.body.retain(|script| {
             if let component_body_item::Inner::Script(script) = script.get_inner() {
+                if let Some(id) = &self.mutation.script_id {
+                    return script.get_id() != id;
+                }
                 script.get_target() != Some(self.mutation.target.clone())
             } else {
                 true

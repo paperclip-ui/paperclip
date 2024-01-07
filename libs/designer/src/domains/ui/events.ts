@@ -256,6 +256,8 @@ export type ScriptSaved = BaseEvent<
   { id?: string; src: string; target: string; name: string }
 >;
 
+export type ScriptRemoved = BaseEvent<"ui/scriptRemoved", { id: string }>;
+
 export type ResourceModalDragLeft = BaseEvent<"ui/resourceModalDragLeft">;
 export type ResourceModalBackgroundClicked =
   BaseEvent<"ui/resourceModalBackgroundClicked">;
@@ -325,6 +327,7 @@ export type UIEvent =
   | TextValueChanged
   | InsertModeButtonClick
   | StyleDeclarationsChanged
+  | ScriptRemoved
   | InsertElementReleased
   | CanvasMouseLeave
   | RectsCaptured
@@ -343,6 +346,7 @@ export type UIEvent =
   | CanvasPanEnd
   | VariantEdited
   | VariantSelected
+  | ScriptSaved
   | CanvasMouseUp
   | InstanceVariantToggled
   | StyleMixinsSet

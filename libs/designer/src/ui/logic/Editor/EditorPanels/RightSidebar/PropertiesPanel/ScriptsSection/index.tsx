@@ -29,7 +29,7 @@ export const ScriptsSectionInner = () => {
     onSelectScript,
     onRemoveScript,
     activeScript,
-    onSaveCurrentScript,
+    onCloseScriptPopup,
   } = useScriptsSection();
 
   const inputs = [
@@ -64,11 +64,7 @@ export const ScriptsSectionInner = () => {
   return (
     <>
       {editScriptPopupOpen && (
-        <EditScriptPopup
-          script={activeScript}
-          onSave={onSaveCurrentScript}
-          onClose={onCloseEditScriptPopup}
-        />
+        <EditScriptPopup script={activeScript} onClose={onCloseScriptPopup} />
       )}
       <inputStyles.Field name="Scripts" input={inputs[0]} />
       {...inputs
@@ -88,7 +84,10 @@ const useScriptsSection = () => {
   const [editScriptPopupOpen, setEditScriptPopupOpen] = useState(false);
   const [activeScript, setActiveScript] = useState<Script>();
   const onAddClick = () => setEditScriptPopupOpen(true);
-  const onSelectScript = (value: Script) => setActiveScript(value);
+  const onSelectScript = (value: Script) => {
+    setActiveScript(value);
+    setEditScriptPopupOpen(true);
+  };
   const onRemoveScript = (value: Script) => {
     dispatch({ type: "ui/scriptRemoved", payload: { id: value.id } });
   };
@@ -96,9 +95,13 @@ const useScriptsSection = () => {
     setEditScriptPopupOpen(false);
   };
 
-  const onSaveCurrentScript = (data: any) => {
-    dispatch({ type: "ui/scriptSaved", payload: data });
+  const onCloseScriptPopup = (data: any) => {
+    if (data) {
+      dispatch({ type: "ui/scriptSaved", payload: data });
+    }
+
     setActiveScript(null);
+    setEditScriptPopupOpen(false);
   };
 
   return {
@@ -106,7 +109,7 @@ const useScriptsSection = () => {
     editScriptPopupOpen,
     component,
     onSelectScript,
-    onSaveCurrentScript,
+    onCloseScriptPopup,
     onCloseEditScriptPopup,
     onRemoveScript,
     scripts,

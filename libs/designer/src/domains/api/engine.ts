@@ -643,12 +643,32 @@ const createEventHandler = (actions: APIActions) => {
     ]);
   };
 
-  const handleScriptSaved = (event: ScriptSaved, state: DesignerState) => {};
+  const handleScriptRemoved = (event: ScriptRemoved) => {
+    actions.applyChanges([
+      {
+        deleteExpression: {
+          expressionId: event.payload.id,
+        },
+      },
+    ]);
+  };
 
-  const handleScriptRemoved = (
-    event: ScriptRemoved,
+  const handleScriptSaved = (
+    { payload: { id, src, target, name } }: ScriptSaved,
     state: DesignerState
-  ) => {};
+  ) => {
+    actions.applyChanges([
+      {
+        saveComponentScript: {
+          componentId: getSelectedExpression(state).id,
+          scriptId: id,
+          src,
+          target,
+          name,
+        },
+      },
+    ]);
+  };
 
   const handleMovedFile = async (
     { payload: { directory, item } }: FileNavigatorDroppedFile,
@@ -1149,7 +1169,7 @@ const createEventHandler = (actions: APIActions) => {
         return handleScriptSaved(event, newState);
       }
       case "ui/scriptRemoved": {
-        return handleScriptRemoved(event, newState);
+        return handleScriptRemoved(event);
       }
       case "ui/FileNavigatorDroppedFile": {
         return handleMovedFile(event, newState);

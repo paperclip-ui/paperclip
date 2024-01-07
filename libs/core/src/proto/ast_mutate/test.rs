@@ -5830,6 +5830,7 @@ case! {
 
   mutation::Inner::SaveComponentScript(SaveComponentScript {
       component_id: "80f4925f-1".to_string(),
+      script_id: None,
       src: "./src.tsx".to_string(),
       target: "react".to_string(),
       name: "SomeComponent".to_string()
@@ -5855,6 +5856,7 @@ case! {
   ],
   mutation::Inner::SaveComponentScript(SaveComponentScript {
       component_id: "80f4925f-8".to_string(),
+      script_id: None,
       src: "./srccc.tsx".to_string(),
       target: "react".to_string(),
       name: "Blarg".to_string()
@@ -5863,6 +5865,29 @@ case! {
       "/entry.pc", r#"
       public component A {
         script(src: "./srccc.tsx", target: "react", name: "Blarg")
+      }
+      "#
+  )]
+}
+
+case! {
+  can_delete_a_script,
+  [
+      (
+          "/entry.pc", r#"
+          public component A {
+            script(src: "./src.tsx", target: "react", name: "SomeComponent")
+          }
+          "#
+      )
+  ],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+      expression_id: "80f4925f-7".to_string()
+  }).get_outer(),
+  [(
+      "/entry.pc", r#"
+      public component A {
+
       }
       "#
   )]

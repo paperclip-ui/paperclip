@@ -2808,6 +2808,39 @@ case! {
 }
 
 case! {
+  can_move_from_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        public component A {
+            render div {
+                slot children {
+                    text "a"
+                    text "b"
+                }
+            }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-4".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      span {
+        text "b"
+      }
+    }
+    "#
+  )]
+}
+
+case! {
   can_move_a_text_node_before_another,
   [
     (

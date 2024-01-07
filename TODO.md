@@ -1,5 +1,11 @@
 #### Immediate
 
+- "Used by" section polished up
+- ability to define scripts
+
+  - right sidebar section
+  - icon in frame
+
 - Slots not showing up for some instances
 
   - See ConfirmModal in Shaya

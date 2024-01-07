@@ -58,6 +58,7 @@ export type TriggersEdited = BaseEvent<
 >;
 
 export type IDChanged = BaseEvent<"ui/idChanged", { value: string }>;
+export type IDFieldBlurred = BaseEvent<"ui/IDFieldBlurred">;
 
 export type CanvasResized = BaseEvent<"ui/canvasResized", Size>;
 export type RectsCaptured = BaseEvent<
@@ -301,6 +302,7 @@ export type UIEvent =
   | LayersBackButtonClicked
   | FrameTitleClicked
   | FileNavigatorContextMenuOpened
+  | IDFieldBlurred
   | ToolsLayerDrop
   | PromptClosed
   | FileNavigatorItemClicked

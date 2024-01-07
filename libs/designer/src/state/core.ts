@@ -133,6 +133,7 @@ export type DesignerState = {
   optionKeyDown: boolean;
   centeredInitial: boolean;
   currentDocument?: FileResponse;
+  renameSelectedLayer?: boolean;
   rects: Record<string, FrameBox>;
   canvas: Canvas;
 } & HistoryEngineState;

@@ -52,6 +52,15 @@ macro_rules! expressions {
                 )*
             }
         }
+        pub fn checksum(&self) -> String {
+            match self {
+                $(
+                    ExpressionWrapper::$name(exp) => {
+                        exp.checksum()
+                    },
+                )*
+            }
+        }
     }
 
     impl visit::MutableVisitable for ExpressionWrapper {

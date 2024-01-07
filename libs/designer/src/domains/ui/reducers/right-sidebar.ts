@@ -35,6 +35,16 @@ export const rightSidebarReducer = (
         }
       });
     }
+    case "shortcuts/itemSelected": {
+      return produce(state, (draft) => {
+        draft.renameSelectedLayer = true;
+      });
+    }
+    case "ui/IDFieldBlurred": {
+      return produce(state, (draft) => {
+        draft.renameSelectedLayer = false;
+      });
+    }
 
     case "ui/AddVariantPopupClicked": {
       return produce(state, (newState) => {

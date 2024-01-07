@@ -500,6 +500,10 @@ export const getSelectedExpressionInfo = (state: DesignerState) => {
   );
 };
 
+export const isRenamingSelectedLayer = (state: DesignerState) => {
+  return state.renameSelectedLayer;
+};
+
 export const getActiveVariant = (state: DesignerState) => {
   return (
     state.activeVariantId &&

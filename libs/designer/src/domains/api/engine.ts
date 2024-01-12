@@ -4,6 +4,7 @@ import {
   FileChanged,
   FileChangedKind,
   ResourceKind,
+  Resource,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch, isPaperclipFile } from "@paperclip-ui/common";
 import { Point } from "../../state/geom";
@@ -311,12 +312,26 @@ const createEventHandler = (actions: APIActions) => {
         },
       ]);
     } else if (item.kind === DNDKind.Resource) {
-      await insertResource(
-        item.item.parentPath + "/" + item.item.name,
-        resolvedTarget.id,
-        null,
-        state
-      );
+      if (item.item.kind === ResourceKind.File2) {
+        await insertResource(
+          item.item.parentPath + "/" + item.item.name,
+          resolvedTarget.id,
+          null,
+          state
+        );
+      } else if (item.item.kind === ResourceKind.Component) {
+        await actions.applyChanges([
+          {
+            appendChild: {
+              parentId: targetId,
+              childSource: `
+              import "${item.item.parentPath}" as module
+              module.${item.item.name}
+              `,
+            },
+          },
+        ]);
+      }
     } else if (item.kind === DNDKind.File) {
       await insertResource(item.item.path, resolvedTarget.id, null, state);
     } else if (item.kind === NativeTypes.FILE) {
@@ -957,7 +972,6 @@ const createEventHandler = (actions: APIActions) => {
     state: DesignerState
   ) => {
     const document = getCurrentDependency(state).document;
-
     const modulePath = path.replace(state.projectInfo.srcDirectory + "/", "");
 
     if (hoverindNodeId && isImageAsset(path)) {

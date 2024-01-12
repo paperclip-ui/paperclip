@@ -1,5 +1,6 @@
 import "ui/theme.pc" as module
 
+
 /**
  * @frame(x: 545, y: -278, width: 934, height: 607)
 */
@@ -28,3 +29,13 @@ public component Test1 {
         text "b"
     }
 }
+
+/**
+ * @frame(x: -280, y: -226, width: 268, height: 143)
+*/
+div {
+    style {
+        position: relative
+    }
+}
+

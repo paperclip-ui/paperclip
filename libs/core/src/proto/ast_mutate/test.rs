@@ -468,6 +468,42 @@ case! {
 }
 
 case! {
+  includes_imports_when_appending_child,
+  [(
+    "/entry.pc", r#"
+    component A {
+        render span
+    }
+    "#
+  ),
+  (
+    "/module.pc", r#"
+    public component B {
+        render div
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+
+      import "/module.pc" as mod
+      mod.B
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "module.pc" as module
+        component A {
+            render span {
+                module.B
+            }
+        }
+    "#
+  )]
+}
+
+case! {
   can_set_the_styles_on_an_element,
   [(
     "/entry.pc", r#"

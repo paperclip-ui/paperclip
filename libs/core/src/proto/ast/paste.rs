@@ -12,6 +12,7 @@ use paperclip_proto::ast::{
 
 use super::update_expr_imports::UpdateExprImports;
 
+#[derive(Clone, Debug)]
 pub struct PasteResult {
     pub imports: HashMap<String, String>,
     pub expressions: Vec<ExpressionWrapper>,
@@ -36,8 +37,9 @@ pub fn paste_expression(
     let mut imports: HashMap<String, String> = HashMap::new();
 
     for import in doc.get_imports() {
-        imports.insert(import.path.to_string(), import.path.to_string());
+        imports.insert(import.namespace.to_string(), import.path.to_string());
     }
+
     let mut items: Vec<ExpressionWrapper> = doc
         .body
         .clone()

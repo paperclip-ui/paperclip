@@ -1,4 +1,6 @@
+import "ui/button.pc" as module1
 import "ui/theme.pc" as module
+
 
 
 /**
@@ -37,5 +39,6 @@ div {
     style {
         position: relative
     }
+    module1.Button
 }
 

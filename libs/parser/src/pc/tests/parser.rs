@@ -24,6 +24,7 @@ macro_rules! add_case {
             );
             if let Ok(ast) = parse_result {
                 let output = serialize(&ast);
+                println!("{:#?}", ast);
                 assert_eq!(strip_extra_ws($source), strip_extra_ws(output.as_str()));
             } else if let Err(_) = parse_result {
                 panic!("assertion failed - error returned");
@@ -123,6 +124,17 @@ add_case! {
     r#"
         component A {
             render ns.div
+        }
+    "#
+}
+
+add_case! {
+    can_parse_comments,
+    r#"
+        component A {
+            render div {
+                text "blarg"
+            }
         }
     "#
 }

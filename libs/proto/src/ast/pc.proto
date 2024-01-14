@@ -81,8 +81,9 @@ message Variant {
 
 message Render {
   string id = 1;
-  ast.base.Range range = 2;
-  Node node = 3;
+  optional string before = 2;
+  ast.base.Range range = 3;
+  Node node = 4;
 }
 
 

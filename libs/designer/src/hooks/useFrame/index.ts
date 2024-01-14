@@ -1,5 +1,5 @@
 import { noop } from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useFrameContainer } from "../useFrameContainer";
 import { useFrameMount } from "../useFrameMount";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";

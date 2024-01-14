@@ -1,7 +1,7 @@
 // FYI this code is super dumb and can definitely be made faster
 import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
 import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
-import {metadataValueMapToJSON} from "@paperclip-ui/proto/lib/virt/html-utils";
+import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   PCModule,
   PCModuleImport,
@@ -235,6 +235,23 @@ export const getFrameRects = (
   }
 
   return rects;
+};
+
+export const getNodeMap = (mount: HTMLElement) => {
+  const map: Record<string, HTMLElement> = {};
+
+  traverseNativeNode(
+    mount.childNodes[STAGE_INDEX].childNodes[0],
+    (node: HTMLElement) => {
+      if (node.nodeType !== Node.ELEMENT_NODE) {
+        return;
+      }
+
+      map[node.id.substring(1)] = node;
+    }
+  );
+
+  return map;
 };
 
 export const computeAllStyles = (mount: HTMLElement, index: number) => {
@@ -560,5 +577,7 @@ const patchChildren = (
 };
 
 export const getFrameBounds = (node: html.Node) => {
-    return metadataValueMapToJSON(node.element?.metadata ?? node.textNode?.metadata).frame;
+  return metadataValueMapToJSON(
+    node.element?.metadata ?? node.textNode?.metadata
+  ).frame;
 };

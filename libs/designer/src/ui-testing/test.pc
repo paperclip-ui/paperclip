@@ -39,6 +39,10 @@ div {
     style {
         position: relative
     }
-    module1.Button
+    module1.Button {
+        style {
+            position: relative
+        }
+    }
 }
 

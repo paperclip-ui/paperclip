@@ -4,7 +4,6 @@ import {
   FileChanged,
   FileChangedKind,
   ResourceKind,
-  Resource,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch, isPaperclipFile } from "@paperclip-ui/common";
 import { Point } from "../../state/geom";
@@ -145,7 +144,6 @@ const createEventHandler = (actions: APIActions) => {
                  [InsertMode.Element]: `div {
                  style {
                    position: relative
-                   background: blue
                  }
                }`,
                  [InsertMode.Text]: `text ""`,

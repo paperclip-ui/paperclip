@@ -4,7 +4,6 @@ mod base;
 mod convert_to_component;
 mod convert_to_slot;
 mod delete_expression;
-mod insert_frame;
 mod move_expression_to_file;
 mod move_node;
 mod prepend_child;
@@ -131,7 +130,6 @@ pub fn edit_graph<TIO: IO>(
 }
 
 mutations! {
-  InsertFrame,
   ToggleInstanceVariant,
   UpdateDependencyPath,
   UpdateVariant,

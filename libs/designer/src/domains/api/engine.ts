@@ -132,17 +132,26 @@ const createEventHandler = (actions: APIActions) => {
 
     if (!intersectingNode) {
       const mutation: Mutation = {
-        insertFrame: {
-          documentId: state.currentDocument.paperclip.html.sourceId,
-          bounds,
-          nodeSource: {
-            [InsertMode.Element]: `div {
-              style {
-                position: relative
-              }
-            }`,
-            [InsertMode.Text]: `text ""`,
-          }[insertMode],
+        appendChild: {
+          parentId: state.currentDocument.paperclip.html.sourceId,
+          childSource: `
+            /**
+             * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${
+            bounds.x
+          }, y: ${bounds.y})
+             */
+             ${
+               {
+                 [InsertMode.Element]: `div {
+                 style {
+                   position: relative
+                   background: blue
+                 }
+               }`,
+                 [InsertMode.Text]: `text ""`,
+               }[insertMode]
+             }
+          `,
         },
       };
 
@@ -894,18 +903,25 @@ const createEventHandler = (actions: APIActions) => {
     } else {
       const expr = ast.getExprInfoById(item.id, state.graph);
 
-      let changes = [];
+      let changes: Mutation[] = [];
 
       if (expr.kind === ast.ExprKind.Component) {
         changes = [
           {
-            insertFrame: {
-              documentId: state.currentDocument.paperclip.html.sourceId,
-              bounds: roundBox(bounds),
-              nodeSource: `imp.${expr.expr.name}`,
-              imports: {
-                imp: ast.getOwnerDependencyPath(item.id, state.graph),
-              },
+            appendChild: {
+              parentId: state.currentDocument.paperclip.html.sourceId,
+              childSource: `
+              /**
+               * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${
+                bounds.x
+              }, y: ${bounds.y})
+               */
+               import "${ast.getOwnerDependencyPath(
+                 item.id,
+                 state.graph
+               )}" as module
+               module.${expr.expr.name}
+              `,
             },
           },
         ];

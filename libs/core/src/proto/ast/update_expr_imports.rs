@@ -2,7 +2,7 @@ use std::{cell::RefCell, collections::HashMap};
 
 use super::super::ast_mutate::utils::resolve_import_ns;
 use paperclip_proto::ast::expr_map::ExprMap;
-use paperclip_proto::ast::pc::{Element, Parameter, Variant};
+use paperclip_proto::ast::pc::{Element, Parameter};
 use paperclip_proto::ast::visit::MutableVisitable;
 use paperclip_proto::ast::{
     graph::Dependency,

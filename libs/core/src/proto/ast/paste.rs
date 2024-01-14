@@ -5,6 +5,7 @@ use paperclip_parser::{
     pc::parser::parse,
 };
 use paperclip_proto::ast::{
+    expr_map::ExprMap,
     graph::Dependency,
     pc::node,
     wrapper::{Expression, ExpressionWrapper},
@@ -22,6 +23,7 @@ pub fn paste_expression(
     source: &str,
     path: Option<String>,
     to_dep: &Dependency,
+    expr_map: &ExprMap,
 ) -> Result<PasteResult, ParserError> {
     let doc = parse(
         source,
@@ -52,7 +54,9 @@ pub fn paste_expression(
     let path = path.unwrap_or("/____ephemeral-path_____.pc".to_string());
 
     for item in items.iter_mut() {
-        resolved_imports.extend(UpdateExprImports::apply2(item, &path, &imports, to_dep));
+        resolved_imports.extend(UpdateExprImports::apply2(
+            item, &path, &imports, to_dep, expr_map,
+        ));
     }
 
     Ok(PasteResult {

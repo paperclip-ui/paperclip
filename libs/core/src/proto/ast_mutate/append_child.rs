@@ -19,6 +19,7 @@ macro_rules! append_child {
                 &$context.mutation.child_source,
                 None,
                 &$context.get_dependency(),
+                &$context.expr_map,
             )
             .expect("Unable to parse child source for AppendChild");
 
@@ -56,9 +57,13 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
         expr: &mut ast::pc::Document,
     ) -> VisitorResult<(), EditContext<AppendChild>> {
         if expr.get_id() == &self.mutation.parent_id {
-            let paste_result =
-                paste_expression(&self.mutation.child_source, None, &self.get_dependency())
-                    .expect("Unable to parse child source for AppendChild");
+            let paste_result = paste_expression(
+                &self.mutation.child_source,
+                None,
+                &self.get_dependency(),
+                &self.expr_map,
+            )
+            .expect("Unable to parse child source for AppendChild");
 
             for child in paste_result.expressions {
                 let mut child: Node = if let Ok(child) = child.clone().try_into() {

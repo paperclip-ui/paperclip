@@ -5928,3 +5928,80 @@ case! {
       "#
   )]
 }
+
+case! {
+  only_the_correct_refs_are_changed,
+  [
+      (
+          "/entry.pc", r#"
+          public token abb red
+          public style blarg {
+            color: orange
+          }
+          public trigger ba {
+            "@media screen and (max-width: 400)"
+          }
+
+
+          public component A {
+            variant ab trigger {
+                ba
+            }
+            variant cd trigger {
+                  ".test"
+              }
+            render div(onClick: onClick) {
+                style variant ab + cd extends blarg {
+                    background: var(abb)
+                }
+            }
+          }
+          "#
+      ),
+      (
+          "/b.pc", r#"
+
+          "#
+      )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-26".to_string(),
+          new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [
+
+      (
+              "/entry.pc", r#"
+              public token abb red
+              public style blarg {
+                color: orange
+              }
+              public trigger ba {
+                "@media screen and (max-width: 400)"
+              }
+
+              "#
+          ),
+          (
+              "/b.pc", r#"
+
+
+              import "entry.pc" as module
+
+              public component A {
+                variant ab trigger {
+                    module.ba
+                }
+                variant cd trigger {
+                      ".test"
+                  }
+                render div(onClick: onClick) {
+                    style variant ab + cd extends module.blarg {
+                      background: var(module.abb)
+                    }
+                }
+              }
+              "#
+          )
+  ]
+}

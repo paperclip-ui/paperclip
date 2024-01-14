@@ -142,6 +142,7 @@ const Frame = memo(
 
     return (
       <styles.Frame
+        class={cx({ hasScript })}
         style={{
           left: 0,
           top: 0,
@@ -151,8 +152,13 @@ const Frame = memo(
           transformOrigin: "top left",
           position: "absolute",
         }}
+        titleOuter={{
+          onDoubleClick: onDoubleClick,
+          onMouseUp: onClick,
+        }}
+        title={title}
       >
-        <styles.FrameTitle
+        {/* <styles.FrameTitle
           class={cx({ hasScript })}
           // onBlur={onBlur}
           // onKeyPress={onKeyPress}
@@ -160,7 +166,7 @@ const Frame = memo(
           // inputRef={inputRef}
           onMouseUp={onClick}
           value={title}
-        />
+        /> */}
       </styles.Frame>
     );
   }

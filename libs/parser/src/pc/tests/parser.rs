@@ -205,6 +205,17 @@ add_case! {
 }
 
 add_case! {
+    can_parse_a_string_with_quotes,
+    r#"
+    component A {
+        render div {
+            text "abc \"def\""
+        }
+    }
+    "#
+}
+
+add_case! {
     can_parse_attributes,
     r#"
     component A {

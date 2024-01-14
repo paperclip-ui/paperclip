@@ -1766,6 +1766,27 @@ case! {
 }
 
 case! {
+  can_use_quotes_with_text_node_value,
+  [
+    (
+      "/entry.pc", r#"
+        text "a"
+      "#
+    )
+  ],
+
+  mutation::Inner::SetTextNodeValue(SetTextNodeValue {
+    text_node_id: "80f4925f-1".to_string(),
+    value: "b\"c\"".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      text "b\"c\""
+    "#
+  )]
+}
+
+case! {
   can_change_the_id_of_an_element,
   [
     (

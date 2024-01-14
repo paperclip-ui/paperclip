@@ -14,7 +14,7 @@ impl MutableVisitor<()> for EditContext<SetTextNodeValue> {
             return VisitorResult::Continue;
         }
 
-        expr.value = self.mutation.value.to_string();
+        expr.value = self.mutation.value.to_string().replace("\"", "\\\"");
 
         self.add_change(
             mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {

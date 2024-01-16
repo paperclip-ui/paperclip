@@ -162,6 +162,7 @@ pub fn upsert_render_expr<'a, Mutation>(
             component_body_item::Inner::Render(Render {
                 id: ctx.new_id(),
                 range: None,
+                before: None,
                 node: if create_node {
                     Some(parse_node("div", &ctx.new_id()))
                 } else {

@@ -10,6 +10,7 @@ members = [
   "libs/evaluator",
   "libs/tidy",
   "libs/paperclip-loader",
+  "libs/emulator",
   "libs/workspace",
   "libs/infer",
   "libs/proto",

@@ -39,6 +39,10 @@ macro_rules! case {
     };
 }
 
+macro_rules! xcase {
+    ($name: ident, $mock_files: expr, $expr_id: expr, $expected_output: expr) => {};
+}
+
 case! {
     can_package_a_simple_expr,
     [
@@ -135,6 +139,33 @@ case! {
     ],
 
     "80f4925f-12",
+    r#"
+    import "/entry.pc" as mod
+    /**
+     * @frame(x: 10, y: 10)
+     */
+    mod.A
+    "#
+}
+
+xcase! {
+    import_included_when_copying_instance,
+    [
+        (
+            "/entry.pc",
+            r#"
+                component A {
+                    render div {
+
+                    }
+                }
+
+                A
+            "#
+        )
+    ],
+
+    "80f4925f-4",
     r#"
     import "/entry.pc" as mod
     /**

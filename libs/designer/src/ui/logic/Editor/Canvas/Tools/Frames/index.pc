@@ -2,85 +2,54 @@ import "ui/theme.pc" as module
 
 
 /**
- * @frame(x: 2887, y: 300, width: 301, height: 304)
-*/
-public component LightningIcon {
-    render div {
-        style extends module.icon {
-            mask-image: url("ui/lightning.svg")
-            width: 1.2em
-            height: 1.2em
-        }
-    }
-}
-
-/**
- * @frame(width: 1024, height: 768, x: 1457, y: -176)
- */
-public component FramesContainer {
-    render div(style: style, data-label: "Frames container", class: class) {
-        style {
-            width: 100%
-            height: 100%
-            position: relative
-        }
-        slot children
-    }
-}
-
-/**
  * @frame(width: 1024, height: 768, x: 668, y: 1081)
  */
 public component Frame {
+    variant hasScript trigger {
+        ".hasScript"
+    }
     render div(style: style, class: class) {
         style {
             position: relative
         }
-        slot children
-    }
-}
-
-/**
- * @frame(width: 1024, height: 768, x: 91, y: -1397)
- */
-public component FrameTitle {
-    variant hasScript trigger {
-        ".hasScript"
-        ".has-script"
-    }
-    render div(onDoubleClick: onDoubleClick, style: style, onClick: onClick, onMouseUp: onMouseUp, class: class) {
-        span title {
+        div titleOuter {
             style {
-                cursor: default
-                white-space: nowrap
-                overflow: hidden
-                font-size: 12px
-                text-overflow: ellipsis
+                transform: translateY(calc(-100% - 6px))
+                position: absolute
+                user-select: none
+                top: 0px
+                left: 0px
+                color: white
+                opacity: 0.5
+                width: 100%
                 display: flex
-                gap: var(module.space02)
+                justify-content: space-between
             }
-            LightningIcon {
-                style variant hasScript {
-                    display: block
+            span titleContainer {
+                div {
+                    style variant hasScript {
+                        display: block
+                    }
+                    style extends module.icon {
+                        width: 1em
+                        height: 1em
+                        mask-image: url("ui/lightning.svg")
+                        display: none
+                    }
                 }
                 style {
-                    display: none
+                    cursor: default
+                    white-space: nowrap
+                    overflow: hidden
+                    font-size: 12px
+                    text-overflow: ellipsis
+                    display: flex
+                    gap: var(module.space02)
                 }
+                slot title
             }
-            slot value
         }
-        style {
-            transform: translateY(calc(-100% - 6px))
-            position: absolute
-            user-select: none
-            top: 0px
-            left: 0px
-            color: white
-            opacity: 0.5
-            width: 100%
-            display: flex
-            justify-content: space-between
-        }
+        slot children
     }
 }
 
@@ -98,10 +67,8 @@ div preview {
             height: 300px
             background: grey
         }
-        FrameTitle unnamed(class: "hasScript") {
-            insert value {
-                text "some title"
-            }
+        insert title {
+            text "double click to edit"
         }
     }
 }

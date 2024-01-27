@@ -1,0 +1,12 @@
+[package]
+name = "paperclip_emulator"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+swc = "0.270.23"
+paperclip_common = { path = "../rs_common" }
+paperclip_proto = { path = "../proto" }
+paperclip_core = { path = "../core" }

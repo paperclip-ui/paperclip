@@ -1,7 +1,8 @@
 use std::{cell::RefCell, collections::HashMap};
 
 use super::super::ast_mutate::utils::resolve_import_ns;
-use paperclip_proto::ast::pc::Element;
+use paperclip_proto::ast::expr_map::ExprMap;
+use paperclip_proto::ast::pc::{Element, Parameter};
 use paperclip_proto::ast::visit::MutableVisitable;
 use paperclip_proto::ast::{
     graph::Dependency,
@@ -11,6 +12,7 @@ use paperclip_proto::ast::{
 };
 use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct UpdateExprImports<'a> {
     expr_imports: HashMap<String, String>,
     expr_path: String,
@@ -18,6 +20,8 @@ pub struct UpdateExprImports<'a> {
 
     // ns: path
     imports: Rc<RefCell<HashMap<String, String>>>,
+    is_within_parameter: bool,
+    expr_map: &'a ExprMap,
 }
 
 impl<'a> UpdateExprImports<'a> {
@@ -25,6 +29,7 @@ impl<'a> UpdateExprImports<'a> {
         expr: &mut ExpressionWrapper,
         from_dep: &'a Dependency,
         to_dep: &'a Dependency,
+        expr_map: &'a ExprMap,
     ) -> HashMap<String, String> {
         let mut expr_imports = HashMap::new();
         for import in from_dep
@@ -37,7 +42,7 @@ impl<'a> UpdateExprImports<'a> {
                 expr_imports.insert(import.namespace.clone(), resolved_path.clone());
             }
         }
-        Self::apply2(expr, &from_dep.path, &expr_imports, to_dep)
+        Self::apply2(expr, &from_dep.path, &expr_imports, to_dep, expr_map)
     }
 
     pub fn apply2(
@@ -45,6 +50,7 @@ impl<'a> UpdateExprImports<'a> {
         expr_path: &str,
         expr_imports: &HashMap<String, String>,
         to_dep: &'a Dependency,
+        expr_map: &'a ExprMap,
     ) -> HashMap<String, String> {
         let imports = Rc::new(RefCell::new(HashMap::new()));
 
@@ -53,6 +59,8 @@ impl<'a> UpdateExprImports<'a> {
             expr_imports: expr_imports.clone(),
             to_dep,
             imports: imports.clone(),
+            is_within_parameter: false,
+            expr_map,
         };
         expr.accept(&mut imp);
         let x = imports.borrow().clone();
@@ -80,7 +88,24 @@ impl<'a> MutableVisitor<()> for UpdateExprImports<'a> {
 
         VisitorResult::Continue
     }
+    fn visit_parameter(&self, _expr: &mut Parameter) -> VisitorResult<(), Self> {
+        VisitorResult::Map(Box::new(Self {
+            is_within_parameter: true,
+            ..self.clone()
+        }))
+    }
     fn visit_reference(&self, expr: &mut Reference) -> VisitorResult<(), Self> {
+        if self.is_within_parameter {
+            return VisitorResult::Continue;
+        }
+
+        let source = expr.follow(&self.expr_map);
+
+        // skip style vairantse
+        if matches!(source, Some(ExpressionWrapper::Variant(_))) {
+            return VisitorResult::Continue;
+        }
+
         // Dealing with local instance that needs to be updated
         if expr.path.len() == 1 {
             if let Ok(info) = resolve_import_ns(self.to_dep, &self.expr_path, None) {

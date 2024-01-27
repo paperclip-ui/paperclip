@@ -1,7 +1,0 @@
-import "ui/theme.pc" as module
-
-public component Frame {
-    render div(style: style) {
-        slot children
-    }
-}

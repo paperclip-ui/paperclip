@@ -21,6 +21,7 @@ pub enum Token<'src> {
     Dot,
     NewLine(&'src [u8]),
     MultiLineComment(&'src [u8]),
+    SingleLineComment(&'src [u8]),
     DoccoStart,
     Space(&'src [u8]),
     Word(&'src [u8]),
@@ -53,19 +54,25 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                 b',' => Token::Comma,
                 b':' => Token::Colon,
                 b'/' => {
-                    if source.peek(0) == Some(b'*') {
-                        // eat *
-                        source.forward(1);
-
-                        // Look for /**
-                        if source.peek(0) == Some(b'*') {
+                    match source.peek(0) {
+                        Some(b'*') => {
+                            // eat *
                             source.forward(1);
-                            Token::DoccoStart
-                        } else {
-                            next_comment(source, s_pos.u8_pos)?
+
+                            // Look for /**
+                            if source.peek(0) == Some(b'*') {
+                                source.forward(1);
+                                Token::DoccoStart
+                            } else {
+                                next_multi_line_comment(source, s_pos.u8_pos)?
+                            }
                         }
-                    } else {
-                        Token::Backslack
+                        Some(b'/') => {
+                            // eat /
+                            source.forward(1);
+                            next_single_line_comment(source, s_pos.u8_pos)?
+                        }
+                        _ => Token::Backslack,
                     }
                 }
                 b'\"' | b'\'' => Token::String(scan_string(source, b)),
@@ -92,7 +99,7 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
     }
 }
 
-fn next_comment<'src>(
+fn next_multi_line_comment<'src>(
     source: &mut StringScanner<'src>,
     s_pos: usize,
 ) -> Result<Token<'src>, err::ParserError> {
@@ -110,8 +117,29 @@ fn next_comment<'src>(
     Err(err::ParserError::new_eof())
 }
 
+fn next_single_line_comment<'src>(
+    source: &mut StringScanner<'src>,
+    s_pos: usize,
+) -> Result<Token<'src>, err::ParserError> {
+    // Eat the entire comment
+    while !source.is_eof() {
+        let curr = source.source[source.pos];
+        source.forward(1);
+        if curr == b'\n' {
+            return Ok(Token::SingleLineComment(
+                &source.source[s_pos..source.pos + 1],
+            ));
+        }
+    }
+
+    Err(err::ParserError::new_eof())
+}
+
 pub fn is_superfluous(token: &Token) -> bool {
-    matches!(token, Token::Space(_) | Token::MultiLineComment(_))
+    matches!(
+        token,
+        Token::Space(_) | Token::MultiLineComment(_) | Token::SingleLineComment(_)
+    )
 }
 
 pub fn is_superfluous_or_newline(token: &Token) -> bool {

@@ -17,10 +17,13 @@ import { getSelectedEntityShortcuts } from "@paperclip-ui/designer/src/domains/s
 import { DropTarget } from "./DropTarget";
 import { TextEditor } from "./TextEditor";
 import {
+  getActiveVariant,
   getGraph,
   getSelectedExpressionInfo,
+  getSelectedVariantIds,
 } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
+import { serializeComputedStyle } from "@paperclip-ui/core/lib/proto/ast/serialize";
 
 export const Tools = () => {
   const {
@@ -127,17 +130,28 @@ const useTools = () => {
 
   const highlightedBox = useSelector(getHighlightedNodeBox);
   const selectedBox = useSelector(getSelectedNodeBox);
+  useSelector(getActiveVariant);
 
   const toolsLayerEnabled = !canvas.isExpanded;
 
   const contextMenu = useSelector(getSelectedEntityShortcuts);
   const selectedExpr = useSelector(getSelectedExpressionInfo);
   const graph = useSelector(getGraph);
+  const variantIds = useSelector(getSelectedVariantIds);
+
+  const style =
+    selectedExpr?.expr &&
+    serializeComputedStyle(
+      ast.computeElementStyle(selectedExpr.expr.id, graph, variantIds)
+    );
 
   const resizeable =
-    selectedExpr &&
-    ast.getParentExprInfo(selectedExpr.expr.id, graph)?.kind ==
-      ast.ExprKind.Document;
+    (selectedExpr &&
+      ast.getParentExprInfo(selectedExpr.expr.id, graph)?.kind ==
+        ast.ExprKind.Document) ||
+    (false &&
+      style?.position &&
+      /relative|fixed|absolute/.test(style.position));
 
   const getMousePoint = (event: any) => {
     const rect = (event.currentTarget as any).getBoundingClientRect();

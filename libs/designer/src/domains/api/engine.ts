@@ -131,17 +131,25 @@ const createEventHandler = (actions: APIActions) => {
 
     if (!intersectingNode) {
       const mutation: Mutation = {
-        insertFrame: {
-          documentId: state.currentDocument.paperclip.html.sourceId,
-          bounds,
-          nodeSource: {
-            [InsertMode.Element]: `div {
-              style {
-                position: relative
-              }
-            }`,
-            [InsertMode.Text]: `text ""`,
-          }[insertMode],
+        appendChild: {
+          parentId: state.currentDocument.paperclip.html.sourceId,
+          childSource: `
+            /**
+             * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${
+            bounds.x
+          }, y: ${bounds.y})
+             */
+             ${
+               {
+                 [InsertMode.Element]: `div {
+                 style {
+                   position: relative
+                 }
+               }`,
+                 [InsertMode.Text]: `text ""`,
+               }[insertMode]
+             }
+          `,
         },
       };
 
@@ -311,12 +319,26 @@ const createEventHandler = (actions: APIActions) => {
         },
       ]);
     } else if (item.kind === DNDKind.Resource) {
-      await insertResource(
-        item.item.parentPath + "/" + item.item.name,
-        resolvedTarget.id,
-        null,
-        state
-      );
+      if (item.item.kind === ResourceKind.File2) {
+        await insertResource(
+          item.item.parentPath + "/" + item.item.name,
+          resolvedTarget.id,
+          null,
+          state
+        );
+      } else if (item.item.kind === ResourceKind.Component) {
+        await actions.applyChanges([
+          {
+            appendChild: {
+              parentId: targetId,
+              childSource: `
+              import "${item.item.parentPath}" as module
+              module.${item.item.name}
+              `,
+            },
+          },
+        ]);
+      }
     } else if (item.kind === DNDKind.File) {
       await insertResource(item.item.path, resolvedTarget.id, null, state);
     } else if (item.kind === NativeTypes.FILE) {
@@ -879,18 +901,25 @@ const createEventHandler = (actions: APIActions) => {
     } else {
       const expr = ast.getExprInfoById(item.id, state.graph);
 
-      let changes = [];
+      let changes: Mutation[] = [];
 
       if (expr.kind === ast.ExprKind.Component) {
         changes = [
           {
-            insertFrame: {
-              documentId: state.currentDocument.paperclip.html.sourceId,
-              bounds: roundBox(bounds),
-              nodeSource: `imp.${expr.expr.name}`,
-              imports: {
-                imp: ast.getOwnerDependencyPath(item.id, state.graph),
-              },
+            appendChild: {
+              parentId: state.currentDocument.paperclip.html.sourceId,
+              childSource: `
+              /**
+               * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${
+                bounds.x
+              }, y: ${bounds.y})
+               */
+               import "${ast.getOwnerDependencyPath(
+                 item.id,
+                 state.graph
+               )}" as module
+               module.${expr.expr.name}
+              `,
             },
           },
         ];
@@ -957,7 +986,6 @@ const createEventHandler = (actions: APIActions) => {
     state: DesignerState
   ) => {
     const document = getCurrentDependency(state).document;
-
     const modulePath = path.replace(state.projectInfo.srcDirectory + "/", "");
 
     if (hoverindNodeId && isImageAsset(path)) {

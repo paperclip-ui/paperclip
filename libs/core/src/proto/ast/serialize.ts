@@ -66,8 +66,9 @@ export const serializeDeclaration = memoize((expr: DeclarationValue) => {
 export const serializeComputedStyle = memoize(
   (style: ComputedStyleMap): Record<string, string> => {
     const comp = {};
+
     for (const key in style.map) {
-      comp[key] = serializeDeclaration(style[key]);
+      comp[key] = serializeDeclaration(style.map[key].value);
     }
     return comp;
   }

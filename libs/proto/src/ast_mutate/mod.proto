@@ -16,11 +16,11 @@ message Mutation {
     ConvertToSlot convert_to_slot = 15;
     SetTagName set_tag_name = 20;
     MoveNode move_node = 18;
+    DetachInstance detach_instance = 30;
 
     // Element
     SetElementParameter set_element_parameter = 4;
     SetFrameBounds set_frame_bounds = 6;
-    InsertFrame insert_frame = 7;
 
     // Text
     SetTextNodeValue set_text_node_value = 8;
@@ -50,6 +50,11 @@ message Mutation {
 
     SaveComponentScript save_component_script = 29;
   }
+}
+
+message DetachInstance {
+    string instance_id = 1;
+    repeated string variant_ids = 2;
 }
 
 message SaveComponentScript {
@@ -213,13 +218,6 @@ message AppendInsert {
   string child_source = 3;
 }
 
-
-message InsertFrame {
-  string document_id = 1;
-  string node_source = 2;
-  Bounds bounds = 3;
-  map<string, string> imports = 4;
-}
 
 message SetTextNodeValue {
   string text_node_id = 1;

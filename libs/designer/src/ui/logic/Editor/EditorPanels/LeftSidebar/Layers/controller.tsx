@@ -108,7 +108,7 @@ const ComponentLeaf = memo(
           ast.getInstanceComponent(renderNode, graph),
           graph
         ).length > 0
-      : renderNode.body.length > 0;
+      : renderNode?.body.length > 0;
 
     return (
       <Leaf

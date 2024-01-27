@@ -9,10 +9,10 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
-    DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PrependChild,
-    SaveComponentScript, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
-    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
-    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
+    DeleteExpression, MoveExpressionToFile, MoveNode, PrependChild, SaveComponentScript,
+    SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration, SetStyleDeclarationValue,
+    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
+    UpdateDependencyPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -461,6 +461,42 @@ case! {
                 insert a {
 
                 }
+            }
+        }
+    "#
+  )]
+}
+
+case! {
+  includes_imports_when_appending_child,
+  [(
+    "/entry.pc", r#"
+    component A {
+        render span
+    }
+    "#
+  ),
+  (
+    "/module.pc", r#"
+    public component B {
+        render div
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+
+      import "/module.pc" as mod
+      mod.B
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "module.pc" as module
+        component A {
+            render span {
+                module.B
             }
         }
     "#
@@ -1685,166 +1721,6 @@ case! {
 }
 
 case! {
-  can_import_a_frame,
-  [
-    (
-      "/entry.pc", r#"
-      "#
-    ),
-    (
-      "/test.pc", r#"
-        component A {
-          render div
-        }
-      "#
-    )
-  ],
-
-  mutation::Inner::InsertFrame(InsertFrame {
-    node_source: "mod.A".to_string(),
-    bounds: Some(Bounds {
-      x: 100.0,
-      y: 200.0,
-      width: 300.0,
-      height: 400.0
-    }),
-    document_id: "80f4925f-1".to_string(),
-    imports: HashMap::from([("mod".to_string(), "/test.pc".to_string())])
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      import "test.pc" as mod
-      /**
-       * @frame(x: 100, y: 200, width: 300, height: 400)
-       */
-      mod.A
-    "#
-  )]
-}
-
-case! {
-  re_uses_import_if_exists,
-  [
-    (
-      "/entry.pc", r#"
-        import "/test.pc" as imp
-      "#
-    ),
-    (
-      "/test.pc", r#"
-        component A {
-          render div
-        }
-      "#
-    )
-  ],
-
-  mutation::Inner::InsertFrame(InsertFrame {
-    node_source: "mod.A".to_string(),
-    bounds: Some(Bounds {
-      x: 100.0,
-      y: 200.0,
-      width: 300.0,
-      height: 400.0
-    }),
-    document_id: "80f4925f-2".to_string(),
-    imports: HashMap::from([("mod".to_string(), "/test.pc".to_string())])
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      import "/test.pc" as imp
-      /**
-       * @frame(x: 100, y: 200, width: 300, height: 400)
-       */
-      imp.A
-    "#
-  )]
-}
-
-case! {
-  uses_unique_namespace,
-  [
-    (
-      "/entry.pc", r#"
-        import "/test2.pc" as mod
-      "#
-    ),
-    (
-      "/test.pc", r#"
-        component A {
-          render div
-        }
-      "#
-    ),
-    (
-      "/test2.pc", r#"
-
-      "#
-    )
-  ],
-
-  mutation::Inner::InsertFrame(InsertFrame {
-    node_source: "mod.A".to_string(),
-    bounds: Some(Bounds {
-      x: 100.0,
-      y: 200.0,
-      width: 300.0,
-      height: 400.0
-    }),
-    document_id: "80f4925f-2".to_string(),
-    imports: HashMap::from([("mod".to_string(), "/test.pc".to_string())])
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      import "test.pc" as mod1
-      import "/test2.pc" as mod
-      /**
-       * @frame(x: 100, y: 200, width: 300, height: 400)
-       */
-      mod1.A
-    "#
-  )]
-}
-
-case! {
-  if_inserting_frame_of_component_in_same_doc_the_namespace_is_dropped,
-  [
-    (
-      "/entry.pc", r#"
-        component A {
-          render div
-        }
-      "#
-    )
-  ],
-
-  mutation::Inner::InsertFrame(InsertFrame {
-    node_source: "mod.A".to_string(),
-    bounds: Some(Bounds {
-      x: 100.0,
-      y: 200.0,
-      width: 300.0,
-      height: 400.0
-    }),
-    document_id: "80f4925f-4".to_string(),
-    imports: HashMap::from([("mod".to_string(), "/entry.pc".to_string())])
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-
-      component A {
-        render div
-      }
-
-      /**
-       * @frame(x: 100, y: 200, width: 300, height: 400)
-       */
-      A
-    "#
-  )]
-}
-
-case! {
   can_delete_the_render_node,
   [
     (
@@ -1885,6 +1761,27 @@ case! {
   [(
     "/entry.pc", r#"
       text "b"
+    "#
+  )]
+}
+
+case! {
+  can_use_quotes_with_text_node_value,
+  [
+    (
+      "/entry.pc", r#"
+        text "a"
+      "#
+    )
+  ],
+
+  mutation::Inner::SetTextNodeValue(SetTextNodeValue {
+    text_node_id: "80f4925f-1".to_string(),
+    value: "b\"c\"".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      text "b\"c\""
     "#
   )]
 }
@@ -5891,4 +5788,81 @@ case! {
       }
       "#
   )]
+}
+
+case! {
+  only_the_correct_refs_are_changed,
+  [
+      (
+          "/entry.pc", r#"
+          public token abb red
+          public style blarg {
+            color: orange
+          }
+          public trigger ba {
+            "@media screen and (max-width: 400)"
+          }
+
+
+          public component A {
+            variant ab trigger {
+                ba
+            }
+            variant cd trigger {
+                  ".test"
+              }
+            render div(onClick: onClick) {
+                style variant ab + cd extends blarg {
+                    background: var(abb)
+                }
+            }
+          }
+          "#
+      ),
+      (
+          "/b.pc", r#"
+
+          "#
+      )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-26".to_string(),
+          new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [
+
+      (
+              "/entry.pc", r#"
+              public token abb red
+              public style blarg {
+                color: orange
+              }
+              public trigger ba {
+                "@media screen and (max-width: 400)"
+              }
+
+              "#
+          ),
+          (
+              "/b.pc", r#"
+
+
+              import "entry.pc" as module
+
+              public component A {
+                variant ab trigger {
+                    module.ba
+                }
+                variant cd trigger {
+                      ".test"
+                  }
+                render div(onClick: onClick) {
+                    style variant ab + cd extends module.blarg {
+                      background: var(module.abb)
+                    }
+                }
+              }
+              "#
+          )
+  ]
 }

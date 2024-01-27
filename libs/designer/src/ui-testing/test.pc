@@ -1,4 +1,7 @@
+import "ui/button.pc" as module1
 import "ui/theme.pc" as module
+
+
 
 /**
  * @frame(x: 545, y: -278, width: 934, height: 607)
@@ -28,3 +31,23 @@ public component Test1 {
         text "b"
     }
 }
+
+/**
+ * @frame(x: -280, y: -226, width: 268, height: 143)
+*/
+div {
+    style {
+        position: relative
+    }
+    module1.Button {
+        style {
+            position: relative
+        }
+    }
+}
+
+/**
+ * @frame(x: -433, y: 376, width: 217, height: 132)
+*/
+Test1 unnamed
+

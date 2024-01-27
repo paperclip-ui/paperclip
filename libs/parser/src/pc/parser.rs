@@ -393,6 +393,7 @@ fn parse_component(
 }
 
 fn parse_render(context: &mut PCContext) -> Result<ast::Render, err::ParserError> {
+    let before = context.get_skipped();
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat render
     context.skip(is_superfluous)?;
@@ -401,6 +402,7 @@ fn parse_render(context: &mut PCContext) -> Result<ast::Render, err::ParserError
 
     Ok(ast::Render {
         id: context.next_id(),
+        before,
         range: Some(base_ast::Range::new(start, end)),
         node,
     })
@@ -1072,12 +1074,12 @@ where
 {
     if ends != None {
         context.next_token()?;
-        context.skip(is_superfluous_or_newline)?;
     }
 
     let mut body: Vec<TItem> = vec![];
 
     while context.curr_token != None {
+        context.skip(is_superfluous_or_newline)?;
         if let Some((_, end)) = &ends {
             if let Some(curr) = &context.curr_token {
                 if curr == end {

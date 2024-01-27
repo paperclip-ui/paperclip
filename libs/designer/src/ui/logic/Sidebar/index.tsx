@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import * as styles from "./sidebar.pc";
 import cx from "classnames";
 import { startDOMDrag } from "../utils/dnd";

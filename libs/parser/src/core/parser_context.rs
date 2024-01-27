@@ -52,6 +52,7 @@ pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone> {
     _next_token: &'tokenizer NextToken<'src, TToken>,
     pub options: Options,
     pub scanner: &'scanner mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
+    current_skipped: Option<(usize, usize)>,
 }
 
 impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
@@ -71,6 +72,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
             _next_token,
             options,
             id_seed: id_seed.to_string(),
+            current_skipped: None,
             id_generator,
             scanner,
         })
@@ -145,17 +147,27 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
     where
         TTest: Fn(&TToken) -> bool,
     {
+        let start = self.scanner.pos;
+        let mut end = start;
+
         loop {
             if let Some(token) = &self.curr_token {
                 if test(token) {
+                    end = self.scanner.pos;
                     self.next_token()?;
                 } else {
+                    self.current_skipped = Some((start, end));
                     return Ok(());
                 }
             } else {
                 return Ok(());
             }
         }
+    }
+    pub fn get_skipped(&self) -> Option<String> {
+        self.current_skipped.and_then(|(start, end)| {
+            String::from_utf8(self.scanner.source[start..end].to_vec()).ok()
+        })
     }
     pub fn get_u16pos(&self) -> U16Position {
         self.scanner.get_u16pos()

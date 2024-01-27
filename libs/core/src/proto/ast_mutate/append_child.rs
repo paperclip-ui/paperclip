@@ -6,21 +6,24 @@ use paperclip_common::log::log_error;
 use paperclip_proto::ast;
 use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast::wrapper::Expression;
-use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInserted};
+use paperclip_proto::ast_mutate::{
+    mutation, mutation_result, AddImport, AppendChild, ExpressionInserted,
+};
 
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 
 macro_rules! append_child {
-    ($context:expr, $expr: expr) => {{
+    ($context: expr, $expr: expr) => {{
         if $expr.get_id() == &$context.mutation.parent_id {
             let paste_result = paste_expression(
                 &$context.mutation.child_source,
                 None,
                 &$context.get_dependency(),
+                &$context.expr_map,
             )
             .expect("Unable to parse child source for AppendChild");
 
-            for child in paste_result.expressions {
+            for child in &paste_result.expressions {
                 if let Ok(child) = TryInto::<Node>::try_into(child.clone()) {
                     let id = child.get_id().to_string();
                     $expr.body.push(child);
@@ -33,6 +36,16 @@ macro_rules! append_child {
                     log_error("Cannot append child");
                 }
             }
+
+            for (ns, path) in &paste_result.imports {
+                $context.add_post_mutation(
+                    mutation::Inner::AddImport(AddImport {
+                        ns: ns.clone(),
+                        path: path.to_string(),
+                    })
+                    .get_outer(),
+                );
+            }
         }
         VisitorResult::Continue
     }};
@@ -44,9 +57,13 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
         expr: &mut ast::pc::Document,
     ) -> VisitorResult<(), EditContext<AppendChild>> {
         if expr.get_id() == &self.mutation.parent_id {
-            let paste_result =
-                paste_expression(&self.mutation.child_source, None, &self.get_dependency())
-                    .expect("Unable to parse child source for AppendChild");
+            let paste_result = paste_expression(
+                &self.mutation.child_source,
+                None,
+                &self.get_dependency(),
+                &self.expr_map,
+            )
+            .expect("Unable to parse child source for AppendChild");
 
             for child in paste_result.expressions {
                 let mut child: Node = if let Ok(child) = child.clone().try_into() {

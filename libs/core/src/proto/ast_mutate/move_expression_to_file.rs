@@ -6,6 +6,7 @@ use super::utils::{get_unique_document_body_item_name, resolve_import_ns};
 
 use super::base::EditContext;
 use paperclip_common::get_or_short;
+use paperclip_proto::ast::expr_map::ExprMap;
 use paperclip_proto::{
     ast::pc::Element,
     ast::{
@@ -40,7 +41,13 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
             .expect("Dep must exist");
 
         if self.mutation.new_file_path == self.get_dependency().path {
-            let imports = insert_document_expr(doc, expr.clone(), expr_dep, self.get_dependency());
+            let imports = insert_document_expr(
+                doc,
+                expr.clone(),
+                expr_dep,
+                self.get_dependency(),
+                &self.expr_map,
+            );
 
             for (ns, path) in imports {
                 self.add_post_mutation(
@@ -139,6 +146,7 @@ fn insert_document_expr(
     expr: ExpressionWrapper,
     expr_dep: &Dependency,
     new_dep: &Dependency,
+    expr_map: &ExprMap,
 ) -> HashMap<String, String> {
     let mut expr = expr;
 
@@ -148,7 +156,7 @@ fn insert_document_expr(
         expr = expr.rename(&unique_name);
     }
 
-    let imports = UpdateExprImports::apply(&mut expr, expr_dep, new_dep);
+    let imports = UpdateExprImports::apply(&mut expr, expr_dep, new_dep, expr_map);
 
     // TODO: should move this to TryFrom instead of having a match here
 

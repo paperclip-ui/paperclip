@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { computeAllStyles, getFrameRects } from "@paperclip-ui/web-renderer";
+import React, { useCallback, useEffect, useState } from "react";
+import { getNodeMap, getFrameRects } from "@paperclip-ui/web-renderer";
 import { memo } from "react";
 import { Frame } from "./Frame";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
@@ -10,6 +10,7 @@ import {
   StyleOverrides,
   getGraph,
   AtomOverrides,
+  getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { Node } from "@paperclip-ui/proto/lib/generated/virt/html";
@@ -143,9 +144,12 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
   const doc = useSelector(getCurrentDocument);
   const dispatch = useDispatch();
   const variantIds = useSelector(getSelectedVariantIds);
+  // const selectedNodeId = useSelector(getTargetExprId);
+  // const [mounts, setMounts] = useState<Record<string, HTMLDivElement>>({});
 
   const emitFrameRects = useCallback(
     (mount: HTMLElement, data: PCModule, frameIndex: number) => {
+      // setMounts({ ...mounts, [frameIndex]: mount });
       if (!shouldCollectRects) {
         return false;
       }
@@ -160,6 +164,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
         type: "ui/rectsCaptured",
         payload: { frameIndex, rects },
       });
+
       // dispatch({
       //   type: "ui/computedStylesCaptured",
       //   payload: computedStyles,
@@ -167,6 +172,15 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
     },
     [dispatch, shouldCollectRects]
   );
+
+  // useEffect(() => {
+  //   if (selectedNodeId) {
+  //     for (const frameIndex in mounts) {
+  //       const nodeMap = getNodeMap(mounts[frameIndex]);
+  //       console.log(selectedNodeId, nodeMap, nodeMap[selectedNodeId]);
+  //     }
+  //   }
+  // }, [mounts, selectedNodeId]);
 
   const onFrameUpdated = (
     mount: HTMLElement,

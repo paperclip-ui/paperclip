@@ -67,11 +67,6 @@ div preview {
             height: 300px
             background: grey
         }
-        FrameTitle unnamed(class: "hasScript") {
-            insert value {
-                text "some title"
-            }
-        }
         insert title {
             text "double click to edit"
         }

@@ -387,15 +387,22 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
 
         let name = script.get_name().unwrap_or("default".to_string()).clone();
 
+        let path = format!("_{}.{}", hash, name);
+
+        // for NextJS "use client" issues
+        context.add_buffer(format!("if (typeof {} === \"function\") {{\n", path).as_str());
+
+        context.start_block();
+
         context.add_buffer(
             format!(
                 "{} = React.memo(React.forwardRef({}({})));\n",
-                component.name,
-                format!("_{}.{}", hash, name),
-                component.name
+                component.name, path, component.name
             )
             .as_str(),
         );
+        context.end_block();
+        context.add_buffer("}\n");
     }
 
     if component.is_public {

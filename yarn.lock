@@ -2227,7 +2227,7 @@ __metadata:
     "@paperclip-ui/releases": ^20.4.44
     execa: ^8.0.0
   bin:
-    paperclip: bin/paperclip
+    paperclip: lib/index.js
   languageName: unknown
   linkType: soft
 

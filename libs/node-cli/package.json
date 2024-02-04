@@ -8,7 +8,7 @@
     "access": "public"
   },
   "bin": {
-    "paperclip": "bin/paperclip"
+    "paperclip": "lib/index.js"
   },
   "scripts": {
     "build": "tsc",

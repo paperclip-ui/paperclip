@@ -1,11 +1,11 @@
-import LRU from "lru-cache";
+import { LRUCache } from "lru-cache";
 
 const DEFAULT_LRU_MAX = 10000;
 
 // need this for default arguments
 const getArgumentCount = (fn: (...args: any[]) => any) => {
   const str = fn.toString();
-  const params = str.match(/\(.*?\)|\w+\s*=>/)[0];
+  const params = str.match(/\(.*?\)|\w+\s*=>/)![0];
   const args = params
     .replace(/[=>()]/g, "")
     .split(/\s*,\s*/)
@@ -30,11 +30,11 @@ export const memoize = <TFunc extends (...args: any[]) => any>(
 
   return compilFastMemoFn(argumentCount, lruMax > 0)(
     fn,
-    new LRU({ max: lruMax })
+    new LRUCache({ max: lruMax })
   ) as TFunc;
 };
 
-export const shallowEquals = (a, b) => {
+export const shallowEquals = (a: any, b: any) => {
   const toa = typeof a;
   const tob = typeof b;
 
@@ -64,14 +64,14 @@ export const reuser = <TValue>(
   getKey: (value: TValue) => string,
   equals: (a: TValue, b: TValue) => boolean = shallowEquals
 ): ((value: TValue) => TValue) => {
-  const cache = new LRU({ max: lruMax });
+  const cache = new LRUCache({ max: lruMax });
   return (value: TValue) => {
     const key = getKey(value);
-    if (!cache.has(key) || !equals(cache.get(key), value)) {
-      cache.set(key, value);
+    if (!cache.has(key) || !equals(cache.get(key) as any, value)) {
+      cache.set(key, value as any);
     }
 
-    return cache.get(key);
+    return cache.get(key) as TValue;
   };
 };
 
@@ -137,36 +137,4 @@ const compilFastMemoFn = (argumentCount: number, acceptPrimitives: boolean) => {
   `;
 
   return (_memoFns[hash] = new Function(buffer)());
-};
-
-/**
- * Calls target function once & proxies passed functions
- * @param fn
- */
-
-export const underchange = <TFunc extends (...args: any[]) => any>(
-  fn: TFunc
-) => {
-  let currentArgs = [];
-  let ret: any;
-  let started: boolean;
-
-  const start = () => {
-    if (started) {
-      return ret;
-    }
-    started = true;
-    return (ret = fn(
-      ...currentArgs.map(
-        (a, i) =>
-          (...args) =>
-            currentArgs[i](...args)
-      )
-    ));
-  };
-
-  return ((...args) => {
-    currentArgs = args;
-    return start();
-  }) as any as TFunc;
 };

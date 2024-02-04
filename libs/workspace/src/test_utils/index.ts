@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fsa from "fs-extra";
-import * as execa from "execa";
+import { execa } from "execa";
 import getPort from "get-port";
 import {
   DesignerClientImpl,

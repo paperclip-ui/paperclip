@@ -875,7 +875,9 @@ add_case! {
   };
   _AB.displayName = "AB";
   let AB = React.memo(React.forwardRef(_AB));
-  AB = React.memo(React.forwardRef(_f2903221.default(AB)));
+  if (typeof _f2903221.default === "function") {
+    AB = React.memo(React.forwardRef(_f2903221.default(AB)));
+  }
   export { AB };
   "#
 }
@@ -1197,7 +1199,9 @@ add_case! {
   };
   _AB.displayName = "AB";
   let AB = React.memo(React.forwardRef(_AB));
-  AB = React.memo(React.forwardRef(_792a6e37.ABC(AB)));
+  if (typeof _792a6e37.ABC === "function") {
+    AB = React.memo(React.forwardRef(_792a6e37.ABC(AB)));
+  }
   export { AB };
 
   const _ABCD = (props, ref) => {
@@ -1208,7 +1212,9 @@ add_case! {
   };
   _ABCD.displayName = "ABCD";
   let ABCD = React.memo(React.forwardRef(_ABCD));
-  ABCD = React.memo(React.forwardRef(_792a6e37.DEF(ABCD)));
+  if (typeof _792a6e37.DEF === "function") {
+    ABCD = React.memo(React.forwardRef(_792a6e37.DEF(ABCD)));
+  }
   export { ABCD };
   "#
 }

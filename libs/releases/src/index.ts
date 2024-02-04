@@ -5,13 +5,17 @@ import * as os from "node:os";
 import tar from "tar";
 import stream from "node:stream";
 import { promisify } from "node:util";
-import execa from "execa";
+import { execa } from "execa";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const debugMode = process.env.DEBUG != null;
 
 const pipeline = promisify(stream.pipeline);
 
-const pkg = require("../package.json");
+const pkg = JSON.parse(fs.readFileSync(__dirname + "/../package.json", "utf8"));
 const BIN_NAME = "paperclip_cli";
 import path from "path";
 

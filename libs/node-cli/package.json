@@ -1,8 +1,9 @@
 {
   "name": "@paperclip-ui/cli",
-  "version": "20.4.42",
+  "version": "20.4.44",
   "description": "",
   "main": "lib/index.js",
+  "type": "module",
   "publishConfig": {
     "access": "public"
   },
@@ -16,8 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/releases": "^20.4.42",
-    "execa": "^5.1.1"
+    "@paperclip-ui/releases": "^20.4.44",
+    "execa": "^8.0.0"
   },
   "gitHead": "9cbfaf54c043385661768ba1b1a41de3ec872d1d"
 }

@@ -8,8 +8,8 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "declaration": true,
-    "moduleResolution": "node",
-    "module": "CommonJS",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "outDir": "lib",
     "jsx": "react",
     "paths": {

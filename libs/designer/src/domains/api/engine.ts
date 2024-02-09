@@ -891,8 +891,6 @@ const createEventHandler = (actions: APIActions) => {
       ...getScaledPoint(point, state.canvas.transform),
     };
 
-    console.log("DROPPED RESOURCE");
-
     if (item.kind === ResourceKind.File2) {
       await insertResource(
         item.parentPath + "/" + item.name,
@@ -906,10 +904,18 @@ const createEventHandler = (actions: APIActions) => {
       let changes: Mutation[] = [];
 
       if (expr.kind === ast.ExprKind.Component) {
+        const intersectingNode = getNodeInfoAtCurrentPoint(state);
+
+        const targetExpr =
+          intersectingNode &&
+          (await resolveTargetExprId(intersectingNode.nodeId, state));
+
         changes = [
           {
             appendChild: {
-              parentId: state.currentDocument.paperclip.html.sourceId,
+              parentId: targetExpr
+                ? targetExpr.id
+                : state.currentDocument.paperclip.html.sourceId,
               childSource: `
               /**
                * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${

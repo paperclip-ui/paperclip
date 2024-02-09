@@ -891,6 +891,8 @@ const createEventHandler = (actions: APIActions) => {
       ...getScaledPoint(point, state.canvas.transform),
     };
 
+    console.log("DROPPED RESOURCE");
+
     if (item.kind === ResourceKind.File2) {
       await insertResource(
         item.parentPath + "/" + item.name,

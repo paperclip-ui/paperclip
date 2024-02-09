@@ -19,6 +19,7 @@ prost = "0.12.3"
 anyhow = "1.0.65"
 crc = "3.0.0"
 futures = "0.3.24"
+itertools = "0.12.1"
 
 [build-dependencies]
 prost-build = "0.12.3"

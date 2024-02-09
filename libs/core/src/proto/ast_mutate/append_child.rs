@@ -15,6 +15,8 @@ use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 macro_rules! append_child {
     ($context: expr, $expr: expr) => {{
         if $expr.get_id() == &$context.mutation.parent_id {
+            println!("Appending child: {:?}", &$context.mutation.child_source);
+
             let paste_result = paste_expression(
                 &$context.mutation.child_source,
                 None,

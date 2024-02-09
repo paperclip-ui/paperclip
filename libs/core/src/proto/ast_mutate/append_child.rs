@@ -113,6 +113,25 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
     fn visit_slot(&self, expr: &mut ast::pc::Slot) -> VisitorResult<(), Self> {
         append_child!(self, expr, false)
     }
+    fn visit_text_node(&self, expr: &mut ast::pc::TextNode) -> VisitorResult<(), Self> {
+        if &self.mutation.parent_id != &expr.id {
+            return VisitorResult::Continue;
+        }
+        let parent = self
+            .expr_map
+            .get_parent(&expr.id)
+            .expect("Parent must exist");
+
+        self.add_post_mutation(
+            mutation::Inner::AppendChild(AppendChild {
+                parent_id: parent.get_id().to_string(),
+                child_source: self.mutation.child_source.clone(),
+            })
+            .get_outer(),
+        );
+
+        VisitorResult::Return(())
+    }
     fn visit_element(
         &self,
         expr: &mut ast::pc::Element,

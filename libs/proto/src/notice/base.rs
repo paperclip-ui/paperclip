@@ -139,9 +139,11 @@ impl NoticeList {
         Self { items: vec![] }
     }
     pub fn extend(&mut self, other: &NoticeList) {
-        let mut new_items = self.items.clone();
-        new_items.extend(other.items.clone());
-        self.items = new_items.into_iter().unique().collect();
+        self.items.extend(other.items.clone());
+        self.dedupe();
+    }
+    fn dedupe(&mut self) {
+        self.items = self.items.clone().into_iter().unique().collect();
     }
     pub fn extend_from_option(&mut self, other: Option<NoticeList>) {
         if let Some(other) = other {
@@ -158,6 +160,7 @@ impl NoticeList {
     }
     pub fn push(&mut self, notice: Notice) {
         self.items.push(notice);
+        self.dedupe();
     }
     pub fn into_result<TRet>(self, ret: TRet) -> Result<TRet, NoticeList> {
         if self.contains_error() {

@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/designer",
-  "version": "20.4.47",
+  "version": "20.4.48",
   "description": "",
   "main": "index.js",
   "private": true,
@@ -21,9 +21,9 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.18.6",
     "@improbable-eng/grpc-web-node-http-transport": "^0.15.0",
-    "@paperclip-ui/evaluator": "^20.4.47",
-    "@paperclip-ui/parser": "^20.4.47",
-    "@paperclip-ui/workspace": "^20.4.47",
+    "@paperclip-ui/evaluator": "^20.4.48",
+    "@paperclip-ui/parser": "^20.4.48",
+    "@paperclip-ui/workspace": "^20.4.48",
     "@types/jest": "^29.2.3",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
@@ -49,9 +49,9 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@paperclip-ui/core": "^20.4.47",
-    "@paperclip-ui/proto": "^20.4.47",
-    "@paperclip-ui/web-renderer": "^20.4.47",
+    "@paperclip-ui/core": "^20.4.48",
+    "@paperclip-ui/proto": "^20.4.48",
+    "@paperclip-ui/web-renderer": "^20.4.48",
     "@types/color": "^3.0.3",
     "classnames": "^2.3.2",
     "color": "^4.2.3",

@@ -72,8 +72,33 @@ macro_rules! expressions {
                 )*
             }
         }
-
     }
+
+
+    impl visit::Visitable for ExpressionWrapper {
+            fn accept<TRet, TVisitor: visit::Visitor<TRet>>(&self, visitor: &TVisitor) -> visit::VisitorResult<TRet, TVisitor> {
+                match self {
+                    $(
+                        ExpressionWrapper::$name(exp) => {
+                            exp.accept(visitor)
+                        },
+                    )*
+                }
+            }
+        }
+
+
+        impl visit::Visitable for &ExpressionWrapper {
+                    fn accept<TRet, TVisitor: visit::Visitor<TRet>>(&self, visitor: &TVisitor) -> visit::VisitorResult<TRet, TVisitor> {
+                        match self {
+                            $(
+                                ExpressionWrapper::$name(exp) => {
+                                    exp.accept(visitor)
+                                },
+                            )*
+                        }
+                    }
+                }
 
 
     #[derive(Clone)]

@@ -1837,6 +1837,7 @@ dependencies = [
  "convert_case",
  "crc 1.8.1",
  "futures",
+ "itertools 0.12.1",
  "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_parser",

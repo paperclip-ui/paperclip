@@ -138,6 +138,16 @@ impl ExprMap {
             .and_then(|doc| doc.try_into().ok())
     }
 
+    pub fn get_document_import_path<'a>(
+        &'a self,
+        expr_or_doc_id: &str,
+        namespace: &str,
+    ) -> Option<String> {
+        self.get_document_import(expr_or_doc_id, namespace)
+            .and_then(|doc| self.document_maps.get(&doc.id))
+            .and_then(|map| Some(map.path.clone()))
+    }
+
     pub fn get_owner_document<'a>(&'a self, expr_id: &str) -> Option<&'a Document> {
         let expr = self.get_expr(expr_id)?;
         let expr_document = self.get_document(expr_id)?;

@@ -5,6 +5,7 @@ use paperclip_proto::ast::{
     expr_map::ExprMap,
     graph::Graph,
     pc::Element,
+    shared::Reference,
     visit::{Visitable, Visitor, VisitorResult},
     wrapper::ExpressionWrapper,
 };
@@ -32,6 +33,14 @@ impl Visitor<()> for CaptureNamespaces {
     fn visit_element(&self, expr: &Element) -> VisitorResult<(), Self> {
         if let Some(namespace) = &expr.namespace {
             self.namespaces.borrow_mut().push(namespace.clone());
+        }
+        VisitorResult::Continue
+    }
+    fn visit_reference(&self, expr: &Reference) -> VisitorResult<(), Self> {
+        if expr.path.len() > 1 {
+            self.namespaces
+                .borrow_mut()
+                .push(expr.path.get(0).expect("path must exist").clone());
         }
         VisitorResult::Continue
     }
@@ -66,13 +75,11 @@ pub fn copy_expression(expr_id: &str, graph: &Graph) -> String {
             .collect();
 
         for namespace in namespaces {
-            let import_path: String = expr_map
-                .get_document_import_path(expr.get_id(), &namespace)
-                .expect("path must exist");
-            ctx.add_buffer(format!("import \"{}\" as {}\n", import_path, namespace).as_str());
+            if let Some(import_path) = expr_map.get_document_import_path(expr.get_id(), &namespace)
+            {
+                ctx.add_buffer(format!("import \"{}\" as {}\n", import_path, namespace).as_str());
+            }
         }
-
-        // println!("{:#?}", namespaces);
 
         ctx.add_buffer(expr.serialize(true).as_str())
     }

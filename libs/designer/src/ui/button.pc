@@ -59,7 +59,7 @@ public component Button {
             border: 1px solid var(mod.blue01)
             border-radius: var(mod.space02)
             padding: var(mod.space04) var(mod.space06)
-            color: var(mod.gray0)
+            color: var(mod.fontColor01)
             cursor: pointer
             transition: 0.2s
         }

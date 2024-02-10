@@ -1,6 +1,6 @@
 import { Deferred, eventListener } from "@paperclip-ui/common";
 import * as getPort from "get-port";
-import * as execa from "execa";
+import { execa } from "execa";
 import * as waitPort from "wait-port";
 import * as URL from "url";
 global.XMLHttpRequest = require("xhr2");

@@ -1,4 +1,5 @@
 use crate::{ast::base::Range, notice};
+use itertools::Itertools;
 use std::error::Error;
 use std::fmt;
 use std::hash::{Hash, Hasher};
@@ -139,10 +140,14 @@ impl NoticeList {
     }
     pub fn extend(&mut self, other: &NoticeList) {
         self.items.extend(other.items.clone());
+        self.dedupe();
+    }
+    fn dedupe(&mut self) {
+        self.items = self.items.clone().into_iter().unique().collect();
     }
     pub fn extend_from_option(&mut self, other: Option<NoticeList>) {
         if let Some(other) = other {
-            self.items.extend(other.items.clone());
+            self.extend(&other);
         }
     }
     pub fn contains_error(&self) -> bool {
@@ -155,6 +160,7 @@ impl NoticeList {
     }
     pub fn push(&mut self, notice: Notice) {
         self.items.push(notice);
+        self.dedupe();
     }
     pub fn into_result<TRet>(self, ret: TRet) -> Result<TRet, NoticeList> {
         if self.contains_error() {

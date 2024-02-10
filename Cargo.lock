@@ -1251,9 +1251,9 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.12.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25db6b064527c5d482d0423354fcd07a89a2dfe07b67892e62411946db7f07b0"
+checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
 dependencies = [
  "either",
 ]
@@ -1837,6 +1837,7 @@ dependencies = [
  "convert_case",
  "crc 1.8.1",
  "futures",
+ "itertools 0.12.1",
  "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_parser",
@@ -1961,6 +1962,7 @@ dependencies = [
  "anyhow",
  "crc 3.0.1",
  "futures",
+ "itertools 0.12.1",
  "prost 0.12.3",
  "prost-build",
  "serde",
@@ -1985,7 +1987,7 @@ dependencies = [
  "anyhow",
  "colored",
  "futures",
- "itertools 0.12.0",
+ "itertools 0.12.1",
  "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_core",

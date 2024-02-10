@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/common",
-  "version": "20.4.45",
+  "version": "20.4.47",
   "description": "",
   "main": "lib/index.js",
   "publishConfig": {
@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lru-cache": "^6.0.0",
+    "lru-cache": "^10.0.0",
     "react": "^18.2.0"
   },
   "devDependencies": {

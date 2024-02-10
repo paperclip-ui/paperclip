@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fsa from "fs-extra";
-import * as execa from "execa";
+import { execaCommand } from "execa";
 import getPort from "get-port";
 import {
   DesignerClientImpl,
@@ -61,7 +61,7 @@ export const startWorkspace = async ({
     localFilesPaths[relativePath] = filePath;
   }
 
-  const ws = execa.command(
+  const ws = execaCommand(
     `${__dirname}/../../../../target/debug/paperclip_cli designer --port=${port} --screenshots=false`,
     { cwd: tmpDirectory, stdio: "ignore" }
   );

@@ -402,6 +402,31 @@ case! {
 }
 
 case! {
+  when_appending_to_text_node_parent_is_selected,
+  [(
+    "/entry.pc", r#"
+    div {
+        text "ab"
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+      text "Hello"
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div {
+        text "ab"
+        text "Hello"
+      }
+    "#
+  )]
+}
+
+case! {
   can_append_child_to_slot,
   [(
     "/entry.pc", r#"
@@ -499,6 +524,36 @@ case! {
                 module.B
             }
         }
+    "#
+  )]
+}
+
+case! {
+  can_append_imported_instance_to_document,
+  [(
+    "/entry.pc", r#"
+
+    "#
+  ),
+  (
+    "/module.pc", r#"
+    public component B {
+        render div
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+
+      import "/module.pc" as mod
+      mod.B
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "module.pc" as module
+        module.B unnamed
     "#
   )]
 }

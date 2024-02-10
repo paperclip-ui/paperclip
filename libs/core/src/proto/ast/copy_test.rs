@@ -148,6 +148,69 @@ case! {
     "#
 }
 
+case! {
+    instance_imports_are_captured,
+    [
+        (
+            "/entry.pc",
+            r#"
+               import "/module.pc" as module
+
+               module.Test
+            "#
+        ),
+        (
+            "/module.pc",
+            r#"
+                component Test {
+                    render div
+                }
+            "#
+        )
+    ],
+
+    "80f4925f-2",
+    r#"
+    import "/module.pc" as module
+
+    module.Test
+    "#
+}
+
+case! {
+    var_refs_are_includes,
+    [
+        (
+            "/entry.pc",
+            r#"
+               import "/module.pc" as module
+
+               div {
+                style {
+                    color: var(module.abba)
+                }
+               }
+            "#
+        ),
+        (
+            "/module.pc",
+            r#"
+                public token abba red
+            "#
+        )
+    ],
+
+    "80f4925f-6",
+    r#"
+    import "/module.pc" as module
+    div {
+        style {
+            color: var(module.abba)
+        }
+    }
+    "#
+}
+
 xcase! {
     import_included_when_copying_instance,
     [

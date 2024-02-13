@@ -12,7 +12,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc --watch --preserveWatchOutput"
+    "build:watch": "tsc --watch --preserveWatchOutput",
+    "postinstall": "node ./postinstall.js",
+    "postupdate": "node ./postinstall.js"
   },
   "author": "",
   "license": "ISC",

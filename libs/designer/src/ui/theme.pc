@@ -1,7 +1,7 @@
 import "ui/theme.pc" as module
 
-public token hoverColor var(gray04)
 
+public token hoverColor var(gray04)
 public token roundedXl 0.75rem
 public token roundedLg 0.5rem
 public token popupBackgroundColor var(gray06)
@@ -30,7 +30,7 @@ public token atomColor rgb(114, 247, 134)
 public token slotColor rgb(161, 255, 203)
 public token puncColor rgb(158, 158, 158)
 public token keywordColor rgb(158, 158, 158)
-public token fontColor01 rgb(236, 236, 236)
+public token fontColor01 white
 public token space01 2px
 public token space02 4px
 public token space03 8px
@@ -138,3 +138,5 @@ public style centered {
 trigger mobile {
     "@media screen and (max-width: 480px)"
 }
+
+

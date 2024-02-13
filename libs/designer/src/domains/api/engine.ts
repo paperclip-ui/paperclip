@@ -330,7 +330,7 @@ const createEventHandler = (actions: APIActions) => {
         await actions.applyChanges([
           {
             appendChild: {
-              parentId: targetId,
+              parentId: resolvedTarget.id,
               childSource: `
               import "${item.item.parentPath}" as module
               module.${item.item.name}

@@ -1,7 +1,7 @@
 {
   "name": "vscode-paperclip",
   "displayName": "Paperclip",
-  "version": "20.4.53",
+  "version": "20.4.54",
   "publisher": "crcn",
   "preview": true,
   "private": true,
@@ -99,9 +99,9 @@
   },
   "dependencies": {
     "@improbable-eng/grpc-web-node-http-transport": "^0.15.0",
-    "@paperclip-ui/common": "^20.4.53",
-    "@paperclip-ui/proto": "^20.4.53",
-    "@paperclip-ui/releases": "^20.4.53",
+    "@paperclip-ui/common": "^20.4.54",
+    "@paperclip-ui/proto": "^20.4.54",
+    "@paperclip-ui/releases": "^20.4.54",
     "color": "^4.2.3",
     "execa": "^8.0.0",
     "get-port": "^3.2.0",

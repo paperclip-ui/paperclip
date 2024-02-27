@@ -4,10 +4,7 @@
   "description": "",
   "type": "module",
   "main": "index.js",
-  "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc --watch"
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "devDependencies": {

@@ -20,7 +20,9 @@ export const migrate = async (resourceUrl: string) => {
     const page = await browser.newPage();
     await page.goto(url);
 
-    const { links, assets } = await page.evaluate(scrapeData);
+    const { links, assets, content } = await page.evaluate(scrapeData);
+
+    console.log(content);
 
     await migrateLinks(links, url);
   };
@@ -39,6 +41,13 @@ export const migrate = async (resourceUrl: string) => {
   browser.close();
 };
 
+type ConvertNodeContext = {
+  content: string;
+  depth: number;
+  isNewLine: boolean;
+  indent: string;
+};
+
 const scrapeData = () => {
   const links = Array.from(document.body.getElementsByTagName("a"))
     .map((anchor) => {
@@ -53,10 +62,95 @@ const scrapeData = () => {
       return href.pathname;
     });
 
-  const assets = {};
+  const assets = [];
+
+  const addBuffer = (
+    value: string,
+    context: ConvertNodeContext
+  ): ConvertNodeContext => ({
+    ...context,
+    isNewLine: value.charAt(value.length - 1) === "\n",
+    content:
+      context.content +
+      (context.isNewLine ? context.indent.repeat(context.depth) : "") +
+      value,
+  });
+
+  const startBlock = (context: ConvertNodeContext) => ({
+    ...context,
+    depth: context.depth + 1,
+  });
+
+  const endBlock = (context: ConvertNodeContext) => ({
+    ...context,
+    depth: context.depth - 1,
+  });
+
+  const convertNode = (node: Node, context: ConvertNodeContext) => {
+    if (node.nodeType === 3) {
+      context = addBuffer(node.textContent + "\n", context);
+    } else if (node.nodeType === 1) {
+      const element = node as HTMLElement;
+      let tagName = node.nodeName.toLowerCase();
+
+      if (/^(script|style|iframe|svg$)/.test(tagName)) {
+        console.warn(`Skipping tag ${tagName}`);
+        return context;
+      }
+
+      if (tagName === "body") {
+        tagName = "div";
+      }
+
+      context = addBuffer(tagName, context);
+
+      const attrs = Array.from(element.attributes)
+        .map((attr) => {
+          if (attr.name === "class") {
+            return;
+          }
+          return `${attr.name}: "${attr.value}"`;
+        })
+        .filter(Boolean)
+        .join(",");
+
+      if (attrs.length) {
+        context = addBuffer(`(${attrs})`, context);
+      }
+
+      context = addBuffer(" {\n", context);
+      const style = window.getComputedStyle(element);
+      context = addBuffer(`style {\n`, context);
+      context = startBlock(context);
+      for (const key in style) {
+        context = addBuffer(`${key}: ${style[key]}\n`, context);
+      }
+      context = endBlock(context);
+      context = addBuffer(`}`, context);
+
+      context = startBlock(context);
+      context = Array.from(element.childNodes).reduce((context, child) => {
+        context = convertNode(child, context);
+        // context = addBuffer("\n", context);
+        return context;
+      }, context);
+      context = endBlock(context);
+      context = addBuffer("}\n", context);
+    }
+
+    return context;
+  };
+
+  const context = convertNode(document.body, {
+    content: "",
+    isNewLine: false,
+    indent: "  ",
+    depth: 0,
+  });
 
   return {
     links,
     assets,
+    content: context.content,
   };
 };

@@ -39,6 +39,7 @@ pub use delete_expression::*;
 pub use move_expression_to_file::*;
 pub use move_node::*;
 pub use paperclip_proto::ast;
+use paperclip_proto::ast::expr_map::ExprMap;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 pub use paperclip_proto::ast_mutate::*;
@@ -92,6 +93,8 @@ pub fn edit_graph<TIO: IO>(
 
     let ctx_graph = Rc::new(graph.clone());
 
+    let expr_map = Rc::new(ExprMap::from_graph(&graph));
+
     for mutation in mutations {
         for (path, dep) in &mut graph.dependencies {
             let mut mutations = vec![mutation.clone()];
@@ -103,8 +106,10 @@ pub fn edit_graph<TIO: IO>(
                     &dep.path,
                     ctx_graph.clone(),
                     config_context,
+                    expr_map.clone(),
                 );
-                dep.accept(&mut ctx);
+                let ret = dep.accept(&mut ctx);
+
                 if ctx.changes.borrow().len() > 0 {
                     changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));
                 }

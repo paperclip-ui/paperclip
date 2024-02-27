@@ -55,6 +55,7 @@ impl<'a, Mutation> EditContext<Mutation> {
         path: &str,
         graph: Rc<Graph>,
         config_context: &ConfigContext,
+        expr_map: Rc<ExprMap>,
     ) -> EditContext<Mutation> {
         let dep: &Dependency = graph
             .dependencies
@@ -71,7 +72,7 @@ impl<'a, Mutation> EditContext<Mutation> {
             mutation,
             post_mutations: Rc::new(RefCell::new(vec![])),
             id_generator: Rc::new(RefCell::new(IDGenerator::new(checksum))),
-            expr_map: Rc::new(ExprMap::from_graph(&graph)),
+            expr_map,
             path: path.to_string(),
             graph: graph.clone(),
             changes: Rc::new(RefCell::new(vec![])),

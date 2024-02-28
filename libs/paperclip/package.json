@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "20.4.60",
+  "version": "20.4.61",
   "description": "",
   "main": "index.js",
   "bin": "node_modules/@paperclip-ui/cli/bin/paperclip",

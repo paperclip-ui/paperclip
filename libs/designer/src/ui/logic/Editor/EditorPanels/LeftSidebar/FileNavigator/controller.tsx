@@ -174,7 +174,7 @@ export const AddFileButton = () => {
 
 const isOpenableFile = (resource: Resource) => {
   if (resource.kind === ResourceKind.File2) {
-    return /\.(pc|svg|png)$/.test(resource.name);
+    return /\.(pc)$/.test(resource.name) || isImageAsset(resource.name);
   }
 
   // everything else is an entity

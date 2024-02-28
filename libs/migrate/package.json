@@ -1,0 +1,12 @@
+{
+  "name": "@paperclip-ui/migrate",
+  "version": "20.4.58",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "puppeteer": "^22.3.0"
+  }
+}

@@ -210,7 +210,12 @@ public component {} {{
 
     log_verbose(&format!("Create component {}", new_source));
 
-    let doc = parse(&new_source, id_seed, &Options::new(vec![])).unwrap();
+    let doc = parse(
+        &new_source,
+        id_seed,
+        &Options::new(vec!["condition".to_string()]),
+    )
+    .unwrap();
     match doc.body.get(0).unwrap().get_inner() {
         node::Inner::Component(expr) => Some(expr),
         _ => None,

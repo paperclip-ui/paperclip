@@ -1,4 +1,4 @@
-use paperclip_common::{fs::FileResolver, serialize_context::Context as SerializeContext};
+use paperclip_common::serialize_context::Context as SerializeContext;
 use paperclip_proto::ast::{
     self,
     expr_map::ExprMap,

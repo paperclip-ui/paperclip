@@ -44,7 +44,7 @@ impl TargetCompilerContext {
 
     pub fn get_asset_out_dir_path(&self) -> String {
         if let Some(part) = &self.options.asset_out_dir {
-            join_path!(&self.get_out_dir_path(), part)
+            join_path!(&self.get_root_dir(), part)
         } else {
             self.get_out_dir_path()
         }

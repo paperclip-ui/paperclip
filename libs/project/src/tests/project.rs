@@ -373,11 +373,11 @@ test_case! {
     "#)
   ],
   [
-    ("/project/out/assets/main.css", r#"
+    ("/project/assets/main.css", r#"
     /* /project/out/entry.pc.css */
-     ._856b6f45-6 { background: url("/out/assets/image.png"); }
+     ._856b6f45-6 { background: url("/assets/image.png"); }
     "#),
-    ("/project/out/assets/image.png", r#"
+    ("/project/assets/image.png", r#"
         Mock
     "#)
   ]

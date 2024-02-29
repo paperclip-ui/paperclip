@@ -34,7 +34,7 @@ pub struct ProjectCompiler<IO: ProjectIO> {
     config_context: ConfigContext,
 
     /// compile output cache - prevents things from being emitted that already have been
-    compile_cache: Mutex<HashMap<String, String>>,
+    compile_cache: Mutex<HashMap<String, Vec<u8>>>,
 
     /// IO for the project,
     pub io: IO,
@@ -72,7 +72,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &'a self,
         graph: Arc<Mutex<Graph>>,
         options: CompileOptions,
-    ) -> impl Stream<Item = Result<(String, String), NoticeList>> + '_ {
+    ) -> impl Stream<Item = Result<(String, Vec<u8>), NoticeList>> + '_ {
         stream! {
             let mut graph = graph.lock().unwrap();
 
@@ -92,8 +92,8 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                     for (file_path, content) in files {
                         // keep tabs on immediately compiled files so that we prevent them from being emitted later if
                         // in watch mode and they haven't changed.
-                        compile_cache.insert(file_path.to_string(), content.to_string());
-                        yield Ok((file_path.to_string(), content.to_string()));
+                        compile_cache.insert(file_path.to_string(), content.clone());
+                        yield Ok((file_path.to_string(), content.clone()));
                     }
                 }
 
@@ -125,7 +125,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                         let files = self.maybe_recompile_file(&value.path, &graph).await;
                         if let Ok(files) = files {
                             for (file_path, content) in files {
-                                yield Ok((file_path.to_string(), content.to_string()));
+                                yield Ok((file_path.to_string(), content.clone()));
                             }
                         }
 
@@ -147,7 +147,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &self,
         files: &Vec<String>,
         graph: &'graph Graph,
-    ) -> Result<HashMap<String, String>, NoticeList> {
+    ) -> Result<HashMap<String, Vec<u8>>, NoticeList> {
         let mut compiled_files = HashMap::new();
         let container = GraphContainer::new(graph);
         for target in &self.targets {
@@ -165,7 +165,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &self,
         path: &str,
         graph: &Graph,
-    ) -> Result<HashMap<String, String>, NoticeList> {
+    ) -> Result<HashMap<String, Vec<u8>>, NoticeList> {
         let dep = get_or_short!(graph.dependencies.get(path), Ok(HashMap::new()));
 
         let mut compile_cache = self.compile_cache.lock().unwrap();
@@ -192,7 +192,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
             .map(|dep| dep.path.to_string())
             .collect();
 
-        let compiled_files: HashMap<String, String> = self
+        let compiled_files: HashMap<String, Vec<u8>> = self
             .compile_files(&files_to_compile, &graph)
             .await?
             .into_iter()

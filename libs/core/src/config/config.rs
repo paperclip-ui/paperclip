@@ -273,12 +273,11 @@ impl Config {
 impl CompilerOptions {
     pub fn get_root_dir(&self) -> String {
         if let Some(root_dir) = &self.root_dir {
-            root_dir.to_string()
+            root_dir.clone()
         } else {
             ".".to_string()
         }
     }
-
     pub fn can_emit(&self, extension: &str) -> bool {
         if let Some(exts) = &self.emit {
             exts.iter().find(|ext| ext.as_str() == extension) != None

@@ -50,8 +50,10 @@ fn compile_file(mut cx: FunctionContext) -> JsResult<JsObject> {
             let ret: Handle<JsObject> = cx.empty_object();
 
             for (key, content) in files {
-                let value = cx.string(content.to_string());
-                ret.set(&mut cx, key.as_str(), value)?;
+                if let Ok(content) = std::str::from_utf8(&content) {
+                    let value = cx.string(content);
+                    ret.set(&mut cx, key.as_str(), value)?;
+                }
             }
 
             Ok(ret)

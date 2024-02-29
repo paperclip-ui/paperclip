@@ -1,4 +1,4 @@
-use std::{cell::RefCell, collections::HashMap, path::Path, rc::Rc};
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use paperclip_common::{fs::FileResolver, serialize_context::Context};
 use paperclip_proto::ast::{

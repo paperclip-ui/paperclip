@@ -102,7 +102,7 @@ macro_rules! test_case {
                 if let Ok((key, content)) = result {
                     if let Some(expected_content) = expected_files.get(key.as_str()) {
                         assert_eq!(
-                            strip_extra_ws(content.as_str()),
+                            strip_extra_ws(std::str::from_utf8(&content).unwrap()),
                             strip_extra_ws(expected_content)
                         )
                     } else {
@@ -334,9 +334,9 @@ test_case! {
     "#)
   ],
   [
-    ("/project/out/assets/main.css", r#"
+    ("/project/out/main.css", r#"
     /* /project/out/entry.pc.css */
-     ._856b6f45-7 { background: url("/project/image.png"); }
+     ._856b6f45-6 { background: url("/image.png"); }
     "#)
   ]
 }
@@ -373,9 +373,12 @@ test_case! {
     "#)
   ],
   [
-    ("/project/assets/main.css", r#"
+    ("/project/out/assets/main.css", r#"
     /* /project/out/entry.pc.css */
-     ._856b6f45-6 { background: url("/project/out/assets/image.png"); }
+     ._856b6f45-6 { background: url("/out/assets/image.png"); }
+    "#),
+    ("/project/out/assets/image.png", r#"
+        Mock
     "#)
   ]
 }

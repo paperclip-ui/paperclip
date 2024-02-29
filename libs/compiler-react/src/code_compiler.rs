@@ -7,7 +7,7 @@ use super::context::Context;
 use anyhow::Result;
 use crc::crc32;
 use inflector::cases::pascalcase::to_pascal_case;
-use paperclip_common::{fs::FileResolver, get_or_short};
+use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer;
 use paperclip_proto::ast::{

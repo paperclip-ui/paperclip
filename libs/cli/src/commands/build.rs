@@ -4,6 +4,7 @@ use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::fs::LocalFileReader;
 use paperclip_common::log::{log_notice, log_verbose};
+use paperclip_common::pc::is_paperclip_file;
 use paperclip_core::config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{CompileOptions, LocalIO, Project};
 use paperclip_proto::notice::base::NoticeList;
@@ -57,15 +58,14 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
         if let Ok((path, content)) = result {
             // replace cd with relative since it's a prettier output
             log_notice(&format!("✍🏻  {}", path.replace(&format!("{}/", cwd), "")));
-            if args.print {
-                println!("{}", content);
+            if args.print && is_paperclip_file(&path) {
+                println!("{}", std::str::from_utf8(&content).unwrap());
             } else {
                 let dir = Path::new(&path).parent().unwrap();
                 let _ = fs::create_dir_all(dir.to_str().unwrap());
 
                 let mut file = File::create(path).expect("Unable to create path");
-                file.write_all(content.as_str().as_bytes())
-                    .expect("Unable to write contents");
+                file.write_all(&content).expect("Unable to write contents");
             }
         } else if let Err(err) = result {
             log_notice(&format!("{}", err.to_pretty_string()));

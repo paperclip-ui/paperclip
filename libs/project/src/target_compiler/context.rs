@@ -10,13 +10,9 @@ pub struct TargetCompilerContext {
 impl TargetCompilerContext {
     pub fn get_main_css_file_path(&self) -> Option<String> {
         let main_css_file_name = get_or_short!(&self.options.main_css_file_name, None);
-        let asset_out_dir = get_or_short!(&self.options.asset_out_dir, None);
+        let asset_out_dir = self.get_asset_out_dir_path();
 
-        Some(join_path!(
-            &self.config_context.directory,
-            asset_out_dir.clone(),
-            main_css_file_name.clone()
-        ))
+        Some(join_path!(&asset_out_dir, main_css_file_name.clone()))
     }
 
     pub fn get_out_dir_path(&self) -> String {
@@ -58,11 +54,18 @@ impl TargetCompilerContext {
         join_path!(&self.config_context.directory, self.options.get_root_dir())
     }
 
-    pub fn resolve_asset_out_file(&self, path: &str) -> String {
-        path.replace(
-            self.get_src_dir_path().as_str(),
-            self.get_asset_out_dir_path().as_str(),
-        )
-        .to_string()
+    pub fn resolve_asset_out_file(&self, path: &str, relative: bool) -> String {
+        let new_path = path
+            .replace(
+                self.get_src_dir_path().as_str(),
+                self.get_asset_out_dir_path().as_str(),
+            )
+            .to_string();
+
+        if relative {
+            new_path.replace(&self.get_root_dir(), "")
+        } else {
+            new_path
+        }
     }
 }

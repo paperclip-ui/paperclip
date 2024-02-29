@@ -41,7 +41,9 @@ impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> 
                 }
             }
 
-            Ok(self.context.resolve_asset_out_file(resolved_path.as_str()))
+            Ok(self
+                .context
+                .resolve_asset_out_file(resolved_path.as_str(), true))
         })
     }
 }
@@ -49,7 +51,7 @@ impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> 
 pub struct TargetCompiler<IO: FileReader + FileResolver> {
     context: TargetCompilerContext,
     io: IO,
-    all_compiled_css: Mutex<BTreeMap<String, String>>,
+    all_compiled_css: Mutex<BTreeMap<String, Vec<u8>>>,
     file_resolver: TargetCompilerResolver<IO>,
 }
 
@@ -78,8 +80,8 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         &self,
         file_paths: &Vec<String>,
         graph: &GraphContainer<'_>,
-    ) -> Result<BTreeMap<String, String>, NoticeList> {
-        let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
+    ) -> Result<BTreeMap<String, Vec<u8>>, NoticeList> {
+        let mut all_compiled_files: BTreeMap<String, Vec<u8>> = BTreeMap::new();
         let mut all_compiled_css = self.all_compiled_css.lock().unwrap();
 
         let mut notice = NoticeList::new();
@@ -91,9 +93,9 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                 for (file_path, content) in compiled_files {
                     if self.context.options.main_css_file_name != None && file_path.contains(".css")
                     {
-                        all_compiled_css.insert(file_path.to_string(), content.to_string());
+                        all_compiled_css.insert(file_path.to_string(), content);
                     } else {
-                        all_compiled_files.insert(file_path.to_string(), content.to_string());
+                        all_compiled_files.insert(file_path.to_string(), content);
                     }
                 }
             } else if let Err(err) = compiled_files {
@@ -106,9 +108,13 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                 main_css_file_path.to_string(),
                 all_compiled_css
                     .iter()
-                    .map(|(key, content)| format!("/* {} */\n{}", key, content))
+                    .map(|(key, content)| {
+                        format!("/* {} */\n{}", key, std::str::from_utf8(content).unwrap())
+                    })
                     .collect::<Vec<String>>()
-                    .join("\n\n"),
+                    .join("\n\n")
+                    .as_bytes()
+                    .to_vec(),
             );
         }
 
@@ -123,7 +129,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         &self,
         path: &str,
         graph: &GraphContainer<'_>,
-    ) -> Result<HashMap<String, String>, NoticeList> {
+    ) -> Result<HashMap<String, Vec<u8>>, NoticeList> {
         let dep = graph.graph.dependencies.get(path).expect("dep must exist");
 
         let resolve_asset_paths = if self.context.options.asset_out_dir.is_some() {
@@ -132,8 +138,23 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
             HashMap::new()
         };
 
+        // Very ick, but here we're using the evaluator file resolver
+        // since there may be embedded assets
+        let out_asset_paths = resolve_asset_paths
+            .clone()
+            .into_iter()
+            .map(|(relative, absolute)| {
+                (
+                    relative.clone(),
+                    self.file_resolver
+                        .resolve_file(&path, &relative)
+                        .unwrap_or(absolute.clone()),
+                )
+            })
+            .collect::<HashMap<String, String>>();
+
         let data = self
-            .translate_with_options(path, graph, &resolve_asset_paths)
+            .translate_with_options(path, graph, &out_asset_paths)
             .await?;
 
         let mut files = HashMap::new();
@@ -141,7 +162,14 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
         for (ext, content) in data {
             let compiled_file = format!("{}.{}", out_file, ext);
-            files.insert(compiled_file, content);
+            files.insert(compiled_file, content.as_bytes().to_vec());
+        }
+
+        for (_, absolute) in resolve_asset_paths {
+            if let Ok(content) = self.io.read_file(&absolute) {
+                let out_file = self.context.resolve_asset_out_file(&absolute, false);
+                files.insert(out_file, content.to_vec());
+            }
         }
 
         Ok(files)

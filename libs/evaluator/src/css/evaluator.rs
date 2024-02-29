@@ -1154,16 +1154,15 @@ fn stringify_style_decl_value<F: FileResolver>(
             format!(
                 "{}({})",
                 expr.name,
-                match expr.name.as_str() {
-                    "url" => stringify_url_arg_value(
-                        &expr.arguments.as_ref().expect("arguments missing"),
-                        context
-                    ),
-                    _ => stringify_style_decl_value(
-                        &expr.arguments.as_ref().expect("arguments missing"),
-                        context
-                    ),
-                }
+                expr.arguments
+                    .as_ref()
+                    .and_then(|arguments| {
+                        Some(match expr.name.as_str() {
+                            "url" => stringify_url_arg_value(arguments, context),
+                            _ => stringify_style_decl_value(arguments, context),
+                        })
+                    })
+                    .unwrap_or("".to_string())
             )
         }
         css_ast::declaration_value::Inner::HexColor(expr) => {

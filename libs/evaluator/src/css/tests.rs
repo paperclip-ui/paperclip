@@ -1670,3 +1670,19 @@ add_case! {
   ._B-root-80f4925f-8._C-80f4925f-14 { color: orange; }
 "#
 }
+
+add_case! {
+  can_evaluate_invert_filter,
+  [
+  ("/entry.pc", r#"
+  div {
+    style {
+        filter: invert() contrast(200%)
+    }
+  }
+"#)
+  ],
+  r#"
+  ._80f4925f-7 { filter: invert() contrast(200%); }
+"#
+}

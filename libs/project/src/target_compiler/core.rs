@@ -1,3 +1,4 @@
+use super::collect_assets::collect_assets;
 use super::context::TargetCompilerContext;
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
@@ -47,6 +48,7 @@ impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> 
 
 pub struct TargetCompiler<IO: FileReader + FileResolver> {
     context: TargetCompilerContext,
+    io: IO,
     all_compiled_css: Mutex<BTreeMap<String, String>>,
     file_resolver: TargetCompilerResolver<IO>,
 }
@@ -66,6 +68,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
         Self {
             context: context.clone(),
+            io: io.clone(),
             all_compiled_css: Mutex::new(BTreeMap::new()),
             file_resolver: TargetCompilerResolver { io, context },
         }
@@ -82,9 +85,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         let mut notice = NoticeList::new();
 
         for dep_file_path in file_paths {
-            let compiled_files = self
-                .compile_dependency(dep_file_path, &graph, &self.file_resolver)
-                .await;
+            let compiled_files = self.compile_dependency(dep_file_path, &graph).await;
 
             if let Ok(compiled_files) = compiled_files {
                 for (file_path, content) in compiled_files {
@@ -118,14 +119,21 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         }
     }
 
-    async fn compile_dependency<F: FileResolver>(
+    async fn compile_dependency(
         &self,
         path: &str,
         graph: &GraphContainer<'_>,
-        file_resolver: &F,
     ) -> Result<HashMap<String, String>, NoticeList> {
+        let dep = graph.graph.dependencies.get(path).expect("dep must exist");
+
+        let resolve_asset_paths = if self.context.options.asset_out_dir.is_some() {
+            collect_assets(dep, &self.io)
+        } else {
+            HashMap::new()
+        };
+
         let data = self
-            .translate_with_options(path, graph, file_resolver)
+            .translate_with_options(path, graph, &resolve_asset_paths)
             .await?;
 
         let mut files = HashMap::new();
@@ -139,11 +147,11 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         Ok(files)
     }
 
-    async fn translate_with_options<F: FileResolver>(
+    async fn translate_with_options(
         &self,
         path: &str,
         graph: &GraphContainer<'_>,
-        file_resolver: &F,
+        resolve_asset_paths: &HashMap<String, String>,
     ) -> Result<HashMap<String, String>, NoticeList> {
         let mut data = HashMap::new();
 
@@ -155,8 +163,9 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                     &info.compiler_name,
                     path,
                     graph,
-                    file_resolver,
+                    &self.file_resolver,
                     self.get_ext_translate_options(ext, path, graph),
+                    resolve_asset_paths,
                 )
                 .await?
                 {
@@ -207,6 +216,7 @@ async fn translate<F: FileResolver>(
     graph_container: &GraphContainer<'_>,
     file_resolver: &F,
     options: TranslateOptions,
+    resolve_asset_paths: &HashMap<String, String>,
 ) -> Result<Option<String>, NoticeList> {
     Ok(match into {
         "css" => Some(translate_css(path, graph_container, file_resolver).await?),
@@ -217,6 +227,7 @@ async fn translate<F: FileResolver>(
             react::context::Options {
                 use_exact_imports: options.use_exact_imports,
             },
+            resolve_asset_paths.clone(),
         )?),
         "react.d.ts" => Some(react::compile_typed_definition(
             graph_container.graph.dependencies.get(path).unwrap(),

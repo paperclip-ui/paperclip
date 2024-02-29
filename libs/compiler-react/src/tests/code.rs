@@ -44,6 +44,7 @@ macro_rules! add_case {
                 CompileOptions {
                     use_exact_imports: false,
                 },
+                HashMap::new(),
             )
             .unwrap();
 

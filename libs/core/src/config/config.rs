@@ -208,6 +208,11 @@ pub struct CompilerOptions {
     #[serde(rename = "assetOutDir", skip_serializing_if = "Option::is_none")]
     pub asset_out_dir: Option<String>,
 
+    /// The root dir for assets so that we're not using absolute paths. If empty
+    /// then paperclip.config.json dir will be used
+    #[serde(rename = "rootDir", skip_serializing_if = "Option::is_none")]
+    pub root_dir: Option<String>,
+
     /// prefix for assets,
     #[serde(rename = "assetPrefix", skip_serializing_if = "Option::is_none")]
     pub asset_prefix: Option<String>,
@@ -266,6 +271,14 @@ impl Config {
 }
 
 impl CompilerOptions {
+    pub fn get_root_dir(&self) -> String {
+        if let Some(root_dir) = &self.root_dir {
+            root_dir.to_string()
+        } else {
+            ".".to_string()
+        }
+    }
+
     pub fn can_emit(&self, extension: &str) -> bool {
         if let Some(exts) = &self.emit {
             exts.iter().find(|ext| ext.as_str() == extension) != None

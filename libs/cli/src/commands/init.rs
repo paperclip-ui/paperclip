@@ -35,6 +35,7 @@ pub async fn init(_args: InitArgs, cwd: &str) -> Result<(), NoticeList> {
             emit: Some(vec!["css".to_string(), "react.js:js".to_string()]),
             out_dir: Some("lib".to_string()),
             import_assets_as_modules: None,
+            root_dir: None,
             main_css_file_name: None,
             embed_asset_max_size: None,
             asset_out_dir: None,

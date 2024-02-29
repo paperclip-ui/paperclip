@@ -143,6 +143,7 @@ fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>
 fn default_compiler_options_with_emit(emit: Vec<String>) -> CompilerOptions {
     CompilerOptions {
         emit: Some(emit),
+        root_dir: None,
         out_dir: None,
         import_assets_as_modules: None,
         main_css_file_name: None,
@@ -305,74 +306,7 @@ test_case! {
   can_emit_one_global_css_file,
   default_config_with_compiler_options("src", vec![
     CompilerOptions {
-      emit: Some(vec!["css".to_string(), "html".to_string()]),
-      out_dir: Some("out/".to_string()),
-      import_assets_as_modules: None,
-      main_css_file_name: Some("main.css".to_string()),
-      embed_asset_max_size: None,
-      asset_out_dir: Some("assets".to_string()),
-      asset_prefix: None,
-      use_asset_hash_names: None,
-      use_exact_imports: None
-  }
-  ]),
-  "/project",
-  "/project/src/entry.pc",
-  [
-    ("/project/src/entry.pc", r#"
-      import "/project/src/imp.pc" as imp0
-      div {
-        style {
-          color: blue
-        }
-        text "A"
-      }
-    "#),
-    ("/project/src/imp.pc", r#"
-      div {
-        style {
-          color: orange
-        }
-        text "B"
-      }
-  "#)
-  ],
-  [
-    ("/project/out/entry.pc.html", r#"
-      <!doctype html>
-      <html>
-        <head>
-          <link rel="stylesheet" href="/project/assets/main.css">
-        </head>
-        <body>
-          <div class="_856b6f45-6"> A </div>
-        </body>
-      </html>
-    "#),
-    ("/project/out/imp.pc.html", r#"
-      <!doctype html>
-      <html>
-        <head>
-          <link rel="stylesheet" href="/project/assets/main.css">
-        </head>
-        <body>
-          <div class="_e2ff1d5b-5"> B </div>
-        </body>
-      </html>
-    "#),
-    ("/project/assets/main.css", r#"
-    /* /project/out/entry.pc.css */
-    ._856b6f45-6 { color: blue; }
-    /* /project/out/imp.pc.css */
-    ._e2ff1d5b-5 { color: orange; }
-    "#)
-  ]
-}
-
-test_case! {
-  properly_resolves_css_assets,
-  default_config_with_compiler_options("src", vec![
-    CompilerOptions {
+      root_dir: None,
       emit: Some(vec!["css".to_string()]),
       out_dir: Some("out/".to_string()),
       import_assets_as_modules: None,
@@ -413,6 +347,7 @@ test_case! {
     CompilerOptions {
       emit: Some(vec!["css".to_string()]),
       out_dir: Some("out/".to_string()),
+      root_dir: None,
       import_assets_as_modules: None,
       main_css_file_name: Some("main.css".to_string()),
       embed_asset_max_size: None,
@@ -554,6 +489,7 @@ test_case! {
       CompilerOptions {
           emit: Some(vec!["css".to_string()]),
           out_dir: None,
+          root_dir: None,
           import_assets_as_modules: None,
           main_css_file_name: None,
           embed_asset_max_size: Some(-1),

@@ -54,6 +54,10 @@ impl TargetCompilerContext {
         }
     }
 
+    pub fn get_root_dir(&self) -> String {
+        join_path!(&self.config_context.directory, self.options.get_root_dir())
+    }
+
     pub fn resolve_asset_out_file(&self, path: &str) -> String {
         path.replace(
             self.get_src_dir_path().as_str(),

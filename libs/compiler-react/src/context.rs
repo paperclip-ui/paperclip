@@ -1,12 +1,12 @@
-use paperclip_common::serialize_context::Context as SerializeContext;
+use paperclip_common::{fs::FileResolver, serialize_context::Context as SerializeContext};
 use paperclip_proto::ast::{
     self,
     expr_map::ExprMap,
     graph_container::GraphContainer,
     graph_ext::{Dependency, Graph},
 };
-use std::cell::RefCell;
 use std::rc::Rc;
+use std::{cell::RefCell, collections::HashMap};
 
 #[derive(Clone)]
 pub struct Context<'dependency> {
@@ -16,6 +16,7 @@ pub struct Context<'dependency> {
     pub current_component: Option<&'dependency ast::pc::Component>,
     pub ctx_name: String,
     pub options: Options,
+    pub resolve_files: HashMap<String, String>,
 }
 
 #[derive(Clone)]
@@ -28,6 +29,7 @@ impl<'dependency> Context<'dependency> {
         dependency: &'dependency Dependency,
         graph_container: &'dependency GraphContainer,
         options: Options,
+        resolve_files: HashMap<String, String>,
     ) -> Self {
         Self {
             content: Rc::new(RefCell::new(SerializeContext::new(0))),
@@ -36,6 +38,7 @@ impl<'dependency> Context<'dependency> {
             graph_container,
             dependency,
             ctx_name: "props".to_string(),
+            resolve_files,
         }
     }
     pub fn graph(&self) -> &Graph {

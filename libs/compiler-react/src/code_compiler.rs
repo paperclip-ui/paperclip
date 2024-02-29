@@ -7,7 +7,7 @@ use super::context::Context;
 use anyhow::Result;
 use crc::crc32;
 use inflector::cases::pascalcase::to_pascal_case;
-use paperclip_common::get_or_short;
+use paperclip_common::{fs::FileResolver, get_or_short};
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer;
 use paperclip_proto::ast::{
@@ -19,9 +19,9 @@ use paperclip_proto::ast::{
     wrapper::Expression,
 };
 use paperclip_proto::notice::base::NoticeList;
-use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::rc::Rc;
+use std::{cell::RefCell, collections::HashMap};
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Info {
@@ -55,8 +55,9 @@ pub fn compile_code(
     dependency: &Dependency,
     graph: &GraphContainer,
     options: Options,
+    resolved_files: HashMap<String, String>,
 ) -> Result<String, NoticeList> {
-    let mut context = Context::new(&dependency, graph, options);
+    let mut context = Context::new(&dependency, graph, options, resolved_files);
     compile_document(
         dependency.document.as_ref().expect("Document must exist"),
         &mut context,
@@ -648,7 +649,7 @@ fn get_raw_element_attrs<'dependency>(
     for parameter in &element.parameters {
         let mut param_context = context.with_new_content();
         let value = parameter.value.as_ref().expect("Value must exist");
-        compile_simple_expression(&value, &mut param_context);
+        compile_element_attr_value(element, &parameter.name, &value, &mut param_context);
 
         if let Some(name) = &element.name {
             let prop = format!("{}.{}", context.ctx_name, name);
@@ -753,6 +754,26 @@ fn attr_alias(name: &str) -> String {
         _ => name,
     })
     .to_string()
+}
+
+fn compile_element_attr_value(
+    element: &ast::Element,
+    parameter_name: &str,
+    value: &ast::SimpleExpression,
+    context: &mut Context,
+) {
+    if element.tag_name == "img".to_string() {
+        if parameter_name == "src" {
+            if let ast::simple_expression::Inner::Str(expr) = value.get_inner() {
+                if let Some(resolved_path) = context.resolve_files.get(&expr.value) {
+                    context.add_buffer(format!("\"{}\"", resolved_path).as_str());
+                    return;
+                }
+            }
+        }
+    }
+
+    compile_simple_expression(value, context);
 }
 
 fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context) {

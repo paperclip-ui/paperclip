@@ -1,5 +1,5 @@
 <button id="copy">Copy selected</button>
-<textarea id="clipboardText" type="text" style="visibility: hidden"> </textarea>
+<textarea id="clipboardText" type="text" style="opacity: 0"> </textarea>
 
 <script>
   document.getElementById("copy").onclick = () => {
@@ -22,6 +22,6 @@
 
     setTimeout(() => {
       document.execCommand("copy");
-    });
+    }, 100);
   };
 </script>

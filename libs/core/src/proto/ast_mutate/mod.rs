@@ -108,7 +108,7 @@ pub fn edit_graph<TIO: IO>(
                     config_context,
                     expr_map.clone(),
                 );
-                let ret = dep.accept(&mut ctx);
+                let _ret = dep.accept(&mut ctx);
 
                 if ctx.changes.borrow().len() > 0 {
                     changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));

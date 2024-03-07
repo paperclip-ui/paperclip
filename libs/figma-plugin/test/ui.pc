@@ -1,62 +1,85 @@
-div {
+/**
+* @frame(x:1415, y: 560, width: 1717, height: 1174)
+*/
+div logIn {
   style {
     display: flex
-    padding: 434px 255px 316px 255.5px
-    flex-direction: column
-    justify-content: flex-end
-    align-items: center
-    flex: 1 0 0
-    align-self: stretch
-    background: var(--bg-primary, #171717)
+    width: 1717px
+    height: 1174px
+    align-items: flex-start
+    background: var(--bg-primary-02, #161616)
   }
-  div {
+  div left {
+    style {
+      width: 859px
+      height: 1174px
+      flex-shrink: 0
+      position: relative
+    }
+    div frame1 {
+      style {
+        display: inline-flex
+        flex-direction: column
+        align-items: flex-start
+        gap: var(--spacing-05, 16px)
+        position: absolute
+        left: 247px
+        top: 441px
+      }
+      text "Shaya" {
+        style {
+          color: #FFF
+          font-family: Judson
+          font-size: 60px
+          font-style: normal
+          font-weight: 700
+          line-height: normal
+        }
+      }
+      text "An anonymous place to share your reflections, see different perspectives, and relate to one another on a deep level." {
+        style {
+          width: 363px
+          height: 108px
+          color: #FFF
+          font-family: Inter
+          font-size: 18px
+          font-style: normal
+          font-weight: 400
+          line-height: 144.622% 
+        }
+      }
+    }
+  }
+  div frame7 {
     style {
       display: flex
+      padding: 434px 255.5px 316px 254.5px
       flex-direction: column
-      align-items: flex-start
-      gap: var(--spacing-06, 24px)
+      justify-content: flex-end
+      align-items: center
+      flex: 1 0 0
+      align-self: stretch
+      background: var(--bg-primary, #171717)
     }
-    text "Log in" {
-      style {
-        width: 348px
-        color: var(--font-color, #E2E2E2)
-        font-family: Inter
-        font-size: 24px
-        font-style: normal
-        font-weight: 600
-        line-height: normal
-      }
-    }
-    div {
+    div authForm {
       style {
         display: flex
-        width: 348px
-        padding: var(--spacing-05, 16px) var(--spacing-07, 32px)
-        align-items: center
-        gap: 10px
-        border-radius: 99px
-        border: 1px solid #818181
-        background: #202020
+        flex-direction: column
+        align-items: flex-start
+        gap: var(--spacing-06, 24px)
       }
-      text "Email..." {
+      text "Log in" {
         style {
-          color: #7C7C7C
+          width: 348px
+          color: var(--font-color, #E2E2E2)
           font-family: Inter
-          font-size: 16px
+          font-size: 24px
           font-style: normal
           font-weight: 600
           line-height: normal
         }
       }
-    }
-    div {
-      style {
-        display: flex
-        flex-direction: column
-        align-items: flex-start
-        gap: var(--spacing-03, 8px)
-      }
-      div {
+      div group3 {
         style {
           display: flex
           width: 348px
@@ -67,7 +90,7 @@ div {
           border: 1px solid #818181
           background: #202020
         }
-        text "Password..." {
+        text "Email..." {
           style {
             color: #7C7C7C
             font-family: Inter
@@ -78,90 +101,120 @@ div {
           }
         }
       }
-      text "Forgot password?" {
-        style {
-          width: 147px
-          color: #8C8C8C
-          text-align: right
-          font-family: Inter
-          font-size: 14px
-          font-style: normal
-          font-weight: 400
-          line-height: normal
-        }
-      }
-    }
-    div {
-      style {
-        display: flex
-        flex-direction: column
-        align-items: flex-end
-        gap: 10px
-        align-self: stretch
-      }
-      div {
+      div frame6 {
         style {
           display: flex
-          height: 56px
-          padding: var(--spacing-05, 16px) var(--spacing-09, 48px)
-          justify-content: center
-          align-items: center
-          gap: 10px
-          border-radius: 99px
-          border: 2px solid #D9D9D9
+          flex-direction: column
+          align-items: flex-start
+          gap: var(--spacing-03, 8px)
         }
-        text "Log in" {
+        div group2 {
           style {
-            color: #D9D9D9
+            display: flex
+            width: 348px
+            padding: var(--spacing-05, 16px) var(--spacing-07, 32px)
+            align-items: center
+            gap: 10px
+            border-radius: 99px
+            border: 1px solid #818181
+            background: #202020
+          }
+          text "Password..." {
+            style {
+              color: #7C7C7C
+              font-family: Inter
+              font-size: 16px
+              font-style: normal
+              font-weight: 600
+              line-height: normal
+            }
+          }
+        }
+        text "Forgot password?" {
+          style {
+            width: 147px
+            color: #8C8C8C
+            text-align: right
             font-family: Inter
-            font-size: 16px
+            font-size: 14px
             font-style: normal
-            font-weight: 600
+            font-weight: 400
             line-height: normal
           }
         }
       }
-    }
-    div {
-      style {
-        display: flex
-        flex-direction: column
-        justify-content: center
-        align-items: center
-        gap: var(--spacing-05, 16px)
-        align-self: stretch
-      }
-      text "Already have an account?" {
-        style {
-          color: #8C8C8C
-          text-align: center
-          font-family: Inter
-          font-size: 16px
-          font-style: normal
-          font-weight: 400
-          line-height: normal
-        }
-      }
-      div {
+      div footer {
         style {
           display: flex
-          height: 56px
-          padding: var(--spacing-05, 16px) var(--spacing-09, 48px)
-          justify-content: center
-          align-items: center
+          flex-direction: column
+          align-items: flex-end
           gap: 10px
           align-self: stretch
-          border-radius: 99px
-          background: var(--font-color, #E2E2E2)
         }
-        text "Sign up" {
+        div group5 {
           style {
-            color: #000
+            display: flex
+            height: 56px
+            padding: var(--spacing-05, 16px) var(--spacing-09, 48px)
+            justify-content: center
+            align-items: center
+            gap: 10px
+            border-radius: 99px
+            border: 2px solid #D9D9D9
+          }
+          text "Log in" {
+            style {
+              color: #D9D9D9
+              font-family: Inter
+              font-size: 16px
+              font-style: normal
+              font-weight: 600
+              line-height: normal
+            }
+          }
+        }
+      }
+      div frame6 {
+        style {
+          display: flex
+          flex-direction: column
+          justify-content: center
+          align-items: center
+          gap: var(--spacing-05, 16px)
+          align-self: stretch
+        }
+        text "Already have an account?" {
+          style {
+            color: #8C8C8C
+            text-align: center
             font-family: Inter
             font-size: 16px
             font-style: normal
-            font-weight: 600
+            font-weight: 400
             line-height: normal
+          }
+        }
+        div group5 {
+          style {
+            display: flex
+            height: 56px
+            padding: var(--spacing-05, 16px) var(--spacing-09, 48px)
+            justify-content: center
+            align-items: center
+            gap: 10px
+            align-self: stretch
+            border-radius: 99px
+            background: var(--font-color, #E2E2E2)
+          }
+          text "Sign up" {
+            style {
+              color: #000
+              font-family: Inter
+              font-size: 16px
+              font-style: normal
+              font-weight: 600
+              line-height: normal
+            }
           }
         }
       }

@@ -36,7 +36,6 @@ const writeNode = async (node: SceneNode, context: Context) => {
     case "INSTANCE":
       return writeInstance(node, context);
   }
-  console.log(node.type);
 
   return context;
 };
@@ -81,11 +80,16 @@ const writeInstance = async (node: InstanceNode, context: Context) => {
   context = await writeGroup(node, context);
   return context;
 };
+
 const writeGroup = async (
   node: GroupNode | FrameNode | InstanceNode,
   context: Context
 ) => {
-  context = addBuffer(`div`, context);
+  if (node.parent.type === "PAGE") {
+    context = writeFrameBounds(node, context);
+  }
+
+  context = addBuffer(`div ${camelCase(node.name)}`, context);
 
   context = await writeBlock(async (context) => {
     context = await writeStyle(node, context);
@@ -98,17 +102,60 @@ const writeGroup = async (
   return context;
 };
 
+const writeFrameBounds = (node: SceneNode, context: Context) => {
+  context = addBuffer(`/**\n`, context);
+  context = addBuffer(
+    `* @frame(x:${node.x}, y: ${node.y}, width: ${node.width}, height: ${node.height})\n`,
+    context
+  );
+  context = addBuffer(`*/\n`, context);
+  return context;
+};
+
 const writeStyle = async (node: SceneNode, context: Context) => {
+  const parent = node.parent;
   const style = await node.getCSSAsync();
+
+  const allStyles = { ...style };
 
   context = addBuffer(`style {\n`, context);
   context = startBlock(context);
-  for (const key in style) {
-    context = addBuffer(`${key}: ${style[key]}\n`, context);
+
+  // relative so that all children are positioned correctly
+  if (node.type === "GROUP") {
+    allStyles.position = "relative";
+  }
+
+  // GROUP's don't have auto layout, so
+  if (parent.type === "GROUP") {
+    allStyles.position = "absolute";
+    allStyles.left = `${node.x}px`;
+    allStyles.top = `${node.y}px`;
+  }
+
+  for (const key in allStyles) {
+    context = addBuffer(`${key}: ${stripComments(allStyles[key])}\n`, context);
   }
   context = endBlock(context);
   context = addBuffer(`}\n`, context);
   return context;
+};
+
+const stripComments = (value: string) => {
+  return value.replace(/\/\*.*?\*\//g, "");
+};
+
+const camelCase = (value: string) => {
+  let buffer = value
+    .split(" ")
+    .map(
+      (value) =>
+        value.charAt(0).toUpperCase() + value.substring(1).toLowerCase()
+    )
+    .join("")
+    .replace(/[^\w_]/g, "");
+  buffer = buffer.charAt(0).toLowerCase() + buffer.substring(1);
+  return buffer;
 };
 
 const writeChildren = async (

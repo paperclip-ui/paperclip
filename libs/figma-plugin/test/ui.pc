@@ -1,0 +1,170 @@
+div {
+  style {
+    display: flex
+    padding: 434px 255px 316px 255.5px
+    flex-direction: column
+    justify-content: flex-end
+    align-items: center
+    flex: 1 0 0
+    align-self: stretch
+    background: var(--bg-primary, #171717)
+  }
+  div {
+    style {
+      display: flex
+      flex-direction: column
+      align-items: flex-start
+      gap: var(--spacing-06, 24px)
+    }
+    text "Log in" {
+      style {
+        width: 348px
+        color: var(--font-color, #E2E2E2)
+        font-family: Inter
+        font-size: 24px
+        font-style: normal
+        font-weight: 600
+        line-height: normal
+      }
+    }
+    div {
+      style {
+        display: flex
+        width: 348px
+        padding: var(--spacing-05, 16px) var(--spacing-07, 32px)
+        align-items: center
+        gap: 10px
+        border-radius: 99px
+        border: 1px solid #818181
+        background: #202020
+      }
+      text "Email..." {
+        style {
+          color: #7C7C7C
+          font-family: Inter
+          font-size: 16px
+          font-style: normal
+          font-weight: 600
+          line-height: normal
+        }
+      }
+    }
+    div {
+      style {
+        display: flex
+        flex-direction: column
+        align-items: flex-start
+        gap: var(--spacing-03, 8px)
+      }
+      div {
+        style {
+          display: flex
+          width: 348px
+          padding: var(--spacing-05, 16px) var(--spacing-07, 32px)
+          align-items: center
+          gap: 10px
+          border-radius: 99px
+          border: 1px solid #818181
+          background: #202020
+        }
+        text "Password..." {
+          style {
+            color: #7C7C7C
+            font-family: Inter
+            font-size: 16px
+            font-style: normal
+            font-weight: 600
+            line-height: normal
+          }
+        }
+      }
+      text "Forgot password?" {
+        style {
+          width: 147px
+          color: #8C8C8C
+          text-align: right
+          font-family: Inter
+          font-size: 14px
+          font-style: normal
+          font-weight: 400
+          line-height: normal
+        }
+      }
+    }
+    div {
+      style {
+        display: flex
+        flex-direction: column
+        align-items: flex-end
+        gap: 10px
+        align-self: stretch
+      }
+      div {
+        style {
+          display: flex
+          height: 56px
+          padding: var(--spacing-05, 16px) var(--spacing-09, 48px)
+          justify-content: center
+          align-items: center
+          gap: 10px
+          border-radius: 99px
+          border: 2px solid #D9D9D9
+        }
+        text "Log in" {
+          style {
+            color: #D9D9D9
+            font-family: Inter
+            font-size: 16px
+            font-style: normal
+            font-weight: 600
+            line-height: normal
+          }
+        }
+      }
+    }
+    div {
+      style {
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        gap: var(--spacing-05, 16px)
+        align-self: stretch
+      }
+      text "Already have an account?" {
+        style {
+          color: #8C8C8C
+          text-align: center
+          font-family: Inter
+          font-size: 16px
+          font-style: normal
+          font-weight: 400
+          line-height: normal
+        }
+      }
+      div {
+        style {
+          display: flex
+          height: 56px
+          padding: var(--spacing-05, 16px) var(--spacing-09, 48px)
+          justify-content: center
+          align-items: center
+          gap: 10px
+          align-self: stretch
+          border-radius: 99px
+          background: var(--font-color, #E2E2E2)
+        }
+        text "Sign up" {
+          style {
+            color: #000
+            font-family: Inter
+            font-size: 16px
+            font-style: normal
+            font-weight: 600
+            line-height: normal
+          }
+        }
+      }
+    }
+  }
+}

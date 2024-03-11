@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/migrate",
-  "version": "20.5.0",
+  "version": "20.5.1",
   "description": "",
   "type": "module",
   "main": "index.js",

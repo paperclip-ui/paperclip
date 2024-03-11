@@ -249,10 +249,12 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
     context.next_token()?;
     context.next_token()?; // eat (
     let arguments = if name == "var" {
-        parse_var_list(context)
+        Some(Box::new(parse_var_list(context)?))
+    } else if !matches!(context.peek(0), Some(Token::ParenClose)) {
+        Some(Box::new(parse_comma_list(context)?))
     } else {
-        parse_comma_list(context)
-    }?;
+        None
+    };
 
     context.next_token()?;
     let end = context.curr_u16pos.clone();
@@ -260,7 +262,7 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
         id: context.next_id(),
         range: Some(Range::new(start, end)),
         name,
-        arguments: Some(Box::new(arguments)),
+        arguments,
     })
 }
 

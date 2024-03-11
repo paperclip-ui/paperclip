@@ -1,0 +1,14 @@
+{
+  "name": "Paperclip",
+  "id": "1345863815184263227",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "ui": "./ui.html",
+  "enableProposedApi": true,
+
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

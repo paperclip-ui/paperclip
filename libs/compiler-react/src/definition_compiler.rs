@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
 use crate::{
     context::Options,
@@ -23,6 +23,7 @@ pub fn compile_typed_definition(
         Options {
             use_exact_imports: false,
         },
+        HashMap::new(),
     );
     compile_document(&mut context);
     Ok(context.get_buffer())

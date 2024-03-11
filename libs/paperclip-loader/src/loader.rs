@@ -26,7 +26,7 @@ impl Loader {
     pub async fn compile_file(
         &self,
         file_path: &str,
-    ) -> Result<HashMap<String, String>, NoticeList> {
+    ) -> Result<HashMap<String, Vec<u8>>, NoticeList> {
         self.project
             .compile_files(&vec![file_path.to_string()])
             .await

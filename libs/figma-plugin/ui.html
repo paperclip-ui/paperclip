@@ -1,0 +1,42 @@
+<button id="copy">Copy selected</button>
+<textarea id="clipboardText" type="text" style="opacity: 1"> </textarea>
+<span id="status"></span>
+
+<script>
+  document.getElementById("copy").onclick = () => {
+    setStatus("copying...");
+    parent.postMessage({ pluginMessage: { type: "copySelected" } }, "*");
+  };
+
+  window.onmessage = (event) => {
+    const message = event.data.pluginMessage;
+    switch (message.type) {
+      case "selectionCopied": {
+        return handleSelectedCopied(event.data.pluginMessage);
+      }
+    }
+  };
+
+  const handleSelectedCopied = ({ payload: { content, resources } }) => {
+    const clipboardText = document.getElementById("clipboardText");
+    clipboardText.value = content;
+    // clipboardText.value = JSON.stringify({
+    //   content, resources: Object.keys(resources).reduce((record, [key, value]) => {
+    //     record[key] = String.fromCharCode(value);
+    //     return record;
+    //   })
+    // }, null, 2);
+
+    clipboardText.select();
+
+    setTimeout(() => {
+      document.execCommand("copy");
+
+      setStatus("copied!");
+    }, 100);
+  };
+
+  const setStatus = (value) => {
+    document.getElementById("status").textContent = value;
+  };
+</script>

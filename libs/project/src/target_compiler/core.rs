@@ -1,3 +1,4 @@
+use super::collect_assets::collect_assets;
 use super::context::TargetCompilerContext;
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
@@ -40,14 +41,17 @@ impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> 
                 }
             }
 
-            Ok(self.context.resolve_asset_out_file(resolved_path.as_str()))
+            Ok(self
+                .context
+                .resolve_asset_out_file(resolved_path.as_str(), true))
         })
     }
 }
 
 pub struct TargetCompiler<IO: FileReader + FileResolver> {
     context: TargetCompilerContext,
-    all_compiled_css: Mutex<BTreeMap<String, String>>,
+    io: IO,
+    all_compiled_css: Mutex<BTreeMap<String, Vec<u8>>>,
     file_resolver: TargetCompilerResolver<IO>,
 }
 
@@ -66,6 +70,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
         Self {
             context: context.clone(),
+            io: io.clone(),
             all_compiled_css: Mutex::new(BTreeMap::new()),
             file_resolver: TargetCompilerResolver { io, context },
         }
@@ -75,24 +80,22 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         &self,
         file_paths: &Vec<String>,
         graph: &GraphContainer<'_>,
-    ) -> Result<BTreeMap<String, String>, NoticeList> {
-        let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
+    ) -> Result<BTreeMap<String, Vec<u8>>, NoticeList> {
+        let mut all_compiled_files: BTreeMap<String, Vec<u8>> = BTreeMap::new();
         let mut all_compiled_css = self.all_compiled_css.lock().unwrap();
 
         let mut notice = NoticeList::new();
 
         for dep_file_path in file_paths {
-            let compiled_files = self
-                .compile_dependency(dep_file_path, &graph, &self.file_resolver)
-                .await;
+            let compiled_files = self.compile_dependency(dep_file_path, &graph).await;
 
             if let Ok(compiled_files) = compiled_files {
                 for (file_path, content) in compiled_files {
                     if self.context.options.main_css_file_name != None && file_path.contains(".css")
                     {
-                        all_compiled_css.insert(file_path.to_string(), content.to_string());
+                        all_compiled_css.insert(file_path.to_string(), content);
                     } else {
-                        all_compiled_files.insert(file_path.to_string(), content.to_string());
+                        all_compiled_files.insert(file_path.to_string(), content);
                     }
                 }
             } else if let Err(err) = compiled_files {
@@ -105,9 +108,13 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                 main_css_file_path.to_string(),
                 all_compiled_css
                     .iter()
-                    .map(|(key, content)| format!("/* {} */\n{}", key, content))
+                    .map(|(key, content)| {
+                        format!("/* {} */\n{}", key, std::str::from_utf8(content).unwrap())
+                    })
                     .collect::<Vec<String>>()
-                    .join("\n\n"),
+                    .join("\n\n")
+                    .as_bytes()
+                    .to_vec(),
             );
         }
 
@@ -118,14 +125,36 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         }
     }
 
-    async fn compile_dependency<F: FileResolver>(
+    async fn compile_dependency(
         &self,
         path: &str,
         graph: &GraphContainer<'_>,
-        file_resolver: &F,
-    ) -> Result<HashMap<String, String>, NoticeList> {
+    ) -> Result<HashMap<String, Vec<u8>>, NoticeList> {
+        let dep = graph.graph.dependencies.get(path).expect("dep must exist");
+
+        let resolve_asset_paths = if self.context.options.asset_out_dir.is_some() {
+            collect_assets(dep, &self.io)
+        } else {
+            HashMap::new()
+        };
+
+        // Very ick, but here we're using the evaluator file resolver
+        // since there may be embedded assets
+        let out_asset_paths = resolve_asset_paths
+            .clone()
+            .into_iter()
+            .map(|(relative, absolute)| {
+                (
+                    relative.clone(),
+                    self.file_resolver
+                        .resolve_file(&path, &relative)
+                        .unwrap_or(absolute.clone()),
+                )
+            })
+            .collect::<HashMap<String, String>>();
+
         let data = self
-            .translate_with_options(path, graph, file_resolver)
+            .translate_with_options(path, graph, &out_asset_paths)
             .await?;
 
         let mut files = HashMap::new();
@@ -133,17 +162,24 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
         for (ext, content) in data {
             let compiled_file = format!("{}.{}", out_file, ext);
-            files.insert(compiled_file, content);
+            files.insert(compiled_file, content.as_bytes().to_vec());
+        }
+
+        for (_, absolute) in resolve_asset_paths {
+            if let Ok(content) = self.io.read_file(&absolute) {
+                let out_file = self.context.resolve_asset_out_file(&absolute, false);
+                files.insert(out_file, content.to_vec());
+            }
         }
 
         Ok(files)
     }
 
-    async fn translate_with_options<F: FileResolver>(
+    async fn translate_with_options(
         &self,
         path: &str,
         graph: &GraphContainer<'_>,
-        file_resolver: &F,
+        resolve_asset_paths: &HashMap<String, String>,
     ) -> Result<HashMap<String, String>, NoticeList> {
         let mut data = HashMap::new();
 
@@ -155,8 +191,9 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                     &info.compiler_name,
                     path,
                     graph,
-                    file_resolver,
+                    &self.file_resolver,
                     self.get_ext_translate_options(ext, path, graph),
+                    resolve_asset_paths,
                 )
                 .await?
                 {
@@ -207,6 +244,7 @@ async fn translate<F: FileResolver>(
     graph_container: &GraphContainer<'_>,
     file_resolver: &F,
     options: TranslateOptions,
+    resolve_asset_paths: &HashMap<String, String>,
 ) -> Result<Option<String>, NoticeList> {
     Ok(match into {
         "css" => Some(translate_css(path, graph_container, file_resolver).await?),
@@ -217,6 +255,7 @@ async fn translate<F: FileResolver>(
             react::context::Options {
                 use_exact_imports: options.use_exact_imports,
             },
+            resolve_asset_paths.clone(),
         )?),
         "react.d.ts" => Some(react::compile_typed_definition(
             graph_container.graph.dependencies.get(path).unwrap(),

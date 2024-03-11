@@ -1,0 +1,14 @@
+{
+  "srcDir": "test",
+  "experimental": ["script", "condition", "repeat"],
+  "moduleDirs": [],
+  "globalScripts": ["./test/global.css"],
+  "openCodeEditorCommandTemplate": "code --goto \"<file>:<line>:<column>\"",
+  "compilerOptions": [
+    {
+      "emit": ["yew.rs:rs", "css", "react.js:js", "react.d.ts:d.ts"],
+      "assetOutDir": "assets",
+      "embedAssetMaxSize": -1
+    }
+  ]
+}

@@ -162,3 +162,10 @@ add_case! {
         left: calc(100% * var(--x) / 100)
     "#
 }
+
+add_case! {
+    can_parse_fn_without_args,
+    r#"
+        left: invert()
+    "#
+}

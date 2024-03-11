@@ -87,7 +87,7 @@ impl<IO: ProjectIO> Project<IO> {
     pub fn compile_all<'a>(
         &self,
         options: CompileOptions,
-    ) -> impl Stream<Item = Result<(String, String), NoticeList>> + '_ {
+    ) -> impl Stream<Item = Result<(String, Vec<u8>), NoticeList>> + '_ {
         self.compiler.compile_graph(self.graph.clone(), options)
     }
 
@@ -97,7 +97,7 @@ impl<IO: ProjectIO> Project<IO> {
     pub async fn compile_files(
         &self,
         files: &Vec<String>,
-    ) -> Result<HashMap<String, String>, NoticeList> {
+    ) -> Result<HashMap<String, Vec<u8>>, NoticeList> {
         let mut graph = self.graph.lock().unwrap();
         graph
             .load_files::<IO>(files, &self.io, self.get_config().into_parser_options())

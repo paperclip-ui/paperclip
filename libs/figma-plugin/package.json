@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/figma-plugin",
-  "version": "20.5.2",
+  "version": "20.5.4",
   "description": "Copy + paste plugin for Paperclip",
   "main": "code.js",
   "scripts": {
@@ -11,7 +11,11 @@
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
     "watch": "npm run build -- --watch"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "",
+  "private": true,
   "license": "",
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "*",

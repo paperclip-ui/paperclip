@@ -112,7 +112,7 @@ export const prettyKeyCombo = (combo: string[]) => {
 };
 
 export const isImageAsset = (value: string) => {
-  return /svg|png|jpeg|jpg|gif$/.test(value);
+  return /svg|png|jpeg|jpg|gif|avif$/.test(value);
 };
 
 export const shouldShowLayers = (state: DesignerState) => {

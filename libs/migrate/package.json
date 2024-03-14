@@ -3,6 +3,10 @@
   "version": "20.5.4",
   "description": "",
   "type": "module",
+  "private": "true",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "index.js",
   "author": "",
   "license": "ISC",

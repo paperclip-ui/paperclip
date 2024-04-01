@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/evaluator",
-  "version": "20.5.5",
+  "version": "20.5.6",
   "private": true,
   "publishConfig": {
     "access": "public"
@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/proto": "^20.5.5"
+    "@paperclip-ui/proto": "^20.5.6"
   },
   "gitHead": "8104e4d9b0b976b8c8eccf1e4eee194a251bc76e"
 }

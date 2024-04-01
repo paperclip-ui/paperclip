@@ -11,8 +11,7 @@
     "build:rs:sign": "codesign --verbose -s - lib/main.node",
     "build:rs:debug": "yarn build:rs",
     "build:rs:release": "yarn build:rs --release",
-    "test": "cargo test",
-    "prepublishOnly": "yarn build"
+    "test": "cargo test"
   },
   "publishConfig": {
     "access": "public"

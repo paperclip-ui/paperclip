@@ -9,7 +9,8 @@
     "paperclip:designer": "../../target/debug/paperclip_cli designer --open",
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
-    "watch": "npm run build -- --watch"
+    "watch": "npm run build -- --watch",
+    "prepublishOnly": "yarn build"
   },
   "publishConfig": {
     "access": "public"

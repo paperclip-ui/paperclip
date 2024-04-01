@@ -9,7 +9,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "wasm-pack build --target nodejs; tsc"
+    "build": "wasm-pack build --target nodejs; tsc",
+    "prepublishOnly": "yarn build"
   },
   "author": "",
   "license": "ISC",

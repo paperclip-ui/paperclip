@@ -12,7 +12,6 @@ use paperclip_proto::ast::shared::Reference;
 use paperclip_proto::ast::wrapper::{Expression, ImmutableExpressionRef};
 use paperclip_proto::notice::base::{Notice, NoticeList};
 use paperclip_proto::virt::css::Rule;
-use std::string::ToString;
 
 #[derive(Debug, Clone)]
 enum VariantTrigger {

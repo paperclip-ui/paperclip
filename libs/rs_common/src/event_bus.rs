@@ -1,7 +1,6 @@
 // Inspired by https://github.com/smol-rs/async-channel/blob/master/src/lib.rs
 
 use anyhow::{Error, Result};
-use std::ops::Drop;
 use std::sync::Arc;
 
 pub struct EventBus<T> {

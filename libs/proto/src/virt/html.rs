@@ -1,6 +1,5 @@
 use crate::add_inner_wrapper;
 use std::collections::BTreeMap;
-use std::string::ToString;
 
 include!(concat!(env!("OUT_DIR"), "/virt.html.rs"));
 

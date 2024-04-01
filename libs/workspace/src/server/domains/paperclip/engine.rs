@@ -13,7 +13,6 @@ use paperclip_core::proto::ast_mutate;
 use paperclip_core::proto::graph::{io::IO as GraphIO, load::LoadableGraph};
 use paperclip_evaluator::html;
 
-use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};
 use crate::server::domains::paperclip::utils::apply_mutations;
 use crate::server::io::ServerIO;

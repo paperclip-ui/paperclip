@@ -1,5 +1,5 @@
 use crate::server::{core::ServerEngineContext, core::ServerEvent};
-use crate::{handle_store_events, server::io::ServerIO};
+use crate::server::io::ServerIO;
 use anyhow::Result;
 
 pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {

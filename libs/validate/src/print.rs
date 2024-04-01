@@ -3,7 +3,7 @@ use colored::Colorize;
 use itertools::Itertools;
 use paperclip_common::fs::{FileReader, LocalFileReader};
 use paperclip_proto::notice::base::{Level, Notice, NoticeList};
-use std::{self, env};
+use std::env;
 
 #[derive(Debug, PartialEq)]
 pub struct Message {

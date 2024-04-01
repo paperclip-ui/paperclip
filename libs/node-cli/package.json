@@ -12,7 +12,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc --watch --preserveWatchOutput"
+    "build:watch": "tsc --watch --preserveWatchOutput",
+    "prepublishOnly": "yarn build"
   },
   "author": "",
   "license": "ISC",

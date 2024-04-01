@@ -2316,14 +2316,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/cli@workspace:libs/node-cli"
   dependencies:
-    "@paperclip-ui/releases": ^20.5.11
+    "@paperclip-ui/releases": ^20.5.12
     execa: ^8.0.0
   bin:
     paperclip: ./bin/paperclip.js
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/common@^20.5.11, @paperclip-ui/common@workspace:^, @paperclip-ui/common@workspace:libs/js-common":
+"@paperclip-ui/common@^20.5.12, @paperclip-ui/common@workspace:^, @paperclip-ui/common@workspace:libs/js-common":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/common@workspace:libs/js-common"
   dependencies:
@@ -2333,7 +2333,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/core@^20.5.11, @paperclip-ui/core@workspace:libs/core":
+"@paperclip-ui/core@^20.5.12, @paperclip-ui/core@workspace:libs/core":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/core@workspace:libs/core"
   dependencies:
@@ -2354,7 +2354,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/designer@^20.5.11, @paperclip-ui/designer@workspace:libs/designer":
+"@paperclip-ui/designer@^20.5.12, @paperclip-ui/designer@workspace:libs/designer":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/designer@workspace:libs/designer"
   dependencies:
@@ -2362,12 +2362,12 @@ __metadata:
     "@babel/preset-env": ^7.20.2
     "@babel/preset-typescript": ^7.18.6
     "@improbable-eng/grpc-web-node-http-transport": ^0.15.0
-    "@paperclip-ui/core": ^20.5.11
-    "@paperclip-ui/evaluator": ^20.5.11
-    "@paperclip-ui/parser": ^20.5.11
-    "@paperclip-ui/proto": ^20.5.11
-    "@paperclip-ui/web-renderer": ^20.5.11
-    "@paperclip-ui/workspace": ^20.5.11
+    "@paperclip-ui/core": ^20.5.12
+    "@paperclip-ui/evaluator": ^20.5.12
+    "@paperclip-ui/parser": ^20.5.12
+    "@paperclip-ui/proto": ^20.5.12
+    "@paperclip-ui/web-renderer": ^20.5.12
+    "@paperclip-ui/workspace": ^20.5.12
     "@types/color": ^3.0.3
     "@types/jest": ^29.2.3
     "@types/react": ^18.0.21
@@ -2390,7 +2390,7 @@ __metadata:
     lodash: ^4.17.21
     mini-css-extract-plugin: ^2.6.1
     nodemon: ^2.0.20
-    paperclip-loader: ^20.5.11
+    paperclip-loader: ^20.5.12
     process: ^0.11.10
     protoc-gen-grpc-web: ^1.4.0
     raw-loader: ^4.0.2
@@ -2409,11 +2409,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/evaluator@^20.5.11, @paperclip-ui/evaluator@workspace:libs/evaluator":
+"@paperclip-ui/evaluator@^20.5.12, @paperclip-ui/evaluator@workspace:libs/evaluator":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/evaluator@workspace:libs/evaluator"
   dependencies:
-    "@paperclip-ui/proto": ^20.5.11
+    "@paperclip-ui/proto": ^20.5.12
   languageName: unknown
   linkType: soft
 
@@ -2438,21 +2438,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/parser@^20.5.11, @paperclip-ui/parser@workspace:libs/parser":
+"@paperclip-ui/parser@^20.5.12, @paperclip-ui/parser@workspace:libs/parser":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/parser@workspace:libs/parser"
   dependencies:
-    "@paperclip-ui/proto": ^20.5.11
+    "@paperclip-ui/proto": ^20.5.12
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/proto@^20.5.11, @paperclip-ui/proto@workspace:^, @paperclip-ui/proto@workspace:libs/proto":
+"@paperclip-ui/proto@^20.5.12, @paperclip-ui/proto@workspace:^, @paperclip-ui/proto@workspace:libs/proto":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto@workspace:libs/proto"
   dependencies:
     "@grpc/grpc-js": ^1.7.3
     "@improbable-eng/grpc-web": ^0.15.0
-    "@paperclip-ui/common": ^20.5.11
+    "@paperclip-ui/common": ^20.5.12
     "@types/node": ^18.11.9
     browser-headers: ^0.4.1
     protoc-gen-grpc-js: ^0.4.0
@@ -2465,7 +2465,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/releases@^20.5.11, @paperclip-ui/releases@workspace:libs/releases":
+"@paperclip-ui/releases@^20.5.12, @paperclip-ui/releases@workspace:libs/releases":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/releases@workspace:libs/releases"
   dependencies:
@@ -2478,17 +2478,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/web-renderer@^20.5.11, @paperclip-ui/web-renderer@workspace:libs/web-renderer":
+"@paperclip-ui/web-renderer@^20.5.12, @paperclip-ui/web-renderer@workspace:libs/web-renderer":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/web-renderer@workspace:libs/web-renderer"
   dependencies:
-    "@paperclip-ui/common": ^20.5.11
-    "@paperclip-ui/proto": ^20.5.11
+    "@paperclip-ui/common": ^20.5.12
+    "@paperclip-ui/proto": ^20.5.12
     html-entities: ^1.2.1
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/workspace@^20.5.11, @paperclip-ui/workspace@workspace:libs/workspace":
+"@paperclip-ui/workspace@^20.5.12, @paperclip-ui/workspace@workspace:libs/workspace":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/workspace@workspace:libs/workspace"
   dependencies:
@@ -2496,9 +2496,9 @@ __metadata:
     "@babel/preset-env": ^7.20.2
     "@babel/preset-typescript": ^7.18.6
     "@improbable-eng/grpc-web-node-http-transport": ^0.15.0
-    "@paperclip-ui/designer": ^20.5.11
-    "@paperclip-ui/proto": ^20.5.11
-    "@paperclip-ui/web-renderer": ^20.5.11
+    "@paperclip-ui/designer": ^20.5.12
+    "@paperclip-ui/proto": ^20.5.12
+    "@paperclip-ui/web-renderer": ^20.5.12
     "@types/lodash": ^4.14.191
     "@types/react": ^18.0.21
     "@types/react-dom": ^18.0.6
@@ -2516,7 +2516,7 @@ __metadata:
     mini-css-extract-plugin: ^2.6.1
     mocha: ^10.1.0
     nodemon: ^2.0.20
-    paperclip-loader: ^20.5.11
+    paperclip-loader: ^20.5.12
     process: ^0.11.10
     protoc-gen-grpc-web: ^1.4.0
     react: ^18.2.0
@@ -12388,7 +12388,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"paperclip-loader@^20.5.11, paperclip-loader@workspace:libs/paperclip-loader":
+"paperclip-loader@^20.5.12, paperclip-loader@workspace:libs/paperclip-loader":
   version: 0.0.0-use.local
   resolution: "paperclip-loader@workspace:libs/paperclip-loader"
   dependencies:
@@ -16237,9 +16237,9 @@ __metadata:
   resolution: "vscode-paperclip@workspace:integrations/vscode"
   dependencies:
     "@improbable-eng/grpc-web-node-http-transport": ^0.15.0
-    "@paperclip-ui/common": ^20.5.11
-    "@paperclip-ui/proto": ^20.5.11
-    "@paperclip-ui/releases": ^20.5.11
+    "@paperclip-ui/common": ^20.5.12
+    "@paperclip-ui/proto": ^20.5.12
+    "@paperclip-ui/releases": ^20.5.12
     "@types/get-port": ^4.2.0
     "@types/node": ^18.7.21
     "@types/vscode": ^1.73.0

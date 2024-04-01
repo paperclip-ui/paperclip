@@ -1,8 +1,11 @@
 {
   "name": "@paperclip-ui/migrate",
-  "version": "20.5.4",
+  "version": "20.5.6",
   "description": "",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "index.js",
   "author": "",
   "license": "ISC",

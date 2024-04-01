@@ -177,6 +177,6 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: yarn install
       - run: yarn build
-      - run: lerna publish from-package --yes
+      - run: yarn lerna publish from-package --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

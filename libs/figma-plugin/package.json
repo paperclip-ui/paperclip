@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/figma-plugin",
-  "version": "20.5.15",
+  "version": "20.5.16",
   "description": "Copy + paste plugin for Paperclip",
   "main": "code.js",
   "scripts": {

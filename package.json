@@ -25,7 +25,7 @@
     "sync-versions": "node scripts/sync-version.js",
     "precommit": "lint-staged",
     "clean": "git clean -fXd; yarn; yarn prepare; cargo build; cd libs/cli && cargo build",
-    "build": "cd libs/designer && mkdir -p dist & cd ../..; cargo build; lerna run build; cd libs/cli; cargo build",
+    "build": "cd libs/designer && mkdir -p dist & cd ../..; cargo build; lerna run build --concurrency=1; cd libs/cli; cargo build",
     "build:watch": "concurrently \"lerna run build:watch --parallel\" \"cargo watch -x build\"",
     "prepare": "husky install"
   },

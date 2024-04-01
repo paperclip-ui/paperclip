@@ -16,6 +16,8 @@ use crate::server::core::utils::tmp_screenshot_dir;
 
 static DESIGNER_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/../designer/dist");
 
+
+
 pub struct StaticFile(String, &'static File<'static>);
 
 impl Reply for StaticFile {
